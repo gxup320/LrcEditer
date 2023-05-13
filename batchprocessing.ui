@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>batchProcessing</class>
+ <widget class="QWidget" name="batchProcessing">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>852</width>
+    <height>606</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>batch processing</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Files</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTableView" name="tableView_files"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="pushButton_add_file">
+           <property name="text">
+            <string>add file</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_add_directory">
+           <property name="text">
+            <string>add directory</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_remove">
+           <property name="text">
+            <string>remove</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>option</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="3" column="2">
+        <widget class="QLineEdit" name="lineEdit_al"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QCheckBox" name="checkBox_re">
+         <property name="text">
+          <string>re</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QLineEdit" name="lineEdit_by"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="checkBox_by">
+         <property name="text">
+          <string>by</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="checkBox_ar">
+         <property name="text">
+          <string>ar</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="2">
+        <widget class="QSpinBox" name="spinBox_offset"/>
+       </item>
+       <item row="7" column="0">
+        <widget class="QCheckBox" name="checkBox_ti">
+         <property name="text">
+          <string>ti</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLineEdit" name="lineEdit_au"/>
+       </item>
+       <item row="7" column="2">
+        <widget class="QLineEdit" name="lineEdit_ti"/>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="lineEdit_ar"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QCheckBox" name="checkBox_au">
+         <property name="text">
+          <string>au</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2">
+        <widget class="QLineEdit" name="lineEdit_re"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="checkBox_al">
+         <property name="text">
+          <string>al</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QCheckBox" name="checkBox_offset">
+         <property name="text">
+          <string>offset</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="2">
+        <widget class="QLineEdit" name="lineEdit_ve"/>
+       </item>
+       <item row="9" column="0">
+        <widget class="QCheckBox" name="checkBox_ve">
+         <property name="text">
+          <string>ve</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QCheckBox" name="checkBox_moreTimes">
+         <property name="text">
+          <string>Mote times</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>output</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="2" column="1">
+        <widget class="QPushButton" name="pushButton_execute">
+         <property name="text">
+          <string>execute</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="lineEdit_output"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="pushButton_outputSelect">
+         <property name="text">
+          <string>browse</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QProgressBar" name="progressBar">
+         <property name="maximum">
+          <number>0</number>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+         <property name="format">
+          <string>%v/%m</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
