@@ -21,14 +21,14 @@ int main(int argc, char *argv[])
 #endif
     QTranslator translator;
     QLocale locale;
-    qDebug() << QLocale::languageToString(locale.language());
-    if(translator.load("language/" + QLocale::languageToString(locale.language()) + ".qm"))
+    //qDebug() << locale.name();
+    if(translator.load("language/" + locale.name() + ".qm"))
     {
         a.installTranslator(&translator);
     }
     else
     {
-        QMessageBox::warning(nullptr,"language load fail.","language load fail.\ncon't open 'language/" + QLocale::languageToString(locale.language()) + ".qm'");
+        QMessageBox::warning(nullptr,"language load fail.","language load fail.\ncon't open 'language/" + locale.name() + ".qm'");
     }
     MainWindow w;
     w.show();

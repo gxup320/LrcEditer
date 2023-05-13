@@ -65,7 +65,7 @@
        <item row="8" column="0">
         <widget class="QCheckBox" name="checkBox_re">
          <property name="text">
-          <string>re</string>
+          <string>re:</string>
          </property>
         </widget>
        </item>
@@ -75,14 +75,14 @@
        <item row="6" column="0">
         <widget class="QCheckBox" name="checkBox_by">
          <property name="text">
-          <string>by</string>
+          <string>by:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
         <widget class="QCheckBox" name="checkBox_ar">
          <property name="text">
-          <string>ar</string>
+          <string>ar:</string>
          </property>
         </widget>
        </item>
@@ -92,7 +92,7 @@
        <item row="7" column="0">
         <widget class="QCheckBox" name="checkBox_ti">
          <property name="text">
-          <string>ti</string>
+          <string>ti:</string>
          </property>
         </widget>
        </item>
@@ -108,7 +108,7 @@
        <item row="5" column="0">
         <widget class="QCheckBox" name="checkBox_au">
          <property name="text">
-          <string>au</string>
+          <string>au:</string>
          </property>
         </widget>
        </item>
@@ -118,14 +118,14 @@
        <item row="3" column="0">
         <widget class="QCheckBox" name="checkBox_al">
          <property name="text">
-          <string>al</string>
+          <string>al:</string>
          </property>
         </widget>
        </item>
        <item row="10" column="0">
         <widget class="QCheckBox" name="checkBox_offset">
          <property name="text">
-          <string>offset</string>
+          <string>offset:</string>
          </property>
         </widget>
        </item>
@@ -135,7 +135,7 @@
        <item row="9" column="0">
         <widget class="QCheckBox" name="checkBox_ve">
          <property name="text">
-          <string>ve</string>
+          <string>ve:</string>
          </property>
         </widget>
        </item>

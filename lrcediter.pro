@@ -10,7 +10,18 @@ CONFIG += c++11
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-TRANSLATIONS += "language/Chinese.ts"
+TRANSLATIONS += "language/zh_CN.ts"
+
+copydata.commands = $(COPY_DIR) $$shell_path($$PWD/language) $$shell_path($$OUT_PWD/language)
+first.depends = $(first) copydata
+export(first.depends)
+export(copydata.commands)
+QMAKE_EXTRA_TARGETS += first copydata
+
+#translations_zh_CN.files = $$PWD/language/zh_CN.qm
+#translations_zh_CN.path = language
+#
+#QMAKE_BUNDLE_DATA += translations_zh_CN
 
 SOURCES += \
     batchprocessing.cpp \
@@ -47,8 +58,3 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-
-contains(ANDROID_TARGET_ARCH,arm64-v8a) {
-    ANDROID_PACKAGE_SOURCE_DIR = \
-        $$PWD/android
-}

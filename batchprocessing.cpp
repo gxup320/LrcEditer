@@ -14,7 +14,7 @@ batchProcessing::batchProcessing(QWidget *parent) :
     ui->tableView_files->setShowGrid(true);
     ui->tableView_files->setGridStyle(Qt::DashLine);
     model_files = new QStandardItemModel;
-    model_files->setHorizontalHeaderLabels({"file/directory"});
+    model_files->setHorizontalHeaderLabels({tr("files")});
     ui->tableView_files->setModel(model_files);
     ui->tableView_files->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView_files->setSelectionMode(QAbstractItemView::SingleSelection);
