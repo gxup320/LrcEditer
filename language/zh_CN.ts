@@ -481,7 +481,7 @@ line2</source>
     <message>
         <location filename="../mainwindow.ui" line="403"/>
         <source>Merge duplicates</source>
-        <translation>合并相同时间项目</translation>
+        <translation>合并相同项目</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="414"/>
