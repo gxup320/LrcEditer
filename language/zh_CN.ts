@@ -494,7 +494,6 @@ line2</source>
         <translation>调试</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="458"/>
         <source>E:Disable Keyboard operation
 ESC:Enable Keyboard operation
 D:Enable or Disable Debug
@@ -511,7 +510,7 @@ Ctrl+←:0.01 s ahead
 Ctrl+→:0.01 s delay
 Alt+←:0.1 s ahead
 Alt+→:0.1 s delay</source>
-        <translation>E:禁用键盘操作
+        <translation type="vanished">E:禁用键盘操作
 ESC:启用键盘操作
 D:启用/禁用调试
 P:播放/暂停
@@ -520,6 +519,41 @@ P:播放/暂停
 退格键:删除时间
 ↑:上一行
 ↓:下一行
+←:后退3秒
+→:前进3秒
+
+Ctrl+←:提前0.01秒
+Ctrl+→:延后0.01秒
+Alt+←:提前0.1秒
+Alt+→:延后0.1秒</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="458"/>
+        <source>E:Disable Keyboard operation
+ESC:Enable Keyboard operation
+D:Enable or Disable Debug
+P:play/pause
+
+Space:inst time
+Backspace:renove time
+↑:previous item
+↓:next item
+←:back 3 seconds
+→:forward 3 seconds
+
+Ctrl+←:0.01 s ahead
+Ctrl+→:0.01 s delay
+Alt+←:0.1 s ahead
+Alt+→:0.1 s delay</source>
+        <translation>E:禁用键盘操作
+ESC:启用键盘操作
+D:启用/禁用调试
+P:播放/暂停
+
+空格键:插入时间
+退格键:删除时间
+↑:上一项
+↓:下一项
 ←:后退3秒
 →:前进3秒
 

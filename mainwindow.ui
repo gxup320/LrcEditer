@@ -462,8 +462,8 @@ P:play/pause
 
 Space:inst time
 Backspace:renove time
-↑:previous line
-↓:next line
+↑:previous item
+↓:next item
 ←:back 3 seconds
 →:forward 3 seconds
 
