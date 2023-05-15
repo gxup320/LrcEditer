@@ -22,13 +22,13 @@ int main(int argc, char *argv[])
     QTranslator translator;
     QLocale locale;
     //qDebug() << locale.name();
-    if(translator.load("language/" + locale.name() + ".qm"))
+    if(translator.load(a.applicationDirPath() + "/language/" + locale.name() + ".qm"))
     {
         a.installTranslator(&translator);
     }
     else
     {
-        QMessageBox::warning(nullptr,"language load fail.","language load fail.\ncon't open 'language/" + locale.name() + ".qm'");
+        QMessageBox::warning(nullptr,"language load fail.","language load fail.\ncon't open '" + a.applicationDirPath() + "/language/" + locale.name() + ".qm");
     }
     MainWindow w;
     w.show();

@@ -12,7 +12,7 @@ CONFIG += c++11
 
 TRANSLATIONS += "language/zh_CN.ts"
 
-copydata.commands = $(COPY_DIR) $$shell_path($$PWD/language) $$shell_path($$OUT_PWD/language)
+copydata.commands = $(COPY_DIR) $$shell_path($$PWD/language) $$shell_path($(OBJECTS_DIR)/language)
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)
