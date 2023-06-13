@@ -3,11 +3,12 @@
 
 #include <QObject>
 #include <QList>
+#include <glrcline.h>
 
 struct lrcItem
 {
     QList<qint64> times;
-    QString line;
+    GLrcLine line;
 };
 
 class GLrc : public QObject
@@ -17,11 +18,14 @@ public:
     explicit GLrc(QObject *parent = nullptr);
     void setLrc(QString lrc, int maxLine = 2147483647);
     QString getLrc(bool moreTime = false);
-    QString getHtml(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr);
+    QString getHtml(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
     qint64 previousItem();
+    qint64 previousWord();
     qint64 nextItem();
     qint64 nextLine();
+    qint64 nextWord();
     int getSelectLine();
+    qint64 getSelectTime();
     QString getLine(int line);
     QString getTimes(int line);
     bool setLine(int line, QString text);
@@ -35,6 +39,13 @@ public:
     int size();
     void setSelectLine(int line);
     bool removeLine(int line = -1);
+    qint64 setWordTime(qint64 time);
+    qint64 getWordTime();
+    int getSelectWord();
+    qint64 selectWordId(int id);
+    qint64 deleteWordTime();
+    int deleteLineWordTime();
+    int deleteAllWordTime();
 
 signals:
     void lrcChanged();

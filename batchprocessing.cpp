@@ -158,13 +158,13 @@ bool batchProcessing::saveLrcToFile(QString fileName)
             re = ui->lineEdit_re->text();
         }
         if(re != "")
-            lrcFull += "[ti:" + re + "]\n";
+            lrcFull += "[re:" + re + "]\n";
         if(ui->checkBox_ti->isChecked())
         {
             ti = ui->lineEdit_ti->text();
         }
         if(ti != "")
-            lrcFull += "[re:" + ti + "]\n";
+            lrcFull += "[ti:" + ti + "]\n";
         if(ui->checkBox_ve->isChecked())
         {
             ve = ui->lineEdit_ve->text();

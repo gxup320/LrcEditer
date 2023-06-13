@@ -88,6 +88,14 @@ private slots:
 
     void on_pushButto_batchProcess_clicked();
 
+    void on_checkBox_debug_stateChanged(int arg1);
+
+    void on_pushButton_deleteWordTime_clicked();
+
+    void on_pushButton_deleteLineWordTime_clicked();
+
+    void on_pushButton_deleteAllWordTime_clicked();
+
 private:
     Ui::MainWindow *ui;
     LineEdit* linee = nullptr;

@@ -316,7 +316,7 @@ void MainWindow::displayLrc(qint64 time, bool f)
     static qint64 lestLocalTime = 0;
     qint64 localTime;
     int line;
-    QString html = lrc->getHtml(time ,true , &localTime, &line);
+    QString html = lrc->getHtml(time ,true , &localTime, &line, f);
     //qDebug() << time << " -> " << localTime;
     if(f || lestLocalTime != localTime)
     {
@@ -815,6 +815,28 @@ bool MainWindow::keyProc(QKeyEvent *event)
         {
             ui->checkBox_accurate_process->setChecked(!ui->checkBox_accurate_process->isChecked());
         }
+        else if(event->key() == Qt::Key_B)
+        {
+            lrc->previousWord();
+        }
+        else if(event->key() == Qt::Key_N)
+        {
+            lrc->nextWord();
+        }
+        else if(event->key() == Qt::Key_M)
+        {
+            lrc->setWordTime(player->position());
+            int s = lrc->getSelectWord();
+            if(lrc->nextWord() == s)
+            {
+                lrc->nextLine();
+                lrc->selectWordId(0);
+            }
+        }
+        else if(event->key() == Qt::Key_D)
+        {
+            on_pushButton_deleteLineWordTime_clicked();
+        }
         displayLrc(-1, true);
         return false;
     }
@@ -1082,5 +1104,39 @@ void MainWindow::on_pushButto_batchProcess_clicked()
     m_batchProcessing->show();
     QCoreApplication::processEvents();
     hide();
+}
+
+
+void MainWindow::on_checkBox_debug_stateChanged(int arg1)
+{
+    if(arg1 == 0)
+    {
+        displayLrc(-1, true);
+    }
+}
+
+
+void MainWindow::on_pushButton_deleteWordTime_clicked()
+{
+    lrc->deleteWordTime();
+}
+
+
+void MainWindow::on_pushButton_deleteLineWordTime_clicked()
+{
+    lrc->deleteLineWordTime();
+    if(!ui->checkBox_debug->isChecked())
+    {
+        lrc->selectWordId(0);
+        qint64 time = lrc->getSelectTime();
+        if(time != -1 && player != nullptr)
+            player->setPosition(time);
+    }
+}
+
+
+void MainWindow::on_pushButton_deleteAllWordTime_clicked()
+{
+    lrc->deleteAllWordTime();
 }
 

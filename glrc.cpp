@@ -30,16 +30,17 @@ void GLrc::setLrc(QString lrc, int maxLine)
         }
         if((times.size() == 0 || times == lrcTimes) && lineSum < maxLine)
         {
-            if(lrcLine.line != "")
-                lrcLine.line += "\n";
-            lrcLine.line += itm;
+            if(lrcLine.line.isSpace())
+                lrcLine.line = itm;
+            else
+                lrcLine.line.append(itm);
             lineSum++;
         }
         else
         {
             lineSum = 1;
             //qDebug() << lrcTimes << lrcLine.line;
-            if(lrcTimes.size() != 0 || lrcLine.line != "")
+            if(lrcTimes.size() != 0 || lrcLine.line.isSpace() == false)
             {
                 //qDebug() << lrcTimes << lrcLine.line;
                 lrcLine.times = lrcTimes;
@@ -50,7 +51,7 @@ void GLrc::setLrc(QString lrc, int maxLine)
             lrcLine.line = itm;
         }
     }
-    if(lrcLine.line != "" || lrcLine.times.size() != 0)
+    if(lrcLine.line.isSpace() == false || lrcLine.times.size() != 0)
     {
         lrcLine.times = lrcTimes;
         lrcItems << lrcLine;
@@ -86,7 +87,7 @@ QString GLrc::getLrc(bool moreTime /*= false*/)
         }
         if(moreTime)
         {
-            QStringList lines = itm.line.split("\n");
+            QStringList lines = itm.line.toStringList();
             for(auto& line:lines)
             {
                 lrcFile += times + line + "\n";
@@ -94,20 +95,28 @@ QString GLrc::getLrc(bool moreTime /*= false*/)
         }
         else
         {
-            lrcFile += times + itm.line + "\n";
+            lrcFile += times + itm.line.toString() + "\n";
         }
     }
     return lrcFile;
 }
 
-QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos)
+QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos, bool wordColor)
 {
     qint64 localTime = -1;
     if(pos != nullptr)
     {
         *pos = 0;
     }
-    QString html = "<html><head><style>em{color: red;font-style:normal;}span{color: green;}</style></head><body>";
+    QString html;
+    if(wordColor)
+    {
+        html = "<html><head><style>em{color: red;font-style:normal;}strong{color: #6A0DAD;font-style:normal;}.selete{color: green;}.w1{background-color: #008800;}.w2{background-color: #5500FF;}.w3{background-color: #55CCFF;}.wordS{color: #FFFFFF;background-color: #000000;}</style></head><body>";
+    }
+    else
+    {
+        html = "<html><head><style>em{color: red;font-style:normal;}strong{color: #6A0DAD;font-style:normal;}.selete{color: green;}.wordS{color: #FFFFFF;background-color: #000000;}</style></head><body>";
+    }
     for(auto& itm:lrcItems)
     {
         for(auto i:itm.times)
@@ -117,12 +126,13 @@ QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos)
         }
     }
     //selectTime = localTime;
+    qint64 rstTime = localTime;
     bool t = true;
     for(int index = 0; index < lrcItems.size(); index++)
     {
         if(t && pos != nullptr)
         {
-            *pos += lrcItems[index].line.count("\n") + 1 + includTimes;
+            *pos += lrcItems[index].line.toString().count("\n") + 1 + includTimes;
         }
         int n = -1;
         QString timesHtml = "->";
@@ -133,9 +143,17 @@ QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos)
             if(lrcItems[index].times[i] == localTime || (time == -1 && index == selectLine && i == selectTime))
             {
                 n = i;
-                timesHtml+="<span>[" + ts + "]</span>";
+                timesHtml+=R"(<span class="selete">[)" + ts + R"(]</span>)";
                 selectTime = i;
                 selectLine = index;
+                if(time != -1)
+                {
+                    lrcItems[index].line.selectTime(time);
+                    if(lrcItems[index].line.getTime() > 0)
+                    {
+                        rstTime = lrcItems[index].line.getTime();
+                    }
+                }
             }
             else
             {
@@ -146,11 +164,11 @@ QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos)
         {
             if(includTimes)
             {
-                html += "<pre><em>" + timesHtml + "\n" + lrcItems[index].line + "</em></pre>";
+                html += "<pre><em>" + timesHtml + "\n" + lrcItems[index].line.toHtml(true) + "</em></pre>";
             }
             else
             {
-                html += "<pre><em>" + lrcItems[index].line + "</em></pre>";
+                html += "<pre><em>" + lrcItems[index].line.toHtml(true) + "</em></pre>";
             }
             t = false;
         }
@@ -158,23 +176,24 @@ QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos)
         {
             if(includTimes)
             {
-                html += "<pre>" + timesHtml + "\n" + lrcItems[index].line + " </pre>";
+                html += "<pre>" + timesHtml + "\n" + lrcItems[index].line.toHtml(false) + " </pre>";
             }
             else
             {
-                html += "<pre>" + lrcItems[index].line + "</pre>";
+                html += "<pre>" + lrcItems[index].line.toHtml(false) + "</pre>";
             }
         }
     }
     html += "</body></html>";
     if(line != nullptr)
     {
-        *line = localTime;
+        *line = rstTime;
     }
     if(t && pos != nullptr)
     {
         *pos = 0;
     }
+    //qDebug() << html;
     return html;
 }
 
@@ -203,6 +222,13 @@ qint64 GLrc::previousItem()
     if(selectTime >= lrcItems[selectLine].times.size())
         return -1;
     return lrcItems[selectLine].times[selectTime];
+}
+
+qint64 GLrc::previousWord()
+{
+    qint64 time = lrcItems[selectLine].line.selectPrevious();
+    //emit lrcChanged();
+    return time;
 }
 
 qint64 GLrc::nextItem()
@@ -242,16 +268,32 @@ qint64 GLrc::nextLine()
     return lrcItems[selectLine].times[selectTime];
 }
 
+qint64 GLrc::nextWord()
+{
+    qint64 time = lrcItems[selectLine].line.selectNext();
+    //emit lrcChanged();
+    return time;
+}
+
 int GLrc::getSelectLine()
 {
     return selectLine;
+}
+
+qint64 GLrc::getSelectTime()
+{
+    if(selectLine >= lrcItems.size())
+        return -1;
+    if(selectTime >= lrcItems[selectLine].times.size())
+        return -1;
+    return lrcItems[selectLine].times[selectTime];
 }
 
 QString GLrc::getLine(int line)
 {
     if(line >= lrcItems.size())
         return "";
-    return lrcItems[line].line;
+    return lrcItems[line].line.toString();
 }
 
 QString GLrc::getTimes(int line)
@@ -472,5 +514,68 @@ bool GLrc::removeLine(int line)
     }
     emit lrcChanged();
     return true;
+}
+
+qint64 GLrc::setWordTime(qint64 time)
+{
+    if(selectLine >= 0 && selectLine < lrcItems.length())
+    {
+        qint64 t = lrcItems[selectLine].line.setTime(time);
+        emit lrcChanged();
+        return t;
+    }
+
+    return -1;
+}
+
+qint64 GLrc::getWordTime()
+{
+    if(selectLine >= 0 && selectLine < lrcItems.length())
+        return lrcItems[selectLine].line.getTime();
+    return -1;
+}
+
+int GLrc::getSelectWord()
+{
+    return lrcItems[selectLine].line.getSelect();
+}
+
+qint64 GLrc::selectWordId(int id)
+{
+    return lrcItems[selectLine].line.selectId(id);
+}
+
+qint64 GLrc::deleteWordTime()
+{
+    qint64 t = lrcItems[selectLine].line.deleteTime();
+    if(t != -1)
+    {
+        emit lrcChanged();
+    }
+    return t;
+}
+
+int GLrc::deleteLineWordTime()
+{
+    int rev = lrcItems[selectLine].line.deleteAllTime();
+    if(rev != 0)
+    {
+        emit lrcChanged();
+    }
+    return rev;
+}
+
+int GLrc::deleteAllWordTime()
+{
+    int rev = 0;
+    for (int var = 0; var < lrcItems.length(); ++var)
+    {
+        rev += lrcItems[var].line.deleteAllTime();
+    }
+    if(rev != 0)
+    {
+        emit lrcChanged();
+    }
+    return rev;
 }
 

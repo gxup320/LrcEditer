@@ -12,7 +12,8 @@ CONFIG += c++11
 
 TRANSLATIONS += "language/zh_CN.ts"
 
-copydata.commands = $(COPY_DIR) $$shell_path($$PWD/language) $$shell_path($(OBJECTS_DIR)/language)
+copydata.commands += $(COPY_DIR) $$shell_path($$PWD/language) $$shell_path($(OBJECTS_DIR)/language)
+copydata.commands += & $(COPY) $$shell_path($$PWD/nextChar.json) $$shell_path($(OBJECTS_DIR))
 first.depends = $(first) copydata
 export(first.depends)
 export(copydata.commands)
@@ -27,6 +28,7 @@ SOURCES += \
     batchprocessing.cpp \
     gaudioplayer.cpp \
     glrc.cpp \
+    glrcline.cpp \
     gprogressbar.cpp \
     lineedit.cpp \
     lrcedit.cpp \
@@ -39,6 +41,7 @@ HEADERS += \
     batchprocessing.h \
     gaudioplayer.h \
     glrc.h \
+    glrcline.h \
     gprogressbar.h \
     lineedit.h \
     lrcedit.h \
@@ -57,4 +60,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    nextChar.json
 
