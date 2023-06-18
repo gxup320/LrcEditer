@@ -226,8 +226,8 @@ qint64 GLrc::previousItem()
 
 qint64 GLrc::previousWord()
 {
-    qint64 time = lrcItems[selectLine].line.selectPrevious();
-    //emit lrcChanged();
+    lrcItems[selectLine].line.selectPrevious();
+    qint64 time = lrcItems[selectLine].line.getTime();
     return time;
 }
 
@@ -270,7 +270,8 @@ qint64 GLrc::nextLine()
 
 qint64 GLrc::nextWord()
 {
-    qint64 time = lrcItems[selectLine].line.selectNext();
+    lrcItems[selectLine].line.selectNext();
+    qint64 time = lrcItems[selectLine].line.getTime();
     //emit lrcChanged();
     return time;
 }
@@ -345,6 +346,20 @@ qint64 GLrc::timeAdd(qint64 offset)
         localTime = 0;
     }
     lrcItems[selectLine].times[selectTime] = localTime;
+    emit lrcChanged();
+    return localTime;
+}
+
+qint64 GLrc::wordTimeAdd(qint64 offset)
+{
+    if(selectLine >= lrcItems.size())
+        return 0;
+    qint64 localTime = lrcItems[selectLine].line.getTime() + offset;
+    if(localTime < lrcItems[selectLine].times[selectTime])
+    {
+        localTime = lrcItems[selectLine].times[selectTime];
+    }
+    lrcItems[selectLine].line.setTime(localTime);
     emit lrcChanged();
     return localTime;
 }

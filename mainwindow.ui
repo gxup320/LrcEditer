@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1313</width>
-    <height>922</height>
+    <height>977</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -497,9 +497,16 @@ Ctrl+→:0.01 s delay
 Alt+←:0.1 s ahead
 Alt+→:0.1 s delay
 
+C:delete line word time
+
 B:previous word
 N:next word
-M:change word time</string>
+M:change word time
+
+Ctrl+B:word time 0.01 s ahead
+Ctrl+B:word time 0.01 s delay
+Alt+N:word time 0.1 s ahead
+Alt+N:word time 0.1 s delay</string>
              </property>
              <property name="whatsThis">
               <string/>

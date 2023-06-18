@@ -817,23 +817,84 @@ bool MainWindow::keyProc(QKeyEvent *event)
         }
         else if(event->key() == Qt::Key_B)
         {
-            lrc->previousWord();
+            if(event->modifiers() == (Qt::ControlModifier))
+            {
+                //int lrcLine = getSelectLrcLine();
+                qint64 time = lrc->wordTimeAdd(-10);
+                //if(time != -1)
+                //{
+                //    instLrcTime(lrcLine, time + 10);
+                //    setSelectLrcLineShowLine(lrcLine);
+                //    player->setPosition(time + 10);
+                //}
+                player->setPosition(time);
+            }
+            else if(event->modifiers() == (Qt::AltModifier))
+            {
+                //int lrcLine = getSelectLrcLine();
+                qint64 time = lrc->wordTimeAdd(-100);
+                //if(time != -1)
+                //{
+                //    instLrcTime(lrcLine, time + 100);
+                //    setSelectLrcLineShowLine(lrcLine);
+                //    player->setPosition(time + 100);
+                //}
+                player->setPosition(time);
+            }
+            else
+            {
+                qint64 time = lrc->previousWord();
+                qDebug() << time;
+                if(time != -1)
+                    player->setPosition(time);
+            }
         }
         else if(event->key() == Qt::Key_N)
         {
-            lrc->nextWord();
+            if(event->modifiers() == (Qt::ControlModifier))
+            {
+                //int lrcLine = getSelectLrcLine();
+                qint64 time = lrc->wordTimeAdd(10);
+                //if(time != -1)
+                //{
+                //    instLrcTime(lrcLine, time + 10);
+                //    setSelectLrcLineShowLine(lrcLine);
+                //    player->setPosition(time + 10);
+                //}
+                player->setPosition(time);
+            }
+            else if(event->modifiers() == (Qt::AltModifier))
+            {
+                //int lrcLine = getSelectLrcLine();
+                qint64 time = lrc->wordTimeAdd(100);
+                //if(time != -1)
+                //{
+                //    instLrcTime(lrcLine, time + 100);
+                //    setSelectLrcLineShowLine(lrcLine);
+                //    player->setPosition(time + 100);
+                //}
+                player->setPosition(time);
+            }
+            else
+            {
+                qint64 time = lrc->nextWord();
+                qDebug() << time;
+                if(time != -1)
+                    player->setPosition(time);
+            }
         }
         else if(event->key() == Qt::Key_M)
         {
             lrc->setWordTime(player->position());
             int s = lrc->getSelectWord();
-            if(lrc->nextWord() == s)
+            lrc->nextWord();
+            if(lrc->getSelectWord() == s)
             {
                 lrc->nextLine();
                 lrc->selectWordId(0);
             }
         }
-        else if(event->key() == Qt::Key_D)
+        else if(event->key() == Qt::Key_C)
         {
             on_pushButton_deleteLineWordTime_clicked();
         }
