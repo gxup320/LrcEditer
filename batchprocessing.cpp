@@ -177,7 +177,11 @@ bool batchProcessing::saveLrcToFile(QString fileName)
         }
         if(offset != 0)
             lrcFull += "[offset:" + QString::number(offset) + "]\n";
-        lrcFull += lrc->getLrc(ui->checkBox_moreTimes->checkState());
+        if(ui->checkBox_deleteAllWordTime->isChecked())
+        {
+            lrc->deleteAllWordTime();
+        }
+        lrcFull += lrc->getLrc(ui->checkBox_moreTimes->isChecked());
         //lrcFull.replace("<br/>","\n");
         if(file.write(lrcFull.toUtf8()) == false)
         {

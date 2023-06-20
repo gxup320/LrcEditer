@@ -59,95 +59,147 @@
        <string>option</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="3" column="2">
-        <widget class="QLineEdit" name="lineEdit_al"/>
-       </item>
-       <item row="8" column="0">
-        <widget class="QCheckBox" name="checkBox_re">
-         <property name="text">
-          <string>re:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="2">
-        <widget class="QLineEdit" name="lineEdit_by"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QCheckBox" name="checkBox_by">
-         <property name="text">
-          <string>by:</string>
-         </property>
-        </widget>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="checkBox_al">
+           <property name="text">
+            <string>al:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_al"/>
+         </item>
+        </layout>
        </item>
        <item row="4" column="0">
-        <widget class="QCheckBox" name="checkBox_ar">
-         <property name="text">
-          <string>ar:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="2">
-        <widget class="QSpinBox" name="spinBox_offset"/>
-       </item>
-       <item row="7" column="0">
-        <widget class="QCheckBox" name="checkBox_ti">
-         <property name="text">
-          <string>ti:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
-        <widget class="QLineEdit" name="lineEdit_au"/>
-       </item>
-       <item row="7" column="2">
-        <widget class="QLineEdit" name="lineEdit_ti"/>
-       </item>
-       <item row="4" column="2">
-        <widget class="QLineEdit" name="lineEdit_ar"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="checkBox_ar">
+           <property name="text">
+            <string>ar:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_ar"/>
+         </item>
+        </layout>
        </item>
        <item row="5" column="0">
-        <widget class="QCheckBox" name="checkBox_au">
-         <property name="text">
-          <string>au:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QCheckBox" name="checkBox_au">
+           <property name="text">
+            <string>au:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_au"/>
+         </item>
+        </layout>
        </item>
-       <item row="8" column="2">
-        <widget class="QLineEdit" name="lineEdit_re"/>
+       <item row="6" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QCheckBox" name="checkBox_by">
+           <property name="text">
+            <string>by:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_by"/>
+         </item>
+        </layout>
        </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="checkBox_al">
-         <property name="text">
-          <string>al:</string>
-         </property>
-        </widget>
+       <item row="7" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QCheckBox" name="checkBox_ti">
+           <property name="text">
+            <string>ti:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_ti"/>
+         </item>
+        </layout>
        </item>
-       <item row="10" column="0">
-        <widget class="QCheckBox" name="checkBox_offset">
-         <property name="text">
-          <string>offset:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="2">
-        <widget class="QLineEdit" name="lineEdit_ve"/>
+       <item row="8" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QCheckBox" name="checkBox_re">
+           <property name="text">
+            <string>re:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_re"/>
+         </item>
+        </layout>
        </item>
        <item row="9" column="0">
-        <widget class="QCheckBox" name="checkBox_ve">
-         <property name="text">
-          <string>ve:</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QCheckBox" name="checkBox_ve">
+           <property name="text">
+            <string>ve:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_ve"/>
+         </item>
+        </layout>
        </item>
-       <item row="11" column="0">
-        <widget class="QCheckBox" name="checkBox_moreTimes">
-         <property name="text">
-          <string>Mote times</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
+       <item row="10" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QCheckBox" name="checkBox_offset">
+           <property name="text">
+            <string>offset:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="spinBox_offset"/>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_moreTimes">
+           <property name="text">
+            <string>Mote times</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBox_deleteAllWordTime">
+           <property name="text">
+            <string>Delete all word time</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

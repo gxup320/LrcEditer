@@ -918,67 +918,72 @@ Alt+N:字时间延后0.1秒</translation>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="68"/>
+        <location filename="../batchprocessing.ui" line="137"/>
         <source>re:</source>
         <translation>编辑器:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="78"/>
+        <location filename="../batchprocessing.ui" line="109"/>
         <source>by:</source>
         <translation>歌词作者:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="85"/>
+        <location filename="../batchprocessing.ui" line="81"/>
         <source>ar:</source>
         <translation>艺人:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="95"/>
+        <location filename="../batchprocessing.ui" line="123"/>
         <source>ti:</source>
         <translation>标题:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="111"/>
+        <location filename="../batchprocessing.ui" line="95"/>
         <source>au:</source>
         <translation>作曲:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="121"/>
+        <location filename="../batchprocessing.ui" line="67"/>
         <source>al:</source>
         <translation>专辑:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="128"/>
+        <location filename="../batchprocessing.ui" line="165"/>
         <source>offset:</source>
         <translation>延迟时间:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="138"/>
+        <location filename="../batchprocessing.ui" line="151"/>
         <source>ve:</source>
         <translation>版本:</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="145"/>
+        <location filename="../batchprocessing.ui" line="188"/>
         <source>Mote times</source>
         <translation>更多时间</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="156"/>
+        <location filename="../batchprocessing.ui" line="198"/>
+        <source>Delete all word time</source>
+        <translation>删除所有字时间</translation>
+    </message>
+    <message>
+        <location filename="../batchprocessing.ui" line="208"/>
         <source>output</source>
         <translation>输出</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="162"/>
+        <location filename="../batchprocessing.ui" line="214"/>
         <source>execute</source>
         <translation>执行</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="172"/>
+        <location filename="../batchprocessing.ui" line="224"/>
         <source>browse</source>
         <translation>浏览</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.ui" line="185"/>
+        <location filename="../batchprocessing.ui" line="237"/>
         <source>%v/%m</source>
         <translation></translation>
     </message>
@@ -988,28 +993,28 @@ Alt+N:字时间延后0.1秒</translation>
         <translation>文件列表</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.cpp" line="203"/>
+        <location filename="../batchprocessing.cpp" line="207"/>
         <source>Open LRC</source>
         <translation>打开歌词</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.cpp" line="203"/>
+        <location filename="../batchprocessing.cpp" line="207"/>
         <source>LRC Files (*.lrc)</source>
         <translation>歌词文件 (*.lrc)</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.cpp" line="211"/>
-        <location filename="../batchprocessing.cpp" line="242"/>
+        <location filename="../batchprocessing.cpp" line="215"/>
+        <location filename="../batchprocessing.cpp" line="246"/>
         <source>Open Directory</source>
         <translation>打开目录</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.cpp" line="255"/>
+        <location filename="../batchprocessing.cpp" line="259"/>
         <source>warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../batchprocessing.cpp" line="255"/>
+        <location filename="../batchprocessing.cpp" line="259"/>
         <source>Please select an output directory</source>
         <translation>请选择输出目录</translation>
     </message>
