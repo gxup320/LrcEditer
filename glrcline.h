@@ -22,7 +22,7 @@ public:
     bool operator==(const GLrcLine &D);
     QString toString();
     QStringList toStringList();
-    QString toHtml(bool sel = false);
+    QString toHtml(bool sel = false, int lfCount = 0);
     int selectTime(qint64 time);
     qint64 selectId(int id);
     int selectNext();

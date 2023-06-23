@@ -19,6 +19,8 @@ public:
     void setLrc(QString lrc, int maxLine = 2147483647);
     QString getLrc(bool moreTime = false);
     QString getHtml(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
+    QString getHtmlFx(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
+    QString getHtmlFx2(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
     qint64 previousItem();
     qint64 previousWord();
     qint64 nextItem();

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QAudio>
+#include <QProcess>
+#include <QMediaMetaData>
 class QBuffer;
 class QAudioDecoder;
 class QAudioOutput;
@@ -34,12 +36,22 @@ private slots:
     void audioSinkStateChanged(QAudio::State state);
     void sync();
 
+    void stateChangedMateDate(QProcess::ProcessState newState);
+    void stateChangedDecoder(QProcess::ProcessState newState);
+
 
 signals:
     void loadStatus(qint64 position, bool isEnd);
     void positionChanged (qint64 position);
+    void metaDataChanged (QMediaMetaData metaData);
+    void durationChanged(qint64 length);
 
 private:
+    QProcess * ffmpeg_mateDate;
+    QProcess * ffmpeg_decoder;
+    QString ffmpeg;
+    QString ffmpeg_outJpg;
+    QString ffmpeg_outWav;
     QMutex * timerMutex = nullptr;
     QBuffer  * buffer = nullptr;
     //QFile  * buffer = nullptr;
@@ -61,6 +73,8 @@ private:
     bool threadRunning;
     bool decodeing = false;
     friend void positionChangedThread(GAudioPlayer* audioPlayer);
+
+    QString strMid(QString src, QString start, QString end);
 };
 
 #endif // GAUDIOPLAYER_H

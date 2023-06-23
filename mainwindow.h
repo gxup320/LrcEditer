@@ -31,7 +31,7 @@ public:
 private slots:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
-    void metaDataChanged();
+    void metaDataChanged(QMediaMetaData mediaData);
     void valFromMouse(int val);
     void loadStatus(qint64 position, bool isEnd);
     void lrcChanged();
@@ -60,10 +60,6 @@ private slots:
     void on_pushButton_sort_clicked();
 
     void on_pushButton_loadlrc_neteasy_clicked();
-
-    void on_pushButton_repair_clicked();
-
-    void on_pushButton_repair2_clicked();
 
     void on_horizontalSlider_valueChanged(int value);
 
@@ -102,7 +98,7 @@ private:
     LrcEdit* lrce = nullptr;
     LrcSearchNeteasyForm* m_LrcSearchNeteasyForm = nullptr;
     batchProcessing* m_batchProcessing = nullptr;
-    QMediaPlayer* mediaPlayer = nullptr;
+    //QMediaPlayer* mediaPlayer = nullptr;
     //QAudioOutput* audioOutput = nullptr;
     //QVideoWidget* videoOutput = nullptr;
     GAudioPlayer * player = nullptr;

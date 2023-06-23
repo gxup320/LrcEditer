@@ -12,11 +12,24 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QFile>
+#include <QCoreApplication>
+#include <QDir>
+#include <QImage>
 
 void positionChangedThread(GAudioPlayer* audioPlayer);
 GAudioPlayer::GAudioPlayer(QObject *parent)
     : QObject{parent}
 {
+    if(QSysInfo::WordSize == 32)
+        ffmpeg = "";
+    else
+        ffmpeg = QCoreApplication::applicationDirPath() + "/ffmpeg";
+    ffmpeg_outJpg = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".jpg";
+    ffmpeg_outWav = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".wav";
+    ffmpeg_mateDate = new QProcess;
+    ffmpeg_decoder = new QProcess;
+    connect(ffmpeg_mateDate, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(stateChangedMateDate(QProcess::ProcessState)));
+    connect(ffmpeg_decoder, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(stateChangedDecoder(QProcess::ProcessState)));
     timerMutex = new QMutex;
     byteArry = new QByteArray;
     buffer = new QBuffer;
@@ -55,32 +68,26 @@ GAudioPlayer::~GAudioPlayer()
     //playTime->stop();
     delete playTime;
     delete timerMutex;
+    delete ffmpeg_decoder;
+    delete ffmpeg_mateDate;
+    QDir dir;
+    dir.remove(ffmpeg_outWav);
+    dir.remove(ffmpeg_outJpg);
 }
 
 void GAudioPlayer::load(QUrl url)
 {
     stop();
     decodeing = true;
-    QAudioFormat format;
-    format.setChannelCount(2);
-    format.setSampleFormat(QAudioFormat::Int16);
-    format.setSampleRate(44100);
-    audioDecoder->stop();
-    audioDecoder->setAudioFormat(format);
-    audioDecoder->setSource(url);
-    if(audioSink != nullptr)
-    {
-        delete audioSink;
-    }
-    audioSink = new QAudioSink(format, this);
-    audioSink->setVolume(lastVolume);
-    connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
-    audioSink->setBufferSize(1);
-    buffer->close();
-    buffer->setData(QByteArray());
-    //buffer->resize(0);
-    buffer->open(QIODevice::ReadWrite);
-    audioDecoder->start();
+    //执行ffmpeg
+    qDebug() << url.toLocalFile();
+    QDir dir;
+    dir.remove(ffmpeg_outWav);
+    dir.remove(ffmpeg_outJpg);
+    ffmpeg_mateDate->terminate();
+    ffmpeg_mateDate->start(ffmpeg, {"-i", url.toLocalFile(), "-y", ffmpeg_outJpg});
+    ffmpeg_decoder->terminate();
+    ffmpeg_decoder->start(ffmpeg, {"-i", url.toLocalFile(), "-y", ffmpeg_outWav});
 }
 
 bool GAudioPlayer::setPosition(qint64 position)
@@ -331,6 +338,82 @@ void GAudioPlayer::sync()
 
 }
 
+void GAudioPlayer::stateChangedMateDate(QProcess::ProcessState newState)
+{
+    QMediaMetaData metaData;
+    if(newState == QProcess::NotRunning)
+    {
+        if(ffmpeg_mateDate->exitCode() == 0)
+        {
+            QString text = ffmpeg_mateDate->readAllStandardOutput() + ffmpeg_mateDate->readAllStandardError();
+            qDebug() << strMid(text, "ARTIST          : ", "\r\n");
+            metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "ARTIST          : ", "\r\n"));
+            qDebug() << strMid(text, "TITLE           : ", "\r\n");
+            metaData.insert(QMediaMetaData::Title, strMid(text, "TITLE           : ", "\r\n"));
+            qDebug() << strMid(text, "ALBUM           : ", "\r\n");
+            metaData.insert(QMediaMetaData::AlbumTitle, strMid(text, "ALBUM           : ", "\r\n"));
+            qDebug() << strMid(text, "album_artist    : ", "\r\n");
+            metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "album_artist    : ", "\r\n"));
+            qDebug() << strMid(text, "GENRE           : ", "\r\n");
+            metaData.insert(QMediaMetaData::Genre, strMid(text, "GENRE           : ", "\r\n"));
+            qDebug() << strMid(text, "GENRENUMBER     : ", "\r\n");
+            qDebug() << strMid(text, "COMPOSER        : ", "\r\n");
+            metaData.insert(QMediaMetaData::Composer, strMid(text, "COMPOSER        : ", "\r\n"));
+            qDebug() << strMid(text, "disc            : ", "\r\n");
+            qDebug() << strMid(text, "track           : ", "\r\n");
+            qDebug() << strMid(text, "COPYRIGHT       : ", "\r\n");
+            metaData.insert(QMediaMetaData::Copyright, strMid(text, "COPYRIGHT       : ", "\r\n"));
+            qDebug() << strMid(text, "ORGANIZATION    : ", "\r\n");
+            metaData.insert(QMediaMetaData::Orientation, strMid(text, "ORGANIZATION    : ", "\r\n"));
+            qDebug() << strMid(text, "COMMENT         : ", "\r\n");
+            metaData.insert(QMediaMetaData::Comment, strMid(text, "COMMENT         : ", "\r\n"));
+            qDebug() << strMid(text, "PERFORMER       : ", "\r\n");
+            qDebug() << strMid(text, "MOOD            : ", "\r\n");
+            QImage img;
+            if(img.load(ffmpeg_outJpg))
+            {
+                metaData.insert(QMediaMetaData::ThumbnailImage, img);
+            }
+            QString timeStr = strMid(text, "Duration: ", ",");
+            QTime time = QTime::fromString(timeStr + "0","hh:mm:ss.zzz");
+            if(!time.isNull())
+                emit durationChanged(time.msecsSinceStartOfDay());
+            emit metaDataChanged(metaData);
+        }
+    }
+}
+
+void GAudioPlayer::stateChangedDecoder(QProcess::ProcessState newState)
+{
+    if(newState == QProcess::NotRunning)
+    {
+        if(ffmpeg_mateDate->exitCode() == 0)
+        {
+            QAudioFormat format;
+            format.setChannelCount(2);
+            format.setSampleFormat(QAudioFormat::Int16);
+            format.setSampleRate(44100);
+            audioDecoder->stop();
+            audioDecoder->setAudioFormat(format);
+            audioDecoder->setSource(ffmpeg_outWav);
+            if(audioSink != nullptr)
+            {
+                delete audioSink;
+            }
+            audioSink = new QAudioSink(format, this);
+            audioSink->setVolume(lastVolume);
+            connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
+            //audioSink->setBufferSize(1);
+            buffer->close();
+            buffer->setData(QByteArray());
+            //buffer->resize(0);
+            buffer->open(QIODevice::ReadWrite);
+            audioDecoder->start();
+        }
+    }
+}
+
+
 qint64 GAudioPlayer::getAudioFormatSize(QAudioFormat format)
 {
 
@@ -352,6 +435,21 @@ qint64 GAudioPlayer::getAudioFormatSize(QAudioFormat format)
         size = 4;
     }
     return size * format.channelCount();
+}
+
+QString GAudioPlayer::strMid(QString src, QString start, QString end)
+{
+    int startIndex = src.toUpper().indexOf(start.toUpper(), 0);
+    if(startIndex == -1)
+    {
+        return "";
+    }
+    int endIndex = src.toUpper().indexOf(end.toUpper(), startIndex);
+    if(endIndex == -1)
+    {
+        return "";
+    }
+    return src.mid(startIndex + start.length(), endIndex - startIndex - start.length());
 }
 
 void positionChangedThread(GAudioPlayer* audioPlayer)

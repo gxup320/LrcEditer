@@ -18,6 +18,7 @@ GLrcLine::GLrcLine(QObject *parent)
 }
 
 GLrcLine::GLrcLine(const GLrcLine &D)
+: QObject{nullptr}
 {
     lineItems = D.lineItems;
     lines = D.lines;
@@ -121,12 +122,15 @@ QStringList GLrcLine::toStringList()
     return retList;
 }
 
-QString GLrcLine::toHtml(bool sel)
+QString GLrcLine::toHtml(bool sel, int lfCount)
 {
     QString html;
     QString word2[3] = {"w1", "w2", "w3"};
     for (int var = 0; var < lineItems.length(); ++var)
     {
+        QString lWord = lineItems[var].word;
+        if(lWord == "")
+            lWord = " ";
         if(sel)
         {
             if(var == select)
@@ -147,9 +151,16 @@ QString GLrcLine::toHtml(bool sel)
             html += R"(<span class="word">)" + lineItems[var].word + "</span>";
         }
     }
-    for (int var = 0; var < lines.size(); ++var)
+    for (int var = 0; var < lines.size() || var < lfCount; ++var)
     {
-        html += "\n" + lines[var];
+        if(var < lines.size())
+        {
+            html += "\n" + lines[var];
+        }
+        else
+        {
+            html += "\n";
+        }
     }
     return html;
 }

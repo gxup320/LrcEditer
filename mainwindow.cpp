@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->progressBar, SIGNAL(valFromMouse(int)), this, SLOT(valFromMouse(int)));
     ui->textEdit->setFocus();
     setWindowTitle(tr("New File") + " - LrcEditer powered by GXUP320");
-    mediaPlayer = new QMediaPlayer;
+    //mediaPlayer = new QMediaPlayer;
     //audioOutput = new QAudioOutput;
     //videoOutput = new QVideoWidget(ui->label_Cover);
     //videoOutput->resize(200,200);
@@ -35,11 +35,13 @@ MainWindow::MainWindow(QWidget *parent)
     //player->setAudioOutput(audioOutput);
     //player->setVideoOutput(videoOutput);
     //connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
+    //connect(mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
+    //connect(mediaPlayer, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
     //audioOutput->setVolume(1);
 
     player = new GAudioPlayer;
+    connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
+    connect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
 }
@@ -49,7 +51,7 @@ MainWindow::~MainWindow()
     //delete audioOutput;
     //delete videoOutput;
     delete player;
-    delete mediaPlayer;
+    //delete mediaPlayer;
     delete ui;
     delete lrc;
 }
@@ -117,11 +119,11 @@ void MainWindow::positionChanged(qint64 position)
     }
 }
 
-void MainWindow::metaDataChanged()
+void MainWindow::metaDataChanged(QMediaMetaData mediaData)
 {
     QString str;
     QStringList strList;
-    QMediaMetaData mediaData = mediaPlayer->metaData();
+    //QMediaMetaData mediaData = mediaPlayer->metaData();
     qDebug() << "Author:" << mediaData.value(QMediaMetaData::Author).value<QStringList>();
     qDebug() << "Comment:" << mediaData.stringValue(QMediaMetaData::Comment);
     qDebug() << "Description:" << mediaData.stringValue(QMediaMetaData::Description);
@@ -316,7 +318,7 @@ void MainWindow::displayLrc(qint64 time, bool f)
     static qint64 lestLocalTime = 0;
     qint64 localTime;
     int line;
-    QString html = lrc->getHtml(time ,true , &localTime, &line, f);
+    QString html = lrc->getHtmlFx(time ,true , &localTime, &line, f);
     //qDebug() << time << " -> " << localTime;
     if(f || lestLocalTime != localTime)
     {
@@ -434,7 +436,7 @@ void MainWindow::on_pushButton_loadmusic_clicked()
         player->stop();
         ui->progressBar->setValue(0);
         ui->progressBar->setMaximum(0);
-        mediaPlayer->setSource(QUrl::fromLocalFile(fileName));
+        //mediaPlayer->setSource(QUrl::fromLocalFile(fileName));
         player->load(QUrl::fromLocalFile(fileName));
         //player->play();
     }
@@ -1032,44 +1034,6 @@ void MainWindow::on_pushButton_loadlrc_neteasy_clicked()
         }
     }
 }
-
-
-void MainWindow::on_pushButton_repair_clicked()
-{
-    //QStringList lrcLineList = ui->textEdit->toPlainText().split("\n");
-    //QString lrcFull;
-    //QString lrcTemp;
-    //for (auto& lrcLine : lrcLineList)
-    //{
-    //    QString temp = lrcLine;
-    //    if((lrcLine.left(1) == "[" && lrcLine.right(1) == "]") || getTimeOfLrcLine(temp) != -1)
-    //    {
-    //        if(lrcFull == "")
-    //            lrcFull = lrcTemp;
-    //        else
-    //            lrcFull += "\n" + lrcTemp;
-    //        lrcTemp = lrcLine;
-    //    }
-    //    else if(lrcLine != "")
-    //    {
-    //        lrcTemp += "<br/>" + lrcLine;
-    //    }
-    //}
-    //if(lrcFull == "")
-    //    lrcFull = lrcTemp;
-    //else
-    //    lrcFull += "\n" + lrcTemp;
-    //ui->textEdit->setPlainText(lrcFull);
-}
-
-
-void MainWindow::on_pushButton_repair2_clicked()
-{
-    //QString lrcFull = ui->textEdit->toPlainText();
-    //lrcFull.replace("<br/>","\n");
-    //ui->textEdit->setPlainText(lrcFull);
-}
-
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {

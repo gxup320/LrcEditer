@@ -197,6 +197,251 @@ QString GLrc::getHtml(qint64 time,bool includTimes, qint64* line, int* pos, bool
     return html;
 }
 
+QString GLrc::getHtmlFx(qint64 time,bool includTimes, qint64* line, int* pos, bool wordColor)
+{
+    qint64 localTime = -1;
+    if(pos != nullptr)
+    {
+        *pos = 0;
+    }
+    QString html;
+    if(wordColor)
+    {
+        html = "<html><head><style>div{font-size: 20px;}em{color: red;font-style:normal;}strong{color: #6A0DAD;font-style:normal;}.selete{color: green;}.w1{background-color: #008800;}.w2{background-color: #5500FF;}.w3{background-color: #55CCFF;}.wordS{color: #FFFFFF;background-color: #000000;}</style></head><body>";
+    }
+    else
+    {
+        html = "<html><head><style>div{font-size: 20px;}em{color: red;font-style:normal;}strong{color: #6A0DAD;font-style:normal;}.selete{color: green;}.wordS{color: #FFFFFF;background-color: #000000;}</style></head><body>";
+    }
+    for(auto& itm:lrcItems)
+    {
+        for(auto i:itm.times)
+        {
+            if(i > localTime && i <= time)
+                localTime = i;
+        }
+    }
+    //selectTime = localTime;
+    qint64 rstTime = localTime;
+    bool t = true;
+    QStringList lineList;
+    int activation = 0;
+    for(int index = 0; index < lrcItems.size(); index++)
+    {
+        if(t && pos != nullptr)
+        {
+            *pos += lrcItems[index].line.toString().count("\n") + 1 + includTimes;
+        }
+        int n = -1;
+        QString timesHtml = "->";
+        for(int i = 0; i < lrcItems[index].times.size(); i++)
+        {
+            QTime t = QTime::fromMSecsSinceStartOfDay(lrcItems[index].times[i]);
+            QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
+            if(lrcItems[index].times[i] == localTime || (time == -1 && index == selectLine && i == selectTime))
+            {
+                n = i;
+                timesHtml+=R"(<span class="selete">[)" + ts + R"(]</span>)";
+                selectTime = i;
+                selectLine = index;
+                if(time != -1)
+                {
+                    lrcItems[index].line.selectTime(time);
+                    if(lrcItems[index].line.getTime() > 0)
+                    {
+                        rstTime = lrcItems[index].line.getTime();
+                    }
+                }
+            }
+            else
+            {
+                timesHtml+="[" + ts + "]";
+            }
+        }
+        if(n != -1 || (time == -1 && index == selectLine))
+        {
+            if(includTimes)
+            {
+                //html += "<pre><em>" + timesHtml + "\n" + lrcItems[index].line.toHtml(true) + "</em></pre>";
+                lineList.append("<pre><em>" + timesHtml + "\n" + lrcItems[index].line.toHtml(true, 1) + "</em></pre>");
+            }
+            else
+            {
+                //html += "<pre><em>" + lrcItems[index].line.toHtml(true) + "</em></pre>";
+                lineList.append("<pre><em>" + lrcItems[index].line.toHtml(true, 1) + "</em></pre>");
+            }
+            activation = lineList.size() - 1;
+            t = false;
+        }
+        else
+        {
+            if(includTimes)
+            {
+                //html += "<pre>" + timesHtml + "\n" + lrcItems[index].line.toHtml(false) + " </pre>";
+                lineList.append("<pre>" + timesHtml + "\n" + lrcItems[index].line.toHtml(false, 1) + " </pre>");
+            }
+            else
+            {
+                //html += "<pre>" + lrcItems[index].line.toHtml(false) + "</pre>";
+                lineList.append("<pre>" + lrcItems[index].line.toHtml(false, 1) + "</pre>");
+            }
+        }
+    }
+    //加入html
+    int cul = activation - 5;//开始行
+    if(cul < 0)
+    {
+        cul = 0;
+    }
+    for(int i = cul; i < cul + 10; i++)
+    {
+        QString line;
+        if(i < 0 || i >= lineList.size())
+        {
+            line = "<pre></pre>";
+        }
+        else
+        {
+            line = lineList[i];
+        }
+        html += "<div class=\"act" + QString::number(i - activation + 5) + "\">" + line + "</div>";
+    }
+    html += "</body></html>";
+    if(line != nullptr)
+    {
+        *line = rstTime;
+    }
+    if(t && pos != nullptr)
+    {
+        *pos = 0;
+    }
+    //qDebug() << html;
+    return html;
+}
+
+QString GLrc::getHtmlFx2(qint64 time,bool includTimes, qint64* line, int* pos, bool wordColor)
+{
+    includTimes = false;
+    qint64 localTime = -1;
+    if(pos != nullptr)
+    {
+        *pos = 0;
+    }
+    QString html;
+    if(wordColor)
+    {
+        html = "<html><head><style>div{text-align: center;}.act0{font-size: 10px;}.act8{font-size: 10px;}.act1{font-size: 12px;}.act7{font-size: 12px;}.act2{font-size: 15px;}.act6{font-size: 15px;}.act3{font-size: 19px;}.act5{font-size: 19px;}.act4{font-size: 25px;}em{color: red;font-style:normal;}strong{color: #6A0DAD;font-style:normal;}.selete{color: green;}.w1{background-color: #008800;}.w2{background-color: #5500FF;}.w3{background-color: #55CCFF;}.wordS{color: #FFFFFF;background-color: #000000;}</style></head><body>";
+    }
+    else
+    {
+        html = "<html><head><style>div{text-align: center;}.act0{font-size: 10px;}.act8{font-size: 10px;}.act1{font-size: 12px;}.act7{font-size: 12px;}.act2{font-size: 15px;}.act6{font-size: 15px;}.act3{font-size: 19px;}.act5{font-size: 19px;}.act4{font-size: 25px;}em{color: red;font-style:normal;}strong{color: #6A0DAD;font-style:normal;}.selete{color: green;}.wordS{color: #FFFFFF;background-color: #000000;}</style></head><body>";
+    }
+    for(auto& itm:lrcItems)
+    {
+        for(auto i:itm.times)
+        {
+            if(i > localTime && i <= time)
+                localTime = i;
+        }
+    }
+    //selectTime = localTime;
+    qint64 rstTime = localTime;
+    bool t = true;
+    QStringList lineList;
+    int activation = 0;
+    for(int index = 0; index < lrcItems.size(); index++)
+    {
+        if(t && pos != nullptr)
+        {
+            *pos += lrcItems[index].line.toString().count("\n") + 1 + includTimes;
+        }
+        int n = -1;
+        QString timesHtml = "->";
+        for(int i = 0; i < lrcItems[index].times.size(); i++)
+        {
+            QTime t = QTime::fromMSecsSinceStartOfDay(lrcItems[index].times[i]);
+            QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
+            if(lrcItems[index].times[i] == localTime || (time == -1 && index == selectLine && i == selectTime))
+            {
+                n = i;
+                timesHtml+=R"(<span class="selete">[)" + ts + R"(]</span>)";
+                selectTime = i;
+                selectLine = index;
+                if(time != -1)
+                {
+                    lrcItems[index].line.selectTime(time);
+                    if(lrcItems[index].line.getTime() > 0)
+                    {
+                        rstTime = lrcItems[index].line.getTime();
+                    }
+                }
+            }
+            else
+            {
+                timesHtml+="[" + ts + "]";
+            }
+        }
+        if(n != -1 || (time == -1 && index == selectLine))
+        {
+            if(includTimes)
+            {
+                //html += "<pre><em>" + timesHtml + "\n" + lrcItems[index].line.toHtml(true) + "</em></pre>";
+                lineList.append("<pre><em>" + timesHtml + "\n" + lrcItems[index].line.toHtml(true, 1) + "</em></pre>");
+            }
+            else
+            {
+                //html += "<pre><em>" + lrcItems[index].line.toHtml(true) + "</em></pre>";
+                lineList.append("<pre><em>" + lrcItems[index].line.toHtml(true, 1) + "</em></pre>");
+            }
+            activation = lineList.size() - 1;
+            t = false;
+        }
+        else
+        {
+            if(includTimes)
+            {
+                //html += "<pre>" + timesHtml + "\n" + lrcItems[index].line.toHtml(false) + " </pre>";
+                lineList.append("<pre>" + timesHtml + "\n" + lrcItems[index].line.toHtml(false, 1) + " </pre>");
+            }
+            else
+            {
+                //html += "<pre>" + lrcItems[index].line.toHtml(false) + "</pre>";
+                lineList.append("<pre>" + lrcItems[index].line.toHtml(false, 1) + "</pre>");
+            }
+        }
+    }
+    //加入html
+    int cul = activation - 4;//开始行
+    if(cul < 0)
+    {
+        cul = 0;
+    }
+    for(int i = cul; i < cul + 9; i++)
+    {
+        QString line;
+        if(i < 0 || i >= lineList.size())
+        {
+            line = "<pre></pre>";
+        }
+        else
+        {
+            line = lineList[i];
+        }
+        html += "<div class=\"act" + QString::number(((i - activation + 4)>8)?8:((i - activation + 4))) + "\">" + line + "</div>";
+    }
+    html += "</body></html>";
+    if(line != nullptr)
+    {
+        *line = rstTime;
+    }
+    if(t && pos != nullptr)
+    {
+        *pos = 0;
+    }
+    //qDebug() << html;
+    return html;
+}
+
 qint64 GLrc::previousItem()
 {
     if(lrcItems.size() == 0)
