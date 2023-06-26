@@ -15,6 +15,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QImage>
+#include <QDirIterator>
 
 void positionChangedThread(GAudioPlayer* audioPlayer);
 GAudioPlayer::GAudioPlayer(QObject *parent)
@@ -80,10 +81,14 @@ void GAudioPlayer::load(QUrl url)
     stop();
     decodeing = true;
     //执行ffmpeg
-    qDebug() << url.toLocalFile();
+    QFileInfo f(url.toLocalFile());
+    ffmpeg_sourceDir = f.dir().absolutePath();
+    //qDebug() << ffmpeg_sourceDir;
     QDir dir;
     dir.remove(ffmpeg_outWav);
     dir.remove(ffmpeg_outJpg);
+    qDebug() << ffmpeg_outWav;
+    qDebug() << ffmpeg_outJpg;
     ffmpeg_mateDate->terminate();
     ffmpeg_mateDate->start(ffmpeg, {"-i", url.toLocalFile(), "-y", ffmpeg_outJpg});
     ffmpeg_decoder->terminate();
@@ -343,43 +348,63 @@ void GAudioPlayer::stateChangedMateDate(QProcess::ProcessState newState)
     QMediaMetaData metaData;
     if(newState == QProcess::NotRunning)
     {
+        QString text = ffmpeg_mateDate->readAllStandardOutput() + ffmpeg_mateDate->readAllStandardError();
+        qDebug() << strMid(text, "ARTIST          : ", "\r\n");
+        metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "ARTIST          : ", "\r\n"));
+        qDebug() << strMid(text, "TITLE           : ", "\r\n");
+        metaData.insert(QMediaMetaData::Title, strMid(text, "TITLE           : ", "\r\n"));
+        qDebug() << strMid(text, "ALBUM           : ", "\r\n");
+        metaData.insert(QMediaMetaData::AlbumTitle, strMid(text, "ALBUM           : ", "\r\n"));
+        qDebug() << strMid(text, "album_artist    : ", "\r\n");
+        metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "album_artist    : ", "\r\n"));
+        qDebug() << strMid(text, "GENRE           : ", "\r\n");
+        metaData.insert(QMediaMetaData::Genre, strMid(text, "GENRE           : ", "\r\n"));
+        qDebug() << strMid(text, "GENRENUMBER     : ", "\r\n");
+        qDebug() << strMid(text, "COMPOSER        : ", "\r\n");
+        metaData.insert(QMediaMetaData::Composer, strMid(text, "COMPOSER        : ", "\r\n"));
+        qDebug() << strMid(text, "disc            : ", "\r\n");
+        qDebug() << strMid(text, "track           : ", "\r\n");
+        qDebug() << strMid(text, "COPYRIGHT       : ", "\r\n");
+        metaData.insert(QMediaMetaData::Copyright, strMid(text, "COPYRIGHT       : ", "\r\n"));
+        qDebug() << strMid(text, "ORGANIZATION    : ", "\r\n");
+        metaData.insert(QMediaMetaData::Orientation, strMid(text, "ORGANIZATION    : ", "\r\n"));
+        qDebug() << strMid(text, "COMMENT         : ", "\r\n");
+        metaData.insert(QMediaMetaData::Comment, strMid(text, "COMMENT         : ", "\r\n"));
+        qDebug() << strMid(text, "PERFORMER       : ", "\r\n");
+        qDebug() << strMid(text, "MOOD            : ", "\r\n");
+        QImage img;
         if(ffmpeg_mateDate->exitCode() == 0)
         {
-            QString text = ffmpeg_mateDate->readAllStandardOutput() + ffmpeg_mateDate->readAllStandardError();
-            qDebug() << strMid(text, "ARTIST          : ", "\r\n");
-            metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "ARTIST          : ", "\r\n"));
-            qDebug() << strMid(text, "TITLE           : ", "\r\n");
-            metaData.insert(QMediaMetaData::Title, strMid(text, "TITLE           : ", "\r\n"));
-            qDebug() << strMid(text, "ALBUM           : ", "\r\n");
-            metaData.insert(QMediaMetaData::AlbumTitle, strMid(text, "ALBUM           : ", "\r\n"));
-            qDebug() << strMid(text, "album_artist    : ", "\r\n");
-            metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "album_artist    : ", "\r\n"));
-            qDebug() << strMid(text, "GENRE           : ", "\r\n");
-            metaData.insert(QMediaMetaData::Genre, strMid(text, "GENRE           : ", "\r\n"));
-            qDebug() << strMid(text, "GENRENUMBER     : ", "\r\n");
-            qDebug() << strMid(text, "COMPOSER        : ", "\r\n");
-            metaData.insert(QMediaMetaData::Composer, strMid(text, "COMPOSER        : ", "\r\n"));
-            qDebug() << strMid(text, "disc            : ", "\r\n");
-            qDebug() << strMid(text, "track           : ", "\r\n");
-            qDebug() << strMid(text, "COPYRIGHT       : ", "\r\n");
-            metaData.insert(QMediaMetaData::Copyright, strMid(text, "COPYRIGHT       : ", "\r\n"));
-            qDebug() << strMid(text, "ORGANIZATION    : ", "\r\n");
-            metaData.insert(QMediaMetaData::Orientation, strMid(text, "ORGANIZATION    : ", "\r\n"));
-            qDebug() << strMid(text, "COMMENT         : ", "\r\n");
-            metaData.insert(QMediaMetaData::Comment, strMid(text, "COMMENT         : ", "\r\n"));
-            qDebug() << strMid(text, "PERFORMER       : ", "\r\n");
-            qDebug() << strMid(text, "MOOD            : ", "\r\n");
-            QImage img;
             if(img.load(ffmpeg_outJpg))
             {
                 metaData.insert(QMediaMetaData::ThumbnailImage, img);
             }
-            QString timeStr = strMid(text, "Duration: ", ",");
-            QTime time = QTime::fromString(timeStr + "0","hh:mm:ss.zzz");
-            if(!time.isNull())
-                emit durationChanged(time.msecsSinceStartOfDay());
-            emit metaDataChanged(metaData);
         }
+        else
+        {
+            QDirIterator it(ffmpeg_sourceDir, QDir::Files);
+            while(it.hasNext())
+            {
+                it.next();
+                if(     it.fileInfo().fileName().left(6).toUpper() == "COVER." ||
+                        it.fileInfo().fileName().left(7).toUpper() == "FOLDER." ||
+                        it.fileInfo().fileName().left(6).toUpper() == "THUMB." ||
+                        it.fileInfo().fileName().left(6).toUpper() == "ALBUM." ||
+                        it.fileInfo().fileName().left(14).toUpper() == "ALBUMARTSMALL." )
+                {
+                    if(img.load(it.fileInfo().absoluteFilePath()))
+                    {
+                        metaData.insert(QMediaMetaData::ThumbnailImage, img);
+                        break;
+                    }
+                }
+            }
+        }
+        QString timeStr = strMid(text, "Duration: ", ",");
+        QTime time = QTime::fromString(timeStr + "0","hh:mm:ss.zzz");
+        if(!time.isNull())
+            emit durationChanged(time.msecsSinceStartOfDay());
+        emit metaDataChanged(metaData);
     }
 }
 
@@ -387,7 +412,7 @@ void GAudioPlayer::stateChangedDecoder(QProcess::ProcessState newState)
 {
     if(newState == QProcess::NotRunning)
     {
-        if(ffmpeg_mateDate->exitCode() == 0)
+        if(ffmpeg_decoder->exitCode() == 0)
         {
             QAudioFormat format;
             format.setChannelCount(2);

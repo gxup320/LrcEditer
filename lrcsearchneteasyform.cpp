@@ -90,24 +90,38 @@ bool LrcSearchNeteasyForm::wangyiyunList(QString name)
     }
     for(int i = 0; i < 50 && i < songs.size(); i++)
     {
-        int id = songs[i].toObject().find("id")->toInt();
-        QString name = songs[i].toObject().find("name")->toString();
+        QJsonObject songsObj = songs[i].toObject();
+        int id = 0;
+        QString name;
+        if(songsObj.find("id") != songsObj.end())
+            id = songsObj.find("id")->toInt();
+        if(songsObj.find("name") != songsObj.end())
+            name = songsObj.find("name")->toString();
         QString artists = "";
-        QJsonArray artistsarr = songs[i].toObject().find("artists")->toArray();
-        for(auto itm : artistsarr)
+        if(songsObj.find("artists") != songsObj.end())
         {
-            if(artists == "")
+            QJsonArray artistsarr = songsObj.find("artists")->toArray();
+            for(auto itm : artistsarr)
             {
-                artists += itm.toObject().find("name")->toString();
-            }
-            else
-            {
-                artists += "/" + itm.toObject().find("name")->toString();
+                QJsonObject artistsObj = itm.toObject();
+                if(artistsObj.find("name") != artistsObj.end())
+                {
+                    if(artists == "")
+                    {
+                        artists += artistsObj.find("name")->toString();
+                    }
+                    else
+                    {
+                        artists += "/" + artistsObj.find("name")->toString();
+                    }
+                }
             }
         }
         qDebug() << artists;
         QString alias = "";
-        QJsonArray aliasarr = songs[i].toObject().find("alias")->toArray();
+        QJsonArray aliasarr;
+        if(songsObj.find("alias") != songsObj.end())
+               aliasarr = songsObj.find("alias")->toArray();
         if(aliasarr.size() > 0)
         {
             alias = aliasarr[0].toString();

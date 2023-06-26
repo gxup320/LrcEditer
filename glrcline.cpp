@@ -294,18 +294,30 @@ bool GLrcLine::continuous(QChar ch, QChar next)
         for(const auto& itm : qAsConst(arr))
         {
             QJsonObject c = itm.toObject();
-            int s = c.find("start")->toInt();
-            int m = c.find("end")->toInt();
-            QString cs = c.find("chars")->toString();
+            int s = 0;
+            if(c.find("start") != c.end())
+                s = c.find("start")->toInt();
+            int m = 0;
+            if(c.find("end") != c.end())
+                m = c.find("end")->toInt();
+            QString cs = "";
+            if(c.find("chars") != c.end())
+                cs = c.find("chars")->toString();
             if((ch.unicode() >= s && ch.unicode() <= m) || cs.indexOf(ch) != -1)
             {
                 QJsonArray arr = obj.find("next")->toArray();
                 for(const auto& itm : qAsConst(arr))
                 {
                     QJsonObject c = itm.toObject();
-                    int s = c.find("start")->toInt();
-                    int m = c.find("end")->toInt();
-                    QString cs = c.find("chars")->toString();
+                    int s = 0;
+                    if(c.find("start") != c.end())
+                        s = c.find("start")->toInt();
+                    int m = 0;
+                    if(c.find("end") != c.end())
+                        m = c.find("end")->toInt();
+                    QString cs = "";
+                    if(c.find("chars") != c.end())
+                        cs = c.find("chars")->toString();
                     if((next.unicode() >= s && next.unicode() <= m) || cs.indexOf(next) != -1)
                     {
                         return true;

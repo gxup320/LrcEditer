@@ -52,6 +52,7 @@ private:
     QString ffmpeg;
     QString ffmpeg_outJpg;
     QString ffmpeg_outWav;
+    QString ffmpeg_sourceDir;
     QMutex * timerMutex = nullptr;
     QBuffer  * buffer = nullptr;
     //QFile  * buffer = nullptr;
