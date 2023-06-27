@@ -20,6 +20,7 @@ GLrcLine::GLrcLine(QObject *parent)
 GLrcLine::GLrcLine(const GLrcLine &D)
 : QObject{nullptr}
 {
+    nextChar = D.nextChar;
     lineItems = D.lineItems;
     lines = D.lines;
     select = D.select;
