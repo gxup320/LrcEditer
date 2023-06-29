@@ -17,12 +17,15 @@ copydata.commands += & $(COPY) $$shell_path($$PWD/nextChar.json) $$shell_path($(
 win32 {
     copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg_dir/ffmpeg_win64/ffmpeg.exe) $$shell_path($(OBJECTS_DIR))
 }
-linux-g++-64{
+unix:contains(QT_ARCH, x86_64){
     copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg_dir/ffmpeg_linux64/ffmpeg) $$shell_path($(OBJECTS_DIR))
 }
 
-linux-arm-g++{
+unix:contains(QT_ARCH, arm64){
     copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg_dir/ffmpeg_linuxarm64/ffmpeg) $$shell_path($(OBJECTS_DIR))
+}
+unix {
+    copydata.commands += & chmod +x $$shell_path($(OBJECTS_DIR)ffmpeg)
 }
 first.depends = $(first) copydata
 export(first.depends)

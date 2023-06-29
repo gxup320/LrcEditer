@@ -16,6 +16,7 @@
 #include <QDir>
 #include <QImage>
 #include <QDirIterator>
+#include <QTemporaryDir>
 
 void positionChangedThread(GAudioPlayer* audioPlayer);
 GAudioPlayer::GAudioPlayer(QObject *parent)
@@ -27,11 +28,12 @@ GAudioPlayer::GAudioPlayer(QObject *parent)
     format->setSampleRate(44100);
 
     if(QSysInfo::WordSize == 32)
-        ffmpeg = "";
+        ffmpeg = "ffmpeg";
     else
         ffmpeg = QCoreApplication::applicationDirPath() + "/ffmpeg";
-    ffmpeg_outJpg = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".jpg";
-    ffmpeg_outPCM = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".pcm";
+    QTemporaryDir dir;
+    ffmpeg_outJpg = dir.path() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".jpg";
+    ffmpeg_outPCM = dir.path() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".pcm";
     ffmpeg_mateDate = new QProcess;
     ffmpeg_decoder = new QProcess;
     connect(ffmpeg_mateDate, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(stateChangedMateDate(QProcess::ProcessState)));
