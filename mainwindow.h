@@ -13,6 +13,7 @@ class LineEdit;
 class LrcEdit;
 class LrcSearchNeteasyForm;
 class batchProcessing;
+class BufferSizeEdit;
 
 class GLrc;
 
@@ -27,6 +28,8 @@ public:
     void displayLrc(qint64 time, bool f = false);
     QString netEasyApiUrl;
     void loadLrc(QString fileName);
+    qint64 getBufferSize();
+    qint64 setBufferSize(qint64 size);
 
 private slots:
     void durationChanged(qint64 duration);
@@ -35,6 +38,7 @@ private slots:
     void valFromMouse(int val);
     void loadStatus(qint64 position, bool isEnd);
     void lrcChanged();
+    void bufferSizeChanged(qint64 size);
 
     void on_pushButton_loadmusic_clicked();
     void on_pushButton_tostart_clicked();
@@ -92,12 +96,15 @@ private slots:
 
     void on_pushButton_deleteAllWordTime_clicked();
 
+    void on_pushButton_bufferSize_clicked();
+
 private:
     Ui::MainWindow *ui;
     LineEdit* linee = nullptr;
     LrcEdit* lrce = nullptr;
     LrcSearchNeteasyForm* m_LrcSearchNeteasyForm = nullptr;
     batchProcessing* m_batchProcessing = nullptr;
+    BufferSizeEdit* m_BufferSizeEdit = nullptr;
     //QMediaPlayer* mediaPlayer = nullptr;
     //QAudioOutput* audioOutput = nullptr;
     //QVideoWidget* videoOutput = nullptr;

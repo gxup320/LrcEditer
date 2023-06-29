@@ -36,6 +36,7 @@ QMAKE_EXTRA_TARGETS += first copydata
 
 SOURCES += \
     batchprocessing.cpp \
+    buffersizeedit.cpp \
     gaudioplayer.cpp \
     glrc.cpp \
     glrcline.cpp \
@@ -49,6 +50,7 @@ SOURCES += \
 
 HEADERS += \
     batchprocessing.h \
+    buffersizeedit.h \
     gaudioplayer.h \
     glrc.h \
     glrcline.h \
@@ -61,6 +63,7 @@ HEADERS += \
 
 FORMS += \
     batchprocessing.ui \
+    buffersizeedit.ui \
     lineedit.ui \
     lrcedit.ui \
     lrcsearchneteasyform.ui \

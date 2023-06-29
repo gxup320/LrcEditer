@@ -268,7 +268,46 @@ void GAudioPlayer::accurateProgress(bool isAccurate)
 {
     qint64 pos = position();
     isAccurateProgress = isAccurate;
-    setPosition(pos);
+    stop();
+    setBufferSize(-1);
+    play(pos);
+}
+
+qint64 GAudioPlayer::setBufferSize(qint64 size)
+{
+    qint64 last = bufferSize;
+    if(size > 0)
+    {
+        bufferSize = size;
+    }
+
+    if((playing && audioSink != nullptr) || size < 0)
+    {
+        bool nPlaying = playing;
+        qint64 pos = position();
+        if(isAccurateProgress)
+        {
+            stop();
+            audioSink->setBufferSize(bufferSize);
+            if(nPlaying)
+                play(pos);
+            emit bufferSizeChanged(audioSink->bufferSize());
+        }
+        else if(size < 0)
+        {
+            stop();
+            audioSink->setBufferSize(4100);
+            if(nPlaying)
+                play(pos);
+            emit bufferSizeChanged(audioSink->bufferSize());
+        }
+    }
+    return last;
+}
+
+qint64 GAudioPlayer::getBufferSize()
+{
+    return bufferSize;
 }
 
 void GAudioPlayer::readBuffer()
@@ -428,7 +467,7 @@ void GAudioPlayer::stateChangedDecoder(QProcess::ProcessState newState)
             audioSink = new QAudioSink(format, this);
             audioSink->setVolume(lastVolume);
             connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
-            //audioSink->setBufferSize(1);
+            setBufferSize(-1);
             buffer->close();
             buffer->setData(QByteArray());
             //buffer->resize(0);

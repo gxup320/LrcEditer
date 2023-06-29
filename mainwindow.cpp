@@ -13,6 +13,7 @@
 #include "lrcedit.h"
 #include "lrcsearchneteasyform.h"
 #include "batchprocessing.h"
+#include "buffersizeedit.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     connect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
+    connect(player, SIGNAL(bufferSizeChanged(qint64)), this, SLOT(bufferSizeChanged(qint64)));
 }
 
 MainWindow::~MainWindow()
@@ -245,6 +247,11 @@ void MainWindow::lrcChanged()
     }
 }
 
+void MainWindow::bufferSizeChanged(qint64 size)
+{
+    ui->pushButton_bufferSize->setText(QString::number(size));
+}
+
 bool MainWindow::saveLrcToFile(QString fileName)
 {
     ui->statusbar->showMessage(tr("Save lyric to ") + "'" + fileName +"'");
@@ -318,7 +325,7 @@ void MainWindow::displayLrc(qint64 time, bool f)
     static qint64 lestLocalTime = 0;
     qint64 localTime;
     int line;
-    QString html = lrc->getHtmlFx(time ,true , &localTime, &line, f);
+    QString html = lrc->getHtml(time ,true , &localTime, &line, f);
     //qDebug() << time << " -> " << localTime;
     if(f || lestLocalTime != localTime)
     {
@@ -411,6 +418,16 @@ void MainWindow::loadLrc(QString fileName)
             displayLrc(-1, true);
         }
     }
+}
+
+qint64 MainWindow::getBufferSize()
+{
+    return player->getBufferSize();
+}
+
+qint64 MainWindow::setBufferSize(qint64 size)
+{
+    return player->setBufferSize(size);
 }
 
 
@@ -1163,5 +1180,16 @@ void MainWindow::on_pushButton_deleteLineWordTime_clicked()
 void MainWindow::on_pushButton_deleteAllWordTime_clicked()
 {
     lrc->deleteAllWordTime();
+}
+
+
+void MainWindow::on_pushButton_bufferSize_clicked()
+{
+    if(m_BufferSizeEdit != nullptr)
+        delete m_BufferSizeEdit;
+    m_BufferSizeEdit = new BufferSizeEdit;
+    m_BufferSizeEdit->m = this;
+    m_BufferSizeEdit->show();
+    hide();
 }
 
