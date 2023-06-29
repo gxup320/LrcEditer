@@ -33,8 +33,7 @@ public:
     qint64 getBufferSize();
 
 private slots:
-    void readBuffer();
-    void decodingChanged (bool status);
+    //void readBuffer();
     void audioSinkStateChanged(QAudio::State state);
     void sync();
 
@@ -50,18 +49,19 @@ signals:
     void bufferSizeChanged(qint64 length);
 
 private:
+    QAudioFormat* format;
     qint64 bufferSize = 410000;
     QProcess * ffmpeg_mateDate;
     QProcess * ffmpeg_decoder;
     QString ffmpeg;
     QString ffmpeg_outJpg;
-    QString ffmpeg_outWav;
+    QString ffmpeg_outPCM;
     QString ffmpeg_sourceDir;
     QMutex * timerMutex = nullptr;
     QBuffer  * buffer = nullptr;
     //QFile  * buffer = nullptr;
-    QAudioDecoder * audioDecoder = nullptr;
-    QAudioOutput * audioOut = nullptr;
+    //QAudioDecoder * audioDecoder = nullptr;
+    //QAudioOutput * audioOut = nullptr;
     QAudioFormat * audioFormat = nullptr;
     QAudioSink * audioSink = nullptr;
     QByteArray * byteArry = nullptr;
@@ -78,7 +78,7 @@ private:
     bool threadRunning;
     bool decodeing = false;
     friend void positionChangedThread(GAudioPlayer* audioPlayer);
-
+    void decodingChanged (bool status);
     QString strMid(QString src, QString start, QString end);
 };
 

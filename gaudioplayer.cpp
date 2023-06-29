@@ -21,12 +21,17 @@ void positionChangedThread(GAudioPlayer* audioPlayer);
 GAudioPlayer::GAudioPlayer(QObject *parent)
     : QObject{parent}
 {
+    format = new QAudioFormat;
+    format->setChannelCount(2);
+    format->setSampleFormat(QAudioFormat::Int16);
+    format->setSampleRate(44100);
+
     if(QSysInfo::WordSize == 32)
         ffmpeg = "";
     else
         ffmpeg = QCoreApplication::applicationDirPath() + "/ffmpeg";
     ffmpeg_outJpg = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".jpg";
-    ffmpeg_outWav = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".wav";
+    ffmpeg_outPCM = QDir::tempPath() + "gaudio_" + QString::number(QCoreApplication::applicationPid()) + ".pcm";
     ffmpeg_mateDate = new QProcess;
     ffmpeg_decoder = new QProcess;
     connect(ffmpeg_mateDate, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(stateChangedMateDate(QProcess::ProcessState)));
@@ -37,9 +42,9 @@ GAudioPlayer::GAudioPlayer(QObject *parent)
     buffer->setBuffer(byteArry);
     //buffer = new QFile("tempAudioPcm");
     buffer->open(QIODevice::ReadWrite);
-    audioDecoder = new QAudioDecoder;
-    connect(audioDecoder, SIGNAL(bufferReady()), this, SLOT(readBuffer()));
-    connect(audioDecoder, SIGNAL(isDecodingChanged(bool)), this, SLOT(decodingChanged(bool)));
+    //audioDecoder = new QAudioDecoder;
+    //connect(audioDecoder, SIGNAL(bufferReady()), this, SLOT(readBuffer()));
+    //connect(audioDecoder, SIGNAL(isDecodingChanged(bool)), this, SLOT(decodingChanged(bool)));
     threadRunning = true;
     positionChangedThreadHandle = QThread::create(positionChangedThread, this);
     positionChangedThreadHandle->start();
@@ -61,8 +66,8 @@ GAudioPlayer::~GAudioPlayer()
         audioSink->stop();
         delete audioSink;
     }
-    audioDecoder->stop();
-    delete audioDecoder;
+    //audioDecoder->stop();
+    //delete audioDecoder;
     //buffer->remove();
     delete buffer;
     delete byteArry;
@@ -72,7 +77,7 @@ GAudioPlayer::~GAudioPlayer()
     delete ffmpeg_decoder;
     delete ffmpeg_mateDate;
     QDir dir;
-    dir.remove(ffmpeg_outWav);
+    dir.remove(ffmpeg_outPCM);
     dir.remove(ffmpeg_outJpg);
 }
 
@@ -85,14 +90,14 @@ void GAudioPlayer::load(QUrl url)
     ffmpeg_sourceDir = f.dir().absolutePath();
     //qDebug() << ffmpeg_sourceDir;
     QDir dir;
-    dir.remove(ffmpeg_outWav);
+    dir.remove(ffmpeg_outPCM);
     dir.remove(ffmpeg_outJpg);
-    qDebug() << ffmpeg_outWav;
+    qDebug() << ffmpeg_outPCM;
     qDebug() << ffmpeg_outJpg;
     ffmpeg_mateDate->terminate();
     ffmpeg_mateDate->start(ffmpeg, {"-i", url.toLocalFile(), "-y", ffmpeg_outJpg});
     ffmpeg_decoder->terminate();
-    ffmpeg_decoder->start(ffmpeg, {"-i", url.toLocalFile(), "-y", ffmpeg_outWav});
+    ffmpeg_decoder->start(ffmpeg, {"-i", url.toLocalFile(), "-acodec", "pcm_s16le", "-f", "s16le", "-ac", "2", "-ar", "44100", "-y", ffmpeg_outPCM});
 }
 
 bool GAudioPlayer::setPosition(qint64 position)
@@ -103,10 +108,10 @@ bool GAudioPlayer::setPosition(qint64 position)
     {
         position = musicLen;
     }
-    QAudioFormat format = audioDecoder->audioFormat();
-    qint64 filePosition = getAudioFormatSize(format) * format.sampleRate() * position / 1000;
-    if(getAudioFormatSize(format) != 0)
-        filePosition -= filePosition % getAudioFormatSize(format);
+    //QAudioFormat format = audioSink->format();
+    qint64 filePosition = getAudioFormatSize(*format) * format->sampleRate() * position / 1000;
+    if(getAudioFormatSize(*format) != 0)
+        filePosition -= filePosition % getAudioFormatSize(*format);
     bool rev = false;
     if(playing)
     {
@@ -130,13 +135,13 @@ bool GAudioPlayer::setPosition(qint64 position)
             if(audioSink != nullptr)
             {
                 qsizetype buffSize = audioSink->bufferSize();
-                QAudioFormat format = audioDecoder->audioFormat();
+                //QAudioFormat format = audioSink->format();
                 //qDebug() << buffSize / (getAudioFormatSize(format) * format.sampleRate() / 1000.0);
-                if(buffSize / (getAudioFormatSize(format) * format.sampleRate() / 1000.0) < 100)
+                if(buffSize / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0) < 100)
                 {
                     if(buffSize > 0)
                     {
-                        startTime = position - audioSink->processedUSecs() / 1000 - buffSize / (getAudioFormatSize(format) * format.sampleRate() / 1000.0);
+                        startTime = position - audioSink->processedUSecs() / 1000 - buffSize / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0);
                     }
                     else
                     {
@@ -186,8 +191,8 @@ qint64 GAudioPlayer::position(bool trueProcess)
             qsizetype buffSize = audioSink->bufferSize();
             if(buffSize > 0)
             {
-                QAudioFormat format = audioDecoder->audioFormat();
-                pos = startTime + audioSink->processedUSecs() / 1000 - buffSize / (getAudioFormatSize(format) * format.sampleRate() / 1000.0);
+                //QAudioFormat format = audioSink->format();
+                pos = startTime + audioSink->processedUSecs() / 1000 - buffSize / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0);
             }
             else
             {
@@ -196,8 +201,8 @@ qint64 GAudioPlayer::position(bool trueProcess)
         }
         else
         {
-            QAudioFormat format = audioDecoder->audioFormat();
-            pos = qint64(buffer->pos() / (getAudioFormatSize(format) * format.sampleRate() / 1000.0));
+            //QAudioFormat format = audioSink->format();
+            pos = qint64(buffer->pos() / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0));
         }
     }
     return pos;
@@ -310,35 +315,35 @@ qint64 GAudioPlayer::getBufferSize()
     return bufferSize;
 }
 
-void GAudioPlayer::readBuffer()
-{
-    QAudioBuffer audio = audioDecoder->read();
-    QAudioFormat format = audio.format();
-    buffer->write(audio.data<char>(), audio.frameCount() * getAudioFormatSize(format));
-    qint64 decodeTime = audioDecoder->position();
-    //qDebug() << format;
-    if(decodeTime - lastDecodeTime > 1000)
-    {
-        emit loadStatus(decodeTime, false);
-        lastDecodeTime = decodeTime;
-    }
-}
+//void GAudioPlayer::readBuffer()
+//{
+//    QAudioBuffer audio = //->read();
+//    QAudioFormat format = audio.format();
+//    buffer->write(audio.data<char>(), audio.frameCount() * getAudioFormatSize(format));
+//    qint64 decodeTime = audioDecoder->position();
+//    //qDebug() << format;
+//    if(decodeTime - lastDecodeTime > 1000)
+//    {
+//        emit loadStatus(decodeTime, false);
+//        lastDecodeTime = decodeTime;
+//    }
+//}
 
 void GAudioPlayer::decodingChanged(bool status)
 {
     decodeing = status;
-    musicLen = 0;
+    //musicLen = 0;
     if(status == false)
     {
-        qint64 len = audioDecoder->position();
+        //qint64 len = audioDecoder->position();
         //QAudioBuffer audio = audioDecoder->read();
-        QAudioFormat format = audioDecoder->audioFormat();
-        if(getAudioFormatSize(format) * 1000 / format.sampleRate() != 0)
-        {
-            len = buffer->size() / getAudioFormatSize(format) * 1000 / format.sampleRate();
-        }
-        musicLen = len;
-        qDebug() << len;
+        //QAudioFormat format = audioSink->format();
+        //if(getAudioFormatSize(format) * 1000 / format.sampleRate() != 0)
+        //{
+        //    len = buffer->size() / getAudioFormatSize(format) * 1000 / format.sampleRate();
+        //}
+        //musicLen = len;
+        //qDebug() << len;
         buffer->seek(0);
         QMutexLocker locker(timerMutex);
         //locker.relock();
@@ -350,8 +355,8 @@ void GAudioPlayer::decodingChanged(bool status)
         startTime = 0;
         lastDecodeTime = -1;
         locker.unlock();
-        audioDecoder->setSource(QUrl());
-        emit loadStatus(len, true);
+        //audioDecoder->setSource(QUrl());
+        emit loadStatus(musicLen, true);
     }
 
 }
@@ -442,7 +447,10 @@ void GAudioPlayer::stateChangedMateDate(QProcess::ProcessState newState)
         QString timeStr = strMid(text, "Duration: ", ",");
         QTime time = QTime::fromString(timeStr + "0","hh:mm:ss.zzz");
         if(!time.isNull())
+        {
+            musicLen = time.msecsSinceStartOfDay();
             emit durationChanged(time.msecsSinceStartOfDay());
+        }
         emit metaDataChanged(metaData);
     }
 }
@@ -453,26 +461,28 @@ void GAudioPlayer::stateChangedDecoder(QProcess::ProcessState newState)
     {
         if(ffmpeg_decoder->exitCode() == 0)
         {
-            QAudioFormat format;
-            format.setChannelCount(2);
-            format.setSampleFormat(QAudioFormat::Int16);
-            format.setSampleRate(44100);
-            audioDecoder->stop();
-            audioDecoder->setAudioFormat(format);
-            audioDecoder->setSource(ffmpeg_outWav);
+            //audioDecoder->stop();
+            //audioDecoder->setAudioFormat(format);
+            //audioDecoder->setSource(ffmpeg_outWav);
             if(audioSink != nullptr)
             {
                 delete audioSink;
             }
-            audioSink = new QAudioSink(format, this);
+            audioSink = new QAudioSink(*format, this);
             audioSink->setVolume(lastVolume);
             connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
             setBufferSize(-1);
             buffer->close();
-            buffer->setData(QByteArray());
+            QFile file(ffmpeg_outPCM);
+            if(file.open(QFile::ReadOnly))
+            {
+                buffer->setData(file.readAll());
+            }
+            //buffer->setData(QByteArray());
             //buffer->resize(0);
             buffer->open(QIODevice::ReadWrite);
-            audioDecoder->start();
+            //audioDecoder->start();
+            decodingChanged(false);
         }
     }
 }

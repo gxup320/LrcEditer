@@ -15,14 +15,14 @@ TRANSLATIONS += "language/zh_CN.ts"
 copydata.commands += $(COPY_DIR) $$shell_path($$PWD/language) $$shell_path($(OBJECTS_DIR)/language)
 copydata.commands += & $(COPY) $$shell_path($$PWD/nextChar.json) $$shell_path($(OBJECTS_DIR))
 win32 {
-    copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg/ffmpeg_win64/ffmpeg.exe) $$shell_path($(OBJECTS_DIR))
+    copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg_dir/ffmpeg_win64/ffmpeg.exe) $$shell_path($(OBJECTS_DIR))
 }
 linux-g++-64{
-    copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg/ffmpeg_linux64/ffmpeg) $$shell_path($(OBJECTS_DIR))
+    copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg_dir/ffmpeg_linux64/ffmpeg) $$shell_path($(OBJECTS_DIR))
 }
 
 linux-arm-g++{
-    copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg/ffmpeg_linuxarm64/ffmpeg) $$shell_path($(OBJECTS_DIR))
+    copydata.commands += & $(COPY) $$shell_path($$PWD/ffmpeg_dir/ffmpeg_linuxarm64/ffmpeg) $$shell_path($(OBJECTS_DIR))
 }
 first.depends = $(first) copydata
 export(first.depends)
@@ -75,8 +75,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    ffmpeg/ffmpeg_linux64/ffmpeg \
-    ffmpeg/ffmpeg_linuxarm64/ffmpeg \
-    ffmpeg/ffmpeg_win64/ffmpeg.exe \
+    ffmpeg_dir/ffmpeg_linux64/ffmpeg \
+    ffmpeg_dir/ffmpeg_linuxarm64/ffmpeg \
+    ffmpeg_dir/ffmpeg_win64/ffmpeg.exe \
     nextChar.json
 
