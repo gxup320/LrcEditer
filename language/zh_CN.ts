@@ -895,7 +895,7 @@ Alt+N:字时间延后0.1秒</translation>
     <message>
         <location filename="../mainwindow.cpp" line="241"/>
         <source>Audio device loading...</source>
-        <translation>真正加载音频设备...</translation>
+        <translation>正在加载音频设备...</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="245"/>
