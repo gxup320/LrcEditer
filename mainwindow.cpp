@@ -225,13 +225,25 @@ void MainWindow::loadStatus(qint64 position, bool isEnd)
     }
     else
     {
-        if(ui->progressBar->maximum() != 0)
+        //if(ui->progressBar->maximum() != 0)
+        //{
+        //    ui->progressBar->setValue(position);
+        //    ui->progressBar->setTextVisible(true);
+        //    ui->statusbar->showMessage(tr("Music loading") + " " + QString::number(position * 10000 / ui->progressBar->maximum() / 100.0) + "%");
+        //}
+        //ui->pushButton_inst->setText(tr("loading：")+("[" + length + "]"));
+        if(position == -1)
         {
-            ui->progressBar->setValue(position);
-            ui->progressBar->setTextVisible(true);
-            ui->statusbar->showMessage(tr("Music loading") + " " + QString::number(position * 10000 / ui->progressBar->maximum() / 100.0) + "%");
+            ui->statusbar->showMessage(tr("Music decodeing..."));
         }
-        ui->pushButton_inst->setText(tr("loading：")+("[" + length + "]"));
+        else if(position == -2)
+        {
+            ui->statusbar->showMessage(tr("Audio device loading..."));
+        }
+        else if(position == -3)
+        {
+            ui->statusbar->showMessage(tr("Music loading..."));
+        }
     }
 }
 
@@ -425,9 +437,14 @@ qint64 MainWindow::getBufferSize()
     return player->getBufferSize();
 }
 
-qint64 MainWindow::setBufferSize(qint64 size)
+qint64 MainWindow::getBufferSizeSmall()
 {
-    return player->setBufferSize(size);
+    return player->getBufferSizeSmall();
+}
+
+qint64 MainWindow::setBufferSize(qint64 size, qint64 sizeSmall)
+{
+    return player->setBufferSize(size, sizeSmall);
 }
 
 

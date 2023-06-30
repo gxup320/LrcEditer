@@ -86,6 +86,7 @@ GAudioPlayer::~GAudioPlayer()
 void GAudioPlayer::load(QUrl url)
 {
     stop();
+    emit loadStatus(-1, false);
     decodeing = true;
     //执行ffmpeg
     QFileInfo f(url.toLocalFile());
@@ -241,9 +242,13 @@ void GAudioPlayer::play(qint64 _position)
 
 void GAudioPlayer::stop()
 {
+
     if(audioSink != nullptr)
     {
+        //qint64 buffSize = 0;
+        //buffSize = audioSink->bufferSize();
         audioSink->stop();
+        //buffer->seek(buffer->pos() - buffSize);
     }
     if(isAccurateProgress)
     {
@@ -256,6 +261,10 @@ void GAudioPlayer::stop()
             playTime = nullptr;
         }
         locker.unlock();
+    }
+    else
+    {
+        startTime = buffer->pos() / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0);
     }
 }
 
@@ -276,16 +285,20 @@ void GAudioPlayer::accurateProgress(bool isAccurate)
     qint64 pos = position();
     isAccurateProgress = isAccurate;
     stop();
-    setBufferSize(-1);
+    setBufferSize();
     play(pos);
 }
 
-qint64 GAudioPlayer::setBufferSize(qint64 size)
+qint64 GAudioPlayer::setBufferSize(qint64 size, qint64 smallSize)
 {
     qint64 last = bufferSize;
     if(size > 0)
     {
         bufferSize = size;
+    }
+    if(smallSize > 0)
+    {
+        bufferSizeSmall = smallSize;
     }
 
     if((playing && audioSink != nullptr) || size < 0)
@@ -300,10 +313,10 @@ qint64 GAudioPlayer::setBufferSize(qint64 size)
                 play(pos);
             emit bufferSizeChanged(audioSink->bufferSize());
         }
-        else if(size < 0)
+        else
         {
             stop();
-            audioSink->setBufferSize(4100);
+            audioSink->setBufferSize(bufferSizeSmall);
             if(nPlaying)
                 play(pos);
             emit bufferSizeChanged(audioSink->bufferSize());
@@ -315,6 +328,11 @@ qint64 GAudioPlayer::setBufferSize(qint64 size)
 qint64 GAudioPlayer::getBufferSize()
 {
     return bufferSize;
+}
+
+qint64 GAudioPlayer::getBufferSizeSmall()
+{
+    return bufferSizeSmall;
 }
 
 //void GAudioPlayer::readBuffer()
@@ -466,6 +484,8 @@ void GAudioPlayer::stateChangedDecoder(QProcess::ProcessState newState)
             //audioDecoder->stop();
             //audioDecoder->setAudioFormat(format);
             //audioDecoder->setSource(ffmpeg_outWav);
+            emit loadStatus(-2, false);
+            QCoreApplication::processEvents();
             if(audioSink != nullptr)
             {
                 delete audioSink;
@@ -473,7 +493,9 @@ void GAudioPlayer::stateChangedDecoder(QProcess::ProcessState newState)
             audioSink = new QAudioSink(*format, this);
             audioSink->setVolume(lastVolume);
             connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
-            setBufferSize(-1);
+            setBufferSize();
+            emit loadStatus(-3, false);
+            QCoreApplication::processEvents();
             buffer->close();
             QFile file(ffmpeg_outPCM);
             if(file.open(QFile::ReadOnly))

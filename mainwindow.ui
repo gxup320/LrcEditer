@@ -535,7 +535,7 @@ Alt+N:word time 0.1 s delay</string>
           <locale language="English" country="UnitedStates"/>
          </property>
          <property name="value">
-          <number>24</number>
+          <number>0</number>
          </property>
          <property name="textVisible">
           <bool>false</bool>

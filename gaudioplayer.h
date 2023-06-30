@@ -29,8 +29,9 @@ public:
     bool isPlaying();
     void setVolume(float volume);
     void accurateProgress(bool isAccurate);
-    qint64 setBufferSize(qint64 size);
+    qint64 setBufferSize(qint64 size = -1, qint64 smallSize = -1);
     qint64 getBufferSize();
+    qint64 getBufferSizeSmall();
 
 private slots:
     //void readBuffer();
@@ -50,7 +51,8 @@ signals:
 
 private:
     QAudioFormat* format;
-    qint64 bufferSize = 410000;
+    qint64 bufferSize = 441000;
+    qint64 bufferSizeSmall = 10000;
     QProcess * ffmpeg_mateDate;
     QProcess * ffmpeg_decoder;
     QString ffmpeg;

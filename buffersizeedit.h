@@ -25,6 +25,8 @@ private slots:
 
     void on_BufferSizeEdit_accepted();
 
+    void on_buttonBox_accepted();
+
 private:
     Ui::BufferSizeEdit *ui;
 };

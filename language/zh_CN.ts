@@ -9,9 +9,24 @@
         <translation>缓冲区大小</translation>
     </message>
     <message>
-        <location filename="../buffersizeedit.ui" line="20"/>
+        <location filename="../buffersizeedit.ui" line="22"/>
+        <source>Use to accurate progress enabled</source>
+        <translation>开启精准进度条时使用</translation>
+    </message>
+    <message>
+        <location filename="../buffersizeedit.ui" line="29"/>
         <source>Buffer siez:</source>
         <translation>缓冲区大小:</translation>
+    </message>
+    <message>
+        <location filename="../buffersizeedit.ui" line="39"/>
+        <source>Use to accurate progress disabled</source>
+        <translation>关闭精准进度条时使用</translation>
+    </message>
+    <message>
+        <location filename="../buffersizeedit.ui" line="46"/>
+        <source>Small buffer size:</source>
+        <translation>小缓冲区大小:</translation>
     </message>
 </context>
 <context>
@@ -805,7 +820,7 @@ Alt+N:字时间延后0.1秒</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="30"/>
-        <location filename="../mainwindow.cpp" line="242"/>
+        <location filename="../mainwindow.cpp" line="254"/>
         <source>New File</source>
         <translation>新文件</translation>
     </message>
@@ -825,80 +840,93 @@ Alt+N:字时间延后0.1秒</translation>
         <translation>正在播放音乐.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="232"/>
         <source>Music loading</source>
-        <translation>正在加载音乐</translation>
+        <translation type="vanished">正在加载音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="234"/>
         <source>loading：</source>
-        <translation>加载中:</translation>
+        <translation type="vanished">加载中:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="257"/>
-        <location filename="../mainwindow.cpp" line="280"/>
-        <location filename="../mainwindow.cpp" line="284"/>
-        <location filename="../mainwindow.cpp" line="287"/>
+        <location filename="../mainwindow.cpp" line="269"/>
+        <location filename="../mainwindow.cpp" line="292"/>
+        <location filename="../mainwindow.cpp" line="296"/>
+        <location filename="../mainwindow.cpp" line="299"/>
         <source>Save lyric to </source>
         <translation>歌词文件保存到 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="296"/>
+        <location filename="../mainwindow.cpp" line="308"/>
         <source>The document has been modified.</source>
         <translation>文件已被修改.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="297"/>
+        <location filename="../mainwindow.cpp" line="309"/>
         <source>Do you want to save your changes?</source>
         <translation>是否要保存更改？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="452"/>
+        <location filename="../mainwindow.cpp" line="469"/>
         <source>Load music from </source>
         <translation>加载音乐 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="492"/>
-        <location filename="../mainwindow.cpp" line="520"/>
+        <location filename="../mainwindow.cpp" line="509"/>
+        <location filename="../mainwindow.cpp" line="537"/>
         <source>Open LRC</source>
         <translation>打开歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="492"/>
-        <location filename="../mainwindow.cpp" line="520"/>
+        <location filename="../mainwindow.cpp" line="509"/>
+        <location filename="../mainwindow.cpp" line="537"/>
         <source>LRC Files (*.lrc)</source>
         <translation>歌词文件 (*.lrc)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="405"/>
+        <location filename="../mainwindow.cpp" line="417"/>
         <source>warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="405"/>
+        <location filename="../mainwindow.cpp" line="237"/>
+        <source>Music decodeing...</source>
+        <translation>正在解码音频...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="241"/>
+        <source>Audio device loading...</source>
+        <translation>真正加载音频设备...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="245"/>
+        <source>Music loading...</source>
+        <translation>正在加载音频...</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="417"/>
         <source>offset option ignored</source>
         <translation>offset选项被忽略</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="511"/>
-        <location filename="../mainwindow.cpp" line="530"/>
+        <location filename="../mainwindow.cpp" line="528"/>
+        <location filename="../mainwindow.cpp" line="547"/>
         <source>Save fail</source>
         <translation>保存失败</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="511"/>
-        <location filename="../mainwindow.cpp" line="530"/>
+        <location filename="../mainwindow.cpp" line="528"/>
+        <location filename="../mainwindow.cpp" line="547"/>
         <source>Save to </source>
         <translation>保存到 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="511"/>
-        <location filename="../mainwindow.cpp" line="530"/>
+        <location filename="../mainwindow.cpp" line="528"/>
+        <location filename="../mainwindow.cpp" line="547"/>
         <source> fail.</source>
         <translation> 失败。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1016"/>
+        <location filename="../mainwindow.cpp" line="1033"/>
         <source>Open NetEasy Music LRC Temp File</source>
         <translation>打开网易云音乐歌词临时文件</translation>
     </message>

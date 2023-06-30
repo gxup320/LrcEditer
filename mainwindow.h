@@ -29,7 +29,8 @@ public:
     QString netEasyApiUrl;
     void loadLrc(QString fileName);
     qint64 getBufferSize();
-    qint64 setBufferSize(qint64 size);
+    qint64 getBufferSizeSmall();
+    qint64 setBufferSize(qint64 size, qint64 sizeSmall);
 
 private slots:
     void durationChanged(qint64 duration);

@@ -17,6 +17,7 @@ BufferSizeEdit::~BufferSizeEdit()
 void BufferSizeEdit::show()
 {
     ui->lineEdit_bufferEdit->setText(QString::number(m->getBufferSize()));
+    ui->lineEdit_bufferEditSmall->setText(QString::number(m->getBufferSizeSmall()));
     QWidget::show();
 }
 
@@ -29,7 +30,14 @@ void BufferSizeEdit::on_BufferSizeEdit_rejected()
 void BufferSizeEdit::on_BufferSizeEdit_accepted()
 {
     QString str = ui->lineEdit_bufferEdit->text();
-    m->setBufferSize(str.toLongLong());
+    QString strSmall = ui->lineEdit_bufferEditSmall->text();
+    m->setBufferSize(str.toLongLong(), strSmall.toLongLong());
     m->show();
+}
+
+
+void BufferSizeEdit::on_buttonBox_accepted()
+{
+
 }
 
