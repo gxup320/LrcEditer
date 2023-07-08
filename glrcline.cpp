@@ -84,12 +84,12 @@ GLrcLine GLrcLine::operator=(const GLrcLine &D)
     return *this;
 }
 
-QString GLrcLine::toString()
+QString GLrcLine::toString(bool incuudeTimes)
 {
     QString retStr;
     for (const auto& itm:lineItems)
     {
-        if(itm.time != -1)
+        if(incuudeTimes && itm.time != -1)
         {
             QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
             QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
@@ -104,12 +104,12 @@ QString GLrcLine::toString()
     return retStr;
 }
 
-QStringList GLrcLine::toStringList()
+QStringList GLrcLine::toStringList(bool incuudeTimes)
 {
     QString retStr;
     for (const auto& itm:lineItems)
     {
-        if(itm.time != -1)
+        if(incuudeTimes && itm.time != -1)
         {
             QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
             QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
@@ -253,11 +253,15 @@ qint64 GLrcLine::setTime(qint64 time)
     return -1;
 }
 
-qint64 GLrcLine::getTime() const
+qint64 GLrcLine::getTime(int _id) const
 {
-    if(select >= 0 && select < lineItems.length())
+    if(_id < 0)
     {
-        return lineItems[select].time;
+        _id = select;
+    }
+    if(_id >= 0 && _id < lineItems.length())
+    {
+        return lineItems[_id].time;
     }
     return -1;
 }
@@ -283,6 +287,19 @@ qint64 GLrcLine::deleteTime()
         lineItems[select].time = -1;
     }
     return t;
+}
+
+int GLrcLine::status(qint64 *selectTime, qint64 *nextTime, int *selectId)
+{
+    *selectId = select;
+    *selectTime = getTime();
+    *nextTime = getTime(select + 1);
+    return lineItems.length();
+}
+
+int GLrcLine::getLineSum()
+{
+    return lines.length() + 1;
 }
 
 

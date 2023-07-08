@@ -69,6 +69,7 @@ private:
     QByteArray * byteArry = nullptr;
     qint64 lastDecodeTime = -1;
     QElapsedTimer * playTime = nullptr;
+    qint64 stopTime = 0;
     qint64 startTime = 0;
     bool playing = false;
     float lastVolume = 1;

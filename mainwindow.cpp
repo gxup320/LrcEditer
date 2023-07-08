@@ -14,6 +14,7 @@
 #include "lrcsearchneteasyform.h"
 #include "batchprocessing.h"
 #include "buffersizeedit.h"
+#include "lrcform.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     lrc = new GLrc;
+    lrc->setLabel(ui->label_lrc);
     connect(lrc, SIGNAL(lrcChanged()), this, SLOT(lrcChanged()));
     ui->textEdit->setReadOnly(true);
     connect(ui->textEdit, SIGNAL(keyProc(QKeyEvent*)), this, SLOT(keyProc(QKeyEvent*)));
@@ -119,6 +121,7 @@ void MainWindow::positionChanged(qint64 position)
     {
         //LastLine = -1;
     }
+    lrc->setDispaleTime(position);
 }
 
 void MainWindow::metaDataChanged(QMediaMetaData mediaData)
@@ -1208,5 +1211,16 @@ void MainWindow::on_pushButton_bufferSize_clicked()
     m_BufferSizeEdit->m = this;
     m_BufferSizeEdit->show();
     hide();
+}
+
+
+void MainWindow::on_pushButton_showLrcWindow_clicked()
+{
+    if(m_lrcForm != nullptr)
+        delete m_lrcForm;
+    m_lrcForm = new lrcForm;
+    m_lrcForm->m = this;
+    m_lrcForm->show();
+    ui->label_lrc->hide();
 }
 

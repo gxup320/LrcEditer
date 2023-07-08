@@ -5,10 +5,15 @@
 #include <QList>
 #include <glrcline.h>
 
+class QThread;
+class QLabel;
+class QMutex;
+
 struct lrcItem
 {
     QList<qint64> times;
     GLrcLine line;
+    int fontSize = -5;
 };
 
 class GLrc : public QObject
@@ -16,6 +21,7 @@ class GLrc : public QObject
     Q_OBJECT
 public:
     explicit GLrc(QObject *parent = nullptr);
+    ~GLrc();
     void setLrc(QString lrc, int maxLine = 2147483647);
     QString getLrc(bool moreTime = false);
     QString getHtml(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
@@ -27,6 +33,7 @@ public:
     qint64 nextLine();
     qint64 nextWord();
     int getSelectLine();
+    qint64 getLrcTime(qint64 time);
     qint64 getSelectTime();
     QString getLine(int line);
     QString getTimes(int line);
@@ -50,6 +57,10 @@ public:
     int deleteLineWordTime();
     int deleteAllWordTime();
 
+    QLabel * setLabel(QLabel* _label);
+    void updateLrcwindow(qint64 time);
+    qint64 setDispaleTime(qint64 time);
+
 signals:
     void lrcChanged();
 private:
@@ -59,6 +70,15 @@ private:
     int selectTime = 0;
     int selectLine = 0;
     void prLrcSort();
+    QThread* lrcThread = nullptr;
+    bool threadRunning;
+    qint64 lrcDispaleTime = 0;
+    static void lrcDispaleThread(GLrc* lrc);
+    QLabel* label = nullptr;
+    void status(qint64 time,int *line, int *word, int *wordSize, qint64 *startTime, qint64 *endTime);
+    int getTextSize(int w, int h);
+    QMutex * updateMutex = nullptr;
+    int movSpeed(int length);
 
 };
 

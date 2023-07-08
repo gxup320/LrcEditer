@@ -189,7 +189,7 @@ qint64 GAudioPlayer::position(bool trueProcess)
     }
     else
     {
-        if(audioSink != nullptr)
+        if(audioSink != nullptr && false)
         {
             qsizetype buffSize = audioSink->bufferSize();
             if(buffSize > 0)
@@ -213,12 +213,13 @@ qint64 GAudioPlayer::position(bool trueProcess)
 
 void GAudioPlayer::play(qint64 _position)
 {
-    if(_position >= 0)
-        setPosition(_position);
-    else
+    if(playing)
     {
-        _position = position();
+        return;
     }
+    if(_position < 0)
+        _position = stopTime;
+    setPosition(_position);
     if(audioSink != nullptr && playing == false)
     {
         startTime = _position;
@@ -242,7 +243,7 @@ void GAudioPlayer::play(qint64 _position)
 
 void GAudioPlayer::stop()
 {
-
+    stopTime = position();
     if(audioSink != nullptr)
     {
         //qint64 buffSize = 0;
@@ -250,22 +251,22 @@ void GAudioPlayer::stop()
         audioSink->stop();
         //buffer->seek(buffer->pos() - buffSize);
     }
-    if(isAccurateProgress)
-    {
-        QMutexLocker locker(timerMutex);
-        //locker.relock();
-        if(playTime != nullptr)
-        {
-            startTime = startTime + playTime->elapsed();
-            delete playTime;
-            playTime = nullptr;
-        }
-        locker.unlock();
-    }
-    else
-    {
-        startTime = buffer->pos() / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0);
-    }
+    //if(isAccurateProgress)
+    //{
+    //    QMutexLocker locker(timerMutex);
+    //    //locker.relock();
+    //    if(playTime != nullptr)
+    //    {
+    //        startTime = startTime + playTime->elapsed();
+    //        delete playTime;
+    //        playTime = nullptr;
+    //    }
+    //    locker.unlock();
+    //}
+    //else
+    //{
+    //    startTime = buffer->pos() / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0);
+    //}
 }
 
 bool GAudioPlayer::isPlaying()
@@ -373,6 +374,7 @@ void GAudioPlayer::decodingChanged(bool status)
             playTime = nullptr;
         }
         startTime = 0;
+        stopTime = 0;
         lastDecodeTime = -1;
         locker.unlock();
         //audioDecoder->setSource(QUrl());
@@ -390,15 +392,18 @@ void GAudioPlayer::audioSinkStateChanged(QAudio::State state)
     else
     {
         playing = false;
-        QMutexLocker locker(timerMutex);
-        //locker.relock();
-        if(playTime != nullptr)
+        if(isAccurateProgress)
         {
-            startTime = startTime + playTime->elapsed();
-            delete playTime;
-            playTime = nullptr;
+            QMutexLocker locker(timerMutex);
+            //locker.relock();
+            if(playTime != nullptr)
+            {
+                startTime = startTime + playTime->elapsed();
+                delete playTime;
+                playTime = nullptr;
+            }
+            locker.unlock();
         }
-        locker.unlock();
     }
 }
 

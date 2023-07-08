@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1313</width>
-    <height>977</height>
+    <width>1328</width>
+    <height>1068</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1010,6 +1010,29 @@ Alt+N:word time 0.1 s delay</string>
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="label_lrc">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>300</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>lyric</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_showLrcWindow">
+           <property name="text">
+            <string>show lrc window</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -1035,7 +1058,7 @@ Alt+N:word time 0.1 s delay</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1313</width>
+     <width>1328</width>
      <height>22</height>
     </rect>
    </property>

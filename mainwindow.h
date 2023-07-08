@@ -14,6 +14,7 @@ class LrcEdit;
 class LrcSearchNeteasyForm;
 class batchProcessing;
 class BufferSizeEdit;
+class lrcForm;
 
 class GLrc;
 
@@ -99,6 +100,8 @@ private slots:
 
     void on_pushButton_bufferSize_clicked();
 
+    void on_pushButton_showLrcWindow_clicked();
+
 private:
     Ui::MainWindow *ui;
     LineEdit* linee = nullptr;
@@ -106,6 +109,7 @@ private:
     LrcSearchNeteasyForm* m_LrcSearchNeteasyForm = nullptr;
     batchProcessing* m_batchProcessing = nullptr;
     BufferSizeEdit* m_BufferSizeEdit = nullptr;
+    lrcForm* m_lrcForm = nullptr;
     //QMediaPlayer* mediaPlayer = nullptr;
     //QAudioOutput* audioOutput = nullptr;
     //QVideoWidget* videoOutput = nullptr;

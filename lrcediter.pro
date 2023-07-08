@@ -46,6 +46,7 @@ SOURCES += \
     gprogressbar.cpp \
     lineedit.cpp \
     lrcedit.cpp \
+    lrcform.cpp \
     lrcqtextedit.cpp \
     lrcsearchneteasyform.cpp \
     main.cpp \
@@ -60,6 +61,7 @@ HEADERS += \
     gprogressbar.h \
     lineedit.h \
     lrcedit.h \
+    lrcform.h \
     lrcqtextedit.h \
     lrcsearchneteasyform.h \
     mainwindow.h
@@ -69,6 +71,7 @@ FORMS += \
     buffersizeedit.ui \
     lineedit.ui \
     lrcedit.ui \
+    lrcform.ui \
     lrcsearchneteasyform.ui \
     mainwindow.ui
 
