@@ -60,6 +60,7 @@ public:
     QLabel * setLabel(QLabel* _label);
     void updateLrcwindow(qint64 time);
     qint64 setDispaleTime(qint64 time);
+    void disableMovingPicture();
 
 signals:
     void lrcChanged();
@@ -75,10 +76,11 @@ private:
     qint64 lrcDispaleTime = 0;
     static void lrcDispaleThread(GLrc* lrc);
     QLabel* label = nullptr;
-    void status(qint64 time,int *line, int *word, int *wordSize, qint64 *startTime, qint64 *endTime);
+    void status(qint64 time,int *line, int *word,int* wordSeleteLength, int *wordSize, qint64 *startTime, qint64 *endTime);
     int getTextSize(int w, int h);
     QMutex * updateMutex = nullptr;
     int movSpeed(int length);
+    bool m_disableMovingPicture = true;
 
 };
 

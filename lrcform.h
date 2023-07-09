@@ -23,6 +23,7 @@ public:
 private:
     Ui::lrcForm *ui;
     void closeEvent( QCloseEvent * event );
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // LRCFORM_H

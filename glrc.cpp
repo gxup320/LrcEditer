@@ -804,7 +804,7 @@ void GLrc::lrcDispaleThread(GLrc *lrc)
 
 }
 
-void GLrc::status(qint64 time,int *line, int *word, int *wordSize, qint64 *startTime, qint64 *endTime)
+void GLrc::status(qint64 time,int *line, int *word,int* wordSeleteLength, int *wordSize, qint64 *startTime, qint64 *endTime)
 {
     qint64 localTime = getLrcTime(time);
     *line = -1;
@@ -820,7 +820,11 @@ void GLrc::status(qint64 time,int *line, int *word, int *wordSize, qint64 *start
         }
         if(*line != -1)
         {
-            *wordSize = lrcItems[*line].line.status(startTime, endTime, word);
+            *wordSize = lrcItems[*line].line.status(time, startTime, endTime, word, wordSeleteLength);
+            if(*startTime == -1 && lrcItems[*line].times.size() > 0)
+            {
+                *startTime = lrcItems[*line].times[0];
+            }
             if(*endTime == -1)
             {
                 if(*line + 1 < lrcItems.size())
@@ -831,6 +835,7 @@ void GLrc::status(qint64 time,int *line, int *word, int *wordSize, qint64 *start
                     }
                 }
             }
+            //qDebug() << *startTime << "/" << *endTime;
             break;
         }
     }
@@ -838,6 +843,10 @@ void GLrc::status(qint64 time,int *line, int *word, int *wordSize, qint64 *start
 
 int GLrc::getTextSize(int w, int h)
 {
+    if(w <= 0 || h <= 0)
+    {
+        return 0;
+    }
     //寻找最长字符串
     QFont myFont;
     myFont.setPixelSize(10);
@@ -1014,9 +1023,9 @@ void GLrc::updateLrcwindow(qint64 time)
         locker.unlock();
         return;
     }
-    int selectLine = -1, selectWord = -1, wordSize = 0;
+    int selectLine = -1, selectWord = -1, wordLength = 0, wordSize = 0;
     qint64 startTime = -1, endTime = -1;
-    status(time, &selectLine, &selectWord, &wordSize, &startTime, &endTime);
+    status(time, &selectLine, &selectWord, &wordLength, &wordSize, &startTime, &endTime);
     //计算画板高度
     //int maph = 0;
     //for (auto& itm : lrcItems) {
@@ -1054,6 +1063,11 @@ void GLrc::updateLrcwindow(qint64 time)
             {
                 s_y += subNum;
             }
+            if(m_disableMovingPicture)
+            {
+                s_y = y2;
+                m_disableMovingPicture = false;
+            }
         }
         else
         {
@@ -1076,16 +1090,39 @@ void GLrc::updateLrcwindow(qint64 time)
             font.setPixelSize(fountSize + sizeDiff);
             painter.setFont(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
+            bool fast = true;
             for (auto& itm : sl)
             {
                 //计算这一行宽度，计算横坐标
                 pos.setY(pos.y() + fountSize + sizeDiff);
-                if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff)
+                if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
                 {
                     QFontMetrics fm(font);
                     pos.setX((w - fm.horizontalAdvance(itm)) / 2);
                     painter.setPen(Qt::red);
                     painter.drawText(pos, itm);
+                }
+                if(fast && selectWord >= 0 && wordLength > 0 && startTime > 0 && endTime > 0)
+                {
+                    fast = false;
+                    //进度
+                    QFontMetrics fm(font);
+                    int n_w = fm.horizontalAdvance(itm.mid(0, selectWord));
+                    int n_w2 = fm.horizontalAdvance(itm.mid(selectWord, wordLength));
+                    qint64 t1 = time - startTime;
+                    qint64 t2 = endTime - startTime;
+                    n_w = n_w + n_w2 * t1 / t2;
+                    if(n_w > 0 && fm.height() > 0)
+                    {
+                        QPixmap n_image(n_w, fm.height());
+                        n_image.fill();
+                        QPainter n_painter(&n_image);
+                        n_painter.setFont(font);
+                        n_painter.setPen(Qt::green);
+                        QPoint n_pos = {0, fountSize + sizeDiff};
+                        n_painter.drawText(n_pos, itm);
+                        painter.drawPixmap(QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()), n_image);
+                    }
                 }
             }
         }
@@ -1099,7 +1136,7 @@ void GLrc::updateLrcwindow(qint64 time)
             {
                 //计算这一行宽度，计算横坐标
                 pos.setY(pos.y() + fountSize + sizeDiff);
-                if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff)
+                if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff  && itm.length() > 0)
                 {
                     QFontMetrics fm(font);
                     pos.setX((w - fm.horizontalAdvance(itm)) / 2);
@@ -1121,5 +1158,12 @@ qint64 GLrc::setDispaleTime(qint64 time)
     lrcDispaleTime = time;
     locker.unlock();
     return t;
+}
+
+void GLrc::disableMovingPicture()
+{
+    QMutexLocker locker(updateMutex);
+    m_disableMovingPicture = true;
+    locker.unlock();
 }
 

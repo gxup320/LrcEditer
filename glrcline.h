@@ -34,7 +34,7 @@ public:
     qint64 getTime(int _id = -1) const;
     int deleteAllTime();
     qint64 deleteTime();
-    int status(qint64* selectTime, qint64* nextTime, int* selectId);
+    int status(qint64 time, qint64* selectTime, qint64* nextTime, int* seleteWorld, int* seleteWorldLength);
     int getLineSum();
 
 signals:

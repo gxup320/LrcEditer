@@ -289,11 +289,30 @@ qint64 GLrcLine::deleteTime()
     return t;
 }
 
-int GLrcLine::status(qint64 *selectTime, qint64 *nextTime, int *selectId)
+int GLrcLine::status(qint64 time, qint64 *selectTime, qint64 *nextTime, int *seleteWorld, int* seleteWorldLength)
 {
-    *selectId = select;
-    *selectTime = getTime();
-    *nextTime = getTime(select + 1);
+    *seleteWorld = 0;
+    *seleteWorldLength = 0;
+    *selectTime = -1;
+    *nextTime = -1;
+    for (int var = 0; var < lineItems.length(); ++var)
+    {
+        if(lineItems[var].time == -1)
+        {
+            break;
+        }
+        if(lineItems[var].time <= time)
+        {
+            *selectTime = lineItems[var].time;
+            *seleteWorld += *seleteWorldLength;
+            *seleteWorldLength = lineItems[var].word.length();
+        }
+        else
+        {
+            *nextTime = lineItems[var].time;
+            break;
+        }
+    }
     return lineItems.length();
 }
 
