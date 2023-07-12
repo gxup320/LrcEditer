@@ -102,6 +102,8 @@ private slots:
 
     void on_pushButton_showLrcWindow_clicked();
 
+    void on_pushButtonfullScreen_clicked();
+
 private:
     Ui::MainWindow *ui;
     LineEdit* linee = nullptr;

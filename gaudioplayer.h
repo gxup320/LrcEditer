@@ -71,7 +71,7 @@ private:
     QElapsedTimer * playTime = nullptr;
     qint64 stopTime = 0;
     qint64 startTime = 0;
-    bool playing = false;
+    QAudio::State playing = QAudio::IdleState;
     float lastVolume = 1;
     bool isAccurateProgress = true;
     qint64 musicLen = 0;

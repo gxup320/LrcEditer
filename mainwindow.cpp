@@ -52,6 +52,23 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    lrc->setLabel(nullptr);
+    if(m_LrcSearchNeteasyForm != nullptr)
+    {
+        delete m_LrcSearchNeteasyForm;
+    }
+    if(m_batchProcessing != nullptr)
+    {
+        delete m_batchProcessing;
+    }
+    if(m_BufferSizeEdit != nullptr)
+    {
+        delete m_BufferSizeEdit;
+    }
+    if(m_lrcForm != nullptr)
+    {
+        delete m_lrcForm;
+    }
     //delete audioOutput;
     //delete videoOutput;
     delete player;
@@ -341,7 +358,7 @@ void MainWindow::displayLrc(qint64 time, bool f)
     qint64 localTime;
     int line;
     QString html = lrc->getHtml(time ,true , &localTime, &line, f);
-    //qDebug() << time << " -> " << localTime;
+    //qDebug() << html;
     if(f || lestLocalTime != localTime)
     {
         lestLocalTime = localTime;
@@ -1221,6 +1238,17 @@ void MainWindow::on_pushButton_showLrcWindow_clicked()
     m_lrcForm = new lrcForm;
     m_lrcForm->m = this;
     m_lrcForm->show();
+    ui->label_lrc->hide();
+}
+
+
+void MainWindow::on_pushButtonfullScreen_clicked()
+{
+    if(m_lrcForm != nullptr)
+        delete m_lrcForm;
+    m_lrcForm = new lrcForm;
+    m_lrcForm->m = this;
+    m_lrcForm->showFullScreen();
     ui->label_lrc->hide();
 }
 

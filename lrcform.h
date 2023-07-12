@@ -18,6 +18,7 @@ public:
     ~lrcForm();
     MainWindow* m;
     void show();
+    void showFullScreen();
     QLabel* m_label;
 
 private:

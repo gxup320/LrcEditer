@@ -116,7 +116,7 @@ bool GAudioPlayer::setPosition(qint64 position)
     if(getAudioFormatSize(*format) != 0)
         filePosition -= filePosition % getAudioFormatSize(*format);
     bool rev = false;
-    if(playing)
+    if(playing == QAudio::ActiveState)
     {
         if(isAccurateProgress)
         {
@@ -165,7 +165,9 @@ bool GAudioPlayer::setPosition(qint64 position)
     else
     {
         startTime = position;
+        stopTime = position;
         rev = buffer->seek(filePosition);
+        playing = QAudio::StoppedState;
     }
     return rev;
 }
@@ -213,14 +215,23 @@ qint64 GAudioPlayer::position(bool trueProcess)
 
 void GAudioPlayer::play(qint64 _position)
 {
-    if(playing)
+    if(playing == QAudio::ActiveState)
     {
         return;
     }
     if(_position < 0)
-        _position = stopTime;
+    {
+        if(playing == QAudio::StoppedState)
+        {
+            _position = stopTime;
+        }
+        else
+        {
+            _position = 0;
+        }
+    }
     setPosition(_position);
-    if(audioSink != nullptr && playing == false)
+    if(audioSink != nullptr && playing != QAudio::ActiveState)
     {
         startTime = _position;
         if(isAccurateProgress)
@@ -271,7 +282,7 @@ void GAudioPlayer::stop()
 
 bool GAudioPlayer::isPlaying()
 {
-    return playing;
+    return playing == QAudio::ActiveState;
 }
 
 void GAudioPlayer::setVolume(float volume)
@@ -283,11 +294,19 @@ void GAudioPlayer::setVolume(float volume)
 
 void GAudioPlayer::accurateProgress(bool isAccurate)
 {
+    bool nPlaying = playing == QAudio::ActiveState;
     qint64 pos = position();
     isAccurateProgress = isAccurate;
     stop();
     setBufferSize();
-    play(pos);
+    if(nPlaying)
+    {
+        play(pos);
+    }
+    else
+    {
+        setPosition(pos);
+    }
 }
 
 qint64 GAudioPlayer::setBufferSize(qint64 size, qint64 smallSize)
@@ -302,9 +321,9 @@ qint64 GAudioPlayer::setBufferSize(qint64 size, qint64 smallSize)
         bufferSizeSmall = smallSize;
     }
 
-    if((playing && audioSink != nullptr) || size < 0)
+    if((playing == QAudio::ActiveState && audioSink != nullptr) || size < 0)
     {
-        bool nPlaying = playing;
+        bool nPlaying = playing == QAudio::ActiveState;
         qint64 pos = position();
         if(isAccurateProgress)
         {
@@ -385,20 +404,24 @@ void GAudioPlayer::decodingChanged(bool status)
 
 void GAudioPlayer::audioSinkStateChanged(QAudio::State state)
 {
-    if(state == QAudio::ActiveState)
+    //qDebug() << state;
+    playing = state;
+    if(state != QAudio::ActiveState)
     {
-        playing = true;
-    }
-    else
-    {
-        playing = false;
         if(isAccurateProgress)
         {
             QMutexLocker locker(timerMutex);
             //locker.relock();
             if(playTime != nullptr)
             {
-                startTime = startTime + playTime->elapsed();
+                if(state == QAudio::IdleState)
+                {
+                    startTime = musicLen;
+                }
+                else
+                {
+                    startTime = startTime + playTime->elapsed();
+                }
                 delete playTime;
                 playTime = nullptr;
             }

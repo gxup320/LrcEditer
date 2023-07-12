@@ -39,6 +39,8 @@ void GLrc::setLrc(QString lrc, int maxLine)
     lrcItems.resize(0);
     lrc.replace("\r\n", "\n");
     lrc.replace("\r", "\n");
+    static QRegularExpression reg("\\s*+$");
+    lrc.remove(reg);
     QStringList lrcLines = lrc.split("\n");
     lrcItem lrcLine;
     int lineSum = 0;
@@ -1051,8 +1053,12 @@ void GLrc::updateLrcwindow(qint64 time)
             //当前行被选中
             if(lrcItems[var].fontSize < 0)
                 lrcItems[var].fontSize++;
+            int sizeDiff = fountSize * lrcItems[var].fontSize / 15;
+            font.setPixelSize(fountSize + sizeDiff);
+            QFontMetrics fm(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
-            int y2 = pos.y() + ((fountSize + fountSize * lrcItems[var].fontSize / 15) * (sl.size() + 1)) / 2;
+            int y2 = pos.y() + (fm.height() * (sl.size())) / 2;
+            y2 += (fm.height() - (fountSize + sizeDiff));
             y2 = h / 2 - y2;
             int subNum = movSpeed(abs(s_y - y2));
             if(s_y > y2)
@@ -1074,10 +1080,13 @@ void GLrc::updateLrcwindow(qint64 time)
             //当前行未被选中，直接输出文本
             if(lrcItems[var].fontSize > -5)
                 lrcItems[var].fontSize--;
+            int sizeDiff = fountSize * lrcItems[var].fontSize / 15;
+            font.setPixelSize(fountSize + sizeDiff);
+            QFontMetrics fm(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
-            pos.setY(pos.y() + (fountSize + fountSize * lrcItems[var].fontSize / 15) * sl.size());
+            pos.setY(pos.y() + fm.height() * sl.size());
         }
-        pos.setY(pos.y() + fountSize * 0.5);
+        pos.setY(pos.y() + fountSize / 2);
     }
     pos.setY(s_y);
     for (int var = 0; var < lrcItems.length(); ++var)
@@ -1091,13 +1100,13 @@ void GLrc::updateLrcwindow(qint64 time)
             painter.setFont(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
             bool fast = true;
+            QFontMetrics fm(font);
             for (auto& itm : sl)
             {
                 //计算这一行宽度，计算横坐标
-                pos.setY(pos.y() + fountSize + sizeDiff);
+                pos.setY(pos.y() + fm.height());
                 if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
                 {
-                    QFontMetrics fm(font);
                     pos.setX((w - fm.horizontalAdvance(itm)) / 2);
                     painter.setPen(Qt::red);
                     painter.drawText(pos, itm);
@@ -1106,7 +1115,6 @@ void GLrc::updateLrcwindow(qint64 time)
                 {
                     fast = false;
                     //进度
-                    QFontMetrics fm(font);
                     int n_w = fm.horizontalAdvance(itm.mid(0, selectWord));
                     int n_w2 = fm.horizontalAdvance(itm.mid(selectWord, wordLength));
                     qint64 t1 = time - startTime;
@@ -1131,12 +1139,13 @@ void GLrc::updateLrcwindow(qint64 time)
             //当前行未被选中，直接输出文本
             font.setPixelSize(fountSize + sizeDiff);
             painter.setFont(font);
+            QFontMetrics fm(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
             for (auto& itm : sl)
             {
                 //计算这一行宽度，计算横坐标
-                pos.setY(pos.y() + fountSize + sizeDiff);
-                if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff  && itm.length() > 0)
+                pos.setY(pos.y() + fm.height());
+                if(pos.y() > 0 && pos.y() < h + fm.height()  && itm.length() > 0)
                 {
                     QFontMetrics fm(font);
                     pos.setX((w - fm.horizontalAdvance(itm)) / 2);
@@ -1145,7 +1154,7 @@ void GLrc::updateLrcwindow(qint64 time)
                 }
             }
         }
-        pos.setY(pos.y() + fountSize * 0.5);
+        pos.setY(pos.y() + fountSize / 2);
     }
     label->setPixmap(image);
     locker.unlock();

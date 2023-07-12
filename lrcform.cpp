@@ -19,10 +19,16 @@ lrcForm::~lrcForm()
 
 void lrcForm::show()
 {
-    ui->label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     m_label = m->lrc->setLabel(ui->label);
     m->lrc->disableMovingPicture();
     QWidget::show();
+}
+
+void lrcForm::showFullScreen()
+{
+    m_label = m->lrc->setLabel(ui->label);
+    m->lrc->disableMovingPicture();
+    QWidget::showFullScreen();
 }
 
 void lrcForm::closeEvent(QCloseEvent *)

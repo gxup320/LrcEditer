@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1328</width>
-    <height>1068</height>
+    <width>1313</width>
+    <height>1100</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1026,11 +1026,22 @@ Alt+N:word time 0.1 s delay</string>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_showLrcWindow">
-           <property name="text">
-            <string>show lrc window</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QPushButton" name="pushButton_showLrcWindow">
+             <property name="text">
+              <string>show lrc window</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonfullScreen">
+             <property name="text">
+              <string>full screen</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <spacer name="verticalSpacer">
@@ -1058,7 +1069,7 @@ Alt+N:word time 0.1 s delay</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1328</width>
+     <width>1313</width>
      <height>22</height>
     </rect>
    </property>

@@ -136,27 +136,27 @@ QString GLrcLine::toHtml(bool sel, int lfCount)
         {
             if(var == select)
             {
-                html += R"(<span class="wordS word )" + word2[var%3] + R"(">)" + lineItems[var].word + "</span>";
+                html += R"(<span class="wordS word )" + word2[var%3] + R"(">)" + lWord.toHtmlEscaped() + "</span>";
             }
             else if(var < select)
             {
-                html += R"(<span class="wordL word )" + word2[var%3] + R"(">)" + lineItems[var].word + "</span>";
+                html += R"(<span class="wordL word )" + word2[var%3] + R"(">)" + lWord.toHtmlEscaped() + "</span>";
             }
             else if(var > select)
             {
-                html += R"(<span class="wordR word )" + word2[var%3] + R"(">)" + lineItems[var].word + "</span>";
+                html += R"(<span class="wordR word )" + word2[var%3] + R"(">)" + lWord.toHtmlEscaped() + "</span>";
             }
         }
         else
         {
-            html += R"(<span class="word">)" + lineItems[var].word + "</span>";
+            html += R"(<span class="word">)" + lWord.toHtmlEscaped() + "</span>";
         }
     }
     for (int var = 0; var < lines.size() || var < lfCount; ++var)
     {
         if(var < lines.size())
         {
-            html += "\n" + lines[var];
+            html += "\n" + lines[var].toHtmlEscaped();
         }
         else
         {
