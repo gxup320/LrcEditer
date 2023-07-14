@@ -21,9 +21,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    qRegisterMetaType<QPixmap*>("QPixmap*");
     lrc = new GLrc;
-    lrc->setLabel(ui->label_lrc);
     connect(lrc, SIGNAL(lrcChanged()), this, SLOT(lrcChanged()));
+    connect(lrc, SIGNAL(lrcImgChanged()), this, SLOT(lrcImgChanged()));
     ui->textEdit->setReadOnly(true);
     connect(ui->textEdit, SIGNAL(keyProc(QKeyEvent*)), this, SLOT(keyProc(QKeyEvent*)));
     connect(ui->textEdit, SIGNAL(focusOutProc(QFocusEvent*)), this, SLOT(focusOutProc(QFocusEvent*)));
@@ -45,14 +46,24 @@ MainWindow::MainWindow(QWidget *parent)
     player = new GAudioPlayer;
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
-    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), lrc, SLOT(setDispaleTime(qint64)));
+    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)), Qt::BlockingQueuedConnection);
     connect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
     connect(player, SIGNAL(bufferSizeChanged(qint64)), this, SLOT(bufferSizeChanged(qint64)));
 }
 
 MainWindow::~MainWindow()
 {
-    lrc->setLabel(nullptr);
+    disconnect(lrc, SIGNAL(lrcChanged()), this, SLOT(lrcChanged()));
+    disconnect(lrc, SIGNAL(lrcImgChanged()), this, SLOT(lrcImgChanged()));
+    disconnect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
+    disconnect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
+    disconnect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+    disconnect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
+    disconnect(player, SIGNAL(bufferSizeChanged(qint64)), this, SLOT(bufferSizeChanged(qint64)));
+    disconnect(player, SIGNAL(positionChanged(qint64)), lrc, SLOT(setDispaleTime(qint64)));
+    QCoreApplication::processEvents();
+    lrc->setLabelSize(QSize(0,0));
     if(m_LrcSearchNeteasyForm != nullptr)
     {
         delete m_LrcSearchNeteasyForm;
@@ -75,6 +86,16 @@ MainWindow::~MainWindow()
     //delete mediaPlayer;
     delete ui;
     delete lrc;
+}
+
+void MainWindow::show()
+{
+    QWidget::show();
+    if(m_lrcLabel == nullptr)
+    {
+        m_lrcLabel = ui->label_lrc;
+        lrc->setLabelSize(ui->label_lrc->size());
+    }
 }
 
 void MainWindow::durationChanged(qint64 duration)
@@ -138,7 +159,6 @@ void MainWindow::positionChanged(qint64 position)
     {
         //LastLine = -1;
     }
-    lrc->setDispaleTime(position);
 }
 
 void MainWindow::metaDataChanged(QMediaMetaData mediaData)
@@ -282,6 +302,15 @@ void MainWindow::lrcChanged()
 void MainWindow::bufferSizeChanged(qint64 size)
 {
     ui->pushButton_bufferSize->setText(QString::number(size));
+}
+
+void MainWindow::lrcImgChanged()
+{
+    const QPixmap* pix = lrc->getPixmap();
+    if(pix != nullptr && m_lrcLabel != nullptr)
+    {
+        m_lrcLabel->setPixmap(*pix);
+    }
 }
 
 bool MainWindow::saveLrcToFile(QString fileName)
@@ -466,7 +495,6 @@ qint64 MainWindow::setBufferSize(qint64 size, qint64 sizeSmall)
 {
     return player->setBufferSize(size, sizeSmall);
 }
-
 
 void MainWindow::on_pushButton_loadmusic_clicked()
 {

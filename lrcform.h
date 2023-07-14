@@ -19,6 +19,7 @@ public:
     MainWindow* m;
     void show();
     void showFullScreen();
+    QSize m_labelSize;
     QLabel* m_label;
 
 private:

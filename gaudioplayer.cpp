@@ -58,7 +58,7 @@ GAudioPlayer::~GAudioPlayer()
     for(int i = 0; i < 100 && positionChangedThreadHandle->isRunning(); i++) thread()->msleep(100);
     if(positionChangedThreadHandle->isRunning())
     {
-        qDebug() << "listen stop time out,to terminate...";
+        qDebug() << "GAudioPlayer:listen stop time out,to terminate...";
         positionChangedThreadHandle->terminate();
     }
     while (positionChangedThreadHandle->isRunning()) { thread()->msleep(1);}

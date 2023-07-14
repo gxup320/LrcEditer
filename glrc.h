@@ -3,10 +3,10 @@
 
 #include <QObject>
 #include <QList>
+#include <QSize>
 #include <glrcline.h>
 
 class QThread;
-class QLabel;
 class QMutex;
 
 struct lrcItem
@@ -57,13 +57,18 @@ public:
     int deleteLineWordTime();
     int deleteAllWordTime();
 
-    QLabel * setLabel(QLabel* _label);
+    void setDispaleColor(const QColor& _default,const QColor& _selectLine,const QColor& _selectLineOver,const QColor& _selectWord);
+public slots:
+    QSize setLabelSize(QSize _labelSize);
     void updateLrcwindow(qint64 time);
     qint64 setDispaleTime(qint64 time);
     void disableMovingPicture();
+    const QPixmap* getPixmap();
 
 signals:
     void lrcChanged();
+    void lrcImgChanged();
+
 private:
     QList<lrcItem> lrcItems;
     qint64 getTimeOfLrcLine(QString& lrcLine);
@@ -75,13 +80,17 @@ private:
     bool threadRunning;
     qint64 lrcDispaleTime = 0;
     static void lrcDispaleThread(GLrc* lrc);
-    QLabel* label = nullptr;
+    QSize labelSize = {0 , 0};
     void status(qint64 time,int *line, int *word,int* wordSeleteLength, int *wordSize, qint64 *startTime, qint64 *endTime);
     int getTextSize(int w, int h);
     QMutex * updateMutex = nullptr;
+    QMutex * lrcDispale = nullptr;
     int movSpeed(int length);
     bool m_disableMovingPicture = true;
-
+    QPixmap* image = nullptr;
+    QPixmap* imageNext = nullptr;
+    bool imgReadEd = true;
+    QColor* colors;
 };
 
 #endif // GLRC_H

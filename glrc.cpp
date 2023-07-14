@@ -11,6 +11,11 @@
 GLrc::GLrc(QObject *parent)
     : QObject{parent}
 {
+    colors = new QColor[4];
+    colors[0] = Qt::black;
+    colors[1] = Qt::red;
+    colors[2] = Qt::green;
+    colors[3] = Qt::blue;
     updateMutex = new QMutex;
     threadRunning = true;
     lrcThread = QThread::create(lrcDispaleThread, this);
@@ -23,7 +28,7 @@ GLrc::~GLrc()
     for(int i = 0; i < 100 && lrcThread->isRunning(); i++) thread()->msleep(100);
     if(lrcThread->isRunning())
     {
-        qDebug() << "listen stop time out,to terminate...";
+        qDebug() << "GLrc:listen stop time out,to terminate...";
         lrcThread->terminate();
     }
     while (lrcThread->isRunning()) { thread()->msleep(1);}
@@ -39,8 +44,6 @@ void GLrc::setLrc(QString lrc, int maxLine)
     lrcItems.resize(0);
     lrc.replace("\r\n", "\n");
     lrc.replace("\r", "\n");
-    static QRegularExpression reg("\\s*+$");
-    lrc.remove(reg);
     QStringList lrcLines = lrc.split("\n");
     lrcItem lrcLine;
     int lineSum = 0;
@@ -800,8 +803,14 @@ void GLrc::lrcDispaleThread(GLrc *lrc)
 {
     while(lrc->threadRunning)
     {
+        QDateTime current_date_time = QDateTime::currentDateTime();
         lrc->updateLrcwindow(lrc->lrcDispaleTime);
-        QThread::msleep(10);
+        int timeout = QDateTime::currentDateTime().toMSecsSinceEpoch() - current_date_time.toMSecsSinceEpoch();
+        //qDebug() << timeout;
+        if(timeout < 17)
+        {
+            QThread::msleep(17 - timeout);
+        }
     }
 
 }
@@ -1000,11 +1009,20 @@ int GLrc::deleteAllWordTime()
     return rev;
 }
 
-QLabel * GLrc::setLabel(QLabel *_label)
+void GLrc::setDispaleColor(const QColor &_default, const QColor &_selectLine, const QColor &_selectLineOver, const QColor &_selectWord)
+{
+    colors[0] = _default;
+    colors[1] = _selectLine;
+    colors[2] = _selectLineOver;
+    colors[3] = _selectWord;
+}
+
+QSize GLrc::setLabelSize(QSize _labelSize)
 {
     QMutexLocker locker(updateMutex);
-    QLabel * t = label;
-    label = _label;
+    QSize t = labelSize;
+    labelSize = _labelSize;
+    m_disableMovingPicture = true;
     locker.unlock();
     return t;
 }
@@ -1012,13 +1030,13 @@ QLabel * GLrc::setLabel(QLabel *_label)
 void GLrc::updateLrcwindow(qint64 time)
 {
     QMutexLocker locker(updateMutex);
-    if(label == nullptr)
+    if(labelSize.isNull() || labelSize.height() == 0 || labelSize.width() == 0)
     {
         locker.unlock();
         return;
     }
-    int w = label->width();
-    int h = label->height();
+    int w = labelSize.width();
+    int h = labelSize.height();
     int fountSize = getTextSize(w, h);
     if(fountSize <= 0)
     {
@@ -1035,9 +1053,13 @@ void GLrc::updateLrcwindow(qint64 time)
     //    //加上每一行文字的长度
     //    maph += itm.line.getLineSum();
     //}
-    QPixmap image(w, h);
-    image.fill();
-    QPainter painter(&image);
+    if(imageNext != nullptr)
+    {
+        delete imageNext;
+    }
+    imageNext = new QPixmap(w, h);
+    imageNext->fill();
+    QPainter painter(imageNext);
     //painter.begin(&image);
     //painter.setBackground(QBrush(QColor(255,255,255)));
     //painter.drawRect(0,0,w,h);
@@ -1088,6 +1110,24 @@ void GLrc::updateLrcwindow(qint64 time)
         }
         pos.setY(pos.y() + fountSize / 2);
     }
+    if(selectLine < 0)
+    {
+        int y2 = h / 2 + fountSize;
+        int subNum = movSpeed(abs(s_y - y2));
+        if(s_y > y2)
+        {
+            s_y -= subNum;
+        }
+        else if(s_y < y2)
+        {
+            s_y += subNum;
+        }
+        if(m_disableMovingPicture)
+        {
+            s_y = y2;
+            m_disableMovingPicture = false;
+        }
+    }
     pos.setY(s_y);
     for (int var = 0; var < lrcItems.length(); ++var)
     {
@@ -1108,7 +1148,7 @@ void GLrc::updateLrcwindow(qint64 time)
                 if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
                 {
                     pos.setX((w - fm.horizontalAdvance(itm)) / 2);
-                    painter.setPen(Qt::red);
+                    painter.setPen(colors[1]);
                     painter.drawText(pos, itm);
                 }
                 if(fast && selectWord >= 0 && wordLength > 0 && startTime > 0 && endTime > 0)
@@ -1119,14 +1159,22 @@ void GLrc::updateLrcwindow(qint64 time)
                     int n_w2 = fm.horizontalAdvance(itm.mid(selectWord, wordLength));
                     qint64 t1 = time - startTime;
                     qint64 t2 = endTime - startTime;
-                    n_w = n_w + n_w2 * t1 / t2;
-                    if(n_w > 0 && fm.height() > 0)
+                    int n_w3 = n_w + n_w2 * t1 / t2;
+                    if(n_w3 > 0 && fm.height() > 0)
                     {
-                        QPixmap n_image(n_w, fm.height());
+                        QPixmap n_image_sel(n_w2, fm.height());
+                        n_image_sel.fill();
+                        QPainter n_painter_sel(&n_image_sel);
+                        n_painter_sel.setFont(font);
+                        n_painter_sel.setPen(colors[3]);
+                        QPoint n_pos_sel = {0, fountSize + sizeDiff};
+                        n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord, wordLength));
+                        painter.drawPixmap(QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()), n_image_sel);
+                        QPixmap n_image(n_w3, fm.height());
                         n_image.fill();
                         QPainter n_painter(&n_image);
                         n_painter.setFont(font);
-                        n_painter.setPen(Qt::green);
+                        n_painter.setPen(colors[2]);
                         QPoint n_pos = {0, fountSize + sizeDiff};
                         n_painter.drawText(n_pos, itm);
                         painter.drawPixmap(QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()), n_image);
@@ -1149,23 +1197,27 @@ void GLrc::updateLrcwindow(qint64 time)
                 {
                     QFontMetrics fm(font);
                     pos.setX((w - fm.horizontalAdvance(itm)) / 2);
-                    painter.setPen(Qt::blue);
+                    painter.setPen(colors[0]);
                     painter.drawText(pos, itm);
                 }
             }
         }
         pos.setY(pos.y() + fountSize / 2);
     }
-    label->setPixmap(image);
     locker.unlock();
+    //while(!imgReadEd)thread()->msleep(1);
+    if(imgReadEd)
+    {
+        std::swap(image,imageNext);
+        imgReadEd = false;
+        emit lrcImgChanged();
+    }
 }
 
 qint64 GLrc::setDispaleTime(qint64 time)
 {
-    QMutexLocker locker(updateMutex);
     qint64 t = lrcDispaleTime;
     lrcDispaleTime = time;
-    locker.unlock();
     return t;
 }
 
@@ -1174,5 +1226,11 @@ void GLrc::disableMovingPicture()
     QMutexLocker locker(updateMutex);
     m_disableMovingPicture = true;
     locker.unlock();
+}
+
+const QPixmap *GLrc::getPixmap()
+{
+    imgReadEd = true;
+    return image;
 }
 

@@ -17,6 +17,7 @@ class BufferSizeEdit;
 class lrcForm;
 
 class GLrc;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -25,13 +26,15 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    GLrc* lrc;
+    void show();
+    GLrc* lrc = nullptr;
     void displayLrc(qint64 time, bool f = false);
     QString netEasyApiUrl;
     void loadLrc(QString fileName);
     qint64 getBufferSize();
     qint64 getBufferSizeSmall();
     qint64 setBufferSize(qint64 size, qint64 sizeSmall);
+    QLabel* m_lrcLabel = nullptr;
 
 private slots:
     void durationChanged(qint64 duration);
@@ -41,6 +44,7 @@ private slots:
     void loadStatus(qint64 position, bool isEnd);
     void lrcChanged();
     void bufferSizeChanged(qint64 size);
+    void lrcImgChanged();
 
     void on_pushButton_loadmusic_clicked();
     void on_pushButton_tostart_clicked();

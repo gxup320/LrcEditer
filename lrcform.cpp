@@ -19,27 +19,29 @@ lrcForm::~lrcForm()
 
 void lrcForm::show()
 {
-    m_label = m->lrc->setLabel(ui->label);
-    m->lrc->disableMovingPicture();
+    m_labelSize = m->lrc->setLabelSize(ui->label->size());
+    m_label = m->m_lrcLabel;
+    m->m_lrcLabel = ui->label;
     QWidget::show();
 }
 
 void lrcForm::showFullScreen()
 {
-    m_label = m->lrc->setLabel(ui->label);
-    m->lrc->disableMovingPicture();
+    m_labelSize = m->lrc->setLabelSize(ui->label->size());
+    m_label = m->m_lrcLabel;
+    m->m_lrcLabel = ui->label;
     QWidget::showFullScreen();
 }
 
 void lrcForm::closeEvent(QCloseEvent *)
 {
-    m->lrc->setLabel(m_label);
-    m->lrc->disableMovingPicture();
-    m_label->show();
+    m->lrc->setLabelSize(m_labelSize);
+    m->m_lrcLabel = m_label;
+    m->m_lrcLabel->show();
 }
 
 void lrcForm::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    m->lrc->disableMovingPicture();
+    m->lrc->setLabelSize(ui->label->size());
 }

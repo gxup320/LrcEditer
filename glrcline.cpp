@@ -49,6 +49,10 @@ GLrcLine GLrcLine::operator=(const QString &str)
     {
         append(sl[var]);
     }
+    while(lines.size() && lines.last() == "")
+    {
+        lines.removeLast();
+    }
     return *this;
 }
 
