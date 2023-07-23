@@ -34,6 +34,7 @@ public:
     qint64 nextWord();
     int getSelectLine();
     qint64 getLrcTime(qint64 time);
+    qint64 getLrcNextTime(qint64 time);
     qint64 getSelectTime();
     QString getLine(int line);
     QString getTimes(int line);
@@ -81,7 +82,7 @@ private:
     qint64 lrcDispaleTime = 0;
     static void lrcDispaleThread(GLrc* lrc);
     QSize labelSize = {0 , 0};
-    void status(qint64 time,int *line, int *word,int* wordSeleteLength, int *wordSize, qint64 *startTime, qint64 *endTime);
+    void status(qint64 time,QList<int> *line, QList<int> *word,QList<int>* wordSeleteLength, QList<int> *wordSize, QList<qint64> *startTime, QList<qint64> *endTime);
     int getTextSize(int w, int h);
     QMutex * updateMutex = nullptr;
     QMutex * lrcDispale = nullptr;

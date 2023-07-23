@@ -87,18 +87,18 @@ void GLrc::setLrc(QString lrc, int maxLine)
     }
     selectTime = 0;
     selectLine = 0;
-    prLrcSort();
-    for(auto& itm:lrcItems)
-    {
-        QString time;
-        for(auto i:itm.times)
-        {
-            QTime t = QTime::fromMSecsSinceStartOfDay(i);
-            QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
-            time += "[" + ts + "]";
-        }
-        //qDebug() << time << itm.line;
-    }
+    //prLrcSort();
+    //for(auto& itm:lrcItems)
+    //{
+    //    QString time;
+    //    for(auto i:itm.times)
+    //    {
+    //        QTime t = QTime::fromMSecsSinceStartOfDay(i);
+    //        QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
+    //        time += "[" + ts + "]";
+    //    }
+    //    //qDebug() << time << itm.line;
+    //}
     locker.unlock();
     emit lrcChanged();
 }
@@ -550,6 +550,22 @@ qint64 GLrc::getLrcTime(qint64 time)
     return localTime;
 }
 
+qint64 GLrc::getLrcNextTime(qint64 time)
+{
+    qint64 localTime = std::numeric_limits<qint64>::max();
+    for(auto& itm:lrcItems)
+    {
+        for(auto i:itm.times)
+        {
+            if(i < localTime && i >= time)
+                localTime = i;
+        }
+    }
+    if(localTime == std::numeric_limits<qint64>::max())
+        localTime = -1;
+    return localTime;
+}
+
 qint64 GLrc::getSelectTime()
 {
     if(selectLine >= lrcItems.size())
@@ -815,40 +831,39 @@ void GLrc::lrcDispaleThread(GLrc *lrc)
 
 }
 
-void GLrc::status(qint64 time,int *line, int *word,int* wordSeleteLength, int *wordSize, qint64 *startTime, qint64 *endTime)
+void GLrc::status(qint64 time,QList<int> *line, QList<int> *word,QList<int>* wordSeleteLength, QList<int> *wordSize, QList<qint64> *startTime, QList<qint64> *endTime)
 {
     qint64 localTime = getLrcTime(time);
-    *line = -1;
+    qint64 nextTime = getLrcNextTime(localTime + 1);
     for (int var = 0; var < lrcItems.length(); ++var)
     {
         for(auto& itm : lrcItems[var].times)
         {
             if(itm == localTime)
             {
-                *line = var;
+                line->push_back(var);
                 break;
             }
         }
-        if(*line != -1)
+    }
+    for (int var = 0; var < line->size(); ++var)
+    {
+        int n_wordSize = 0,n_word = 0,n_wordSeleteLength = 0;
+        qint64 n_startTime = -1, n_endTime = -1;
+        n_wordSize = lrcItems[line->at(var)].line.status(time, &n_startTime, &n_endTime, &n_word, &n_wordSeleteLength);
+        if(n_startTime == -1)
         {
-            *wordSize = lrcItems[*line].line.status(time, startTime, endTime, word, wordSeleteLength);
-            if(*startTime == -1 && lrcItems[*line].times.size() > 0)
-            {
-                *startTime = lrcItems[*line].times[0];
-            }
-            if(*endTime == -1)
-            {
-                if(*line + 1 < lrcItems.size())
-                {
-                    if(lrcItems[*line + 1].times.size() > 0)
-                    {
-                        *endTime = lrcItems[*line + 1].times[0];
-                    }
-                }
-            }
-            //qDebug() << *startTime << "/" << *endTime;
-            break;
+            n_startTime = localTime;
         }
+        if(n_endTime == -1)
+        {
+            n_endTime = nextTime;
+        }
+        word->push_back(n_word);
+        wordSeleteLength->push_back(n_wordSeleteLength);
+        wordSize->push_back(n_wordSize);
+        startTime->push_back(n_startTime);
+        endTime->push_back(n_endTime);
     }
 }
 
@@ -877,7 +892,7 @@ int GLrc::getTextSize(int w, int h)
     if(strLength <= 0)
         return 6;
     int size1 = w / ((strLength / 10.0) + 1);
-    int size2 = h / 10;
+    int size2 = h / 15;
     if(std::min(size1, size2) < 6)
         return 6;
     return std::min(size1, size2);
@@ -1043,9 +1058,10 @@ void GLrc::updateLrcwindow(qint64 time)
         locker.unlock();
         return;
     }
-    int selectLine = -1, selectWord = -1, wordLength = 0, wordSize = 0;
-    qint64 startTime = -1, endTime = -1;
+    QList<int> selectLine, selectWord, wordLength, wordSize;
+    QList<qint64> startTime, endTime;
     status(time, &selectLine, &selectWord, &wordLength, &wordSize, &startTime, &endTime);
+    //qDebug() << selectLine;
     //计算画板高度
     //int maph = 0;
     //for (auto& itm : lrcItems) {
@@ -1067,10 +1083,20 @@ void GLrc::updateLrcwindow(qint64 time)
     //fountSize /= 2;
     QPoint pos = {0, 0};
     static int s_y = 0;
+    bool moveed = false;
     for (int var = 0; var < lrcItems.length(); ++var)
     {
         //判断这一行是否被选中
-        if(var == selectLine)
+        int n_selID = -1;
+        for (int id = 0; id < selectLine.size(); ++id)
+        {
+            if(var == selectLine[id])
+            {
+                n_selID = id;
+                break;
+            }
+        }
+        if(n_selID != -1)
         {
             //当前行被选中
             if(lrcItems[var].fontSize < 0)
@@ -1079,23 +1105,28 @@ void GLrc::updateLrcwindow(qint64 time)
             font.setPixelSize(fountSize + sizeDiff);
             QFontMetrics fm(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
-            int y2 = pos.y() + (fm.height() * (sl.size())) / 2;
-            y2 += (fm.height() - (fountSize + sizeDiff));
-            y2 = h / 2 - y2;
-            int subNum = movSpeed(abs(s_y - y2));
-            if(s_y > y2)
+            if(moveed == false)
             {
-                s_y -= subNum;
+                moveed = true;
+                int y2 = pos.y() + (fm.height() * (sl.size())) / 2;
+                y2 += (fm.height() - (fountSize + sizeDiff));
+                y2 = h / 2 - y2;
+                int subNum = movSpeed(abs(s_y - y2));
+                if(s_y > y2)
+                {
+                    s_y -= subNum;
+                }
+                else if(s_y < y2)
+                {
+                    s_y += subNum;
+                }
+                if(m_disableMovingPicture)
+                {
+                    s_y = y2;
+                    m_disableMovingPicture = false;
+                }
             }
-            else if(s_y < y2)
-            {
-                s_y += subNum;
-            }
-            if(m_disableMovingPicture)
-            {
-                s_y = y2;
-                m_disableMovingPicture = false;
-            }
+
         }
         else
         {
@@ -1110,7 +1141,7 @@ void GLrc::updateLrcwindow(qint64 time)
         }
         pos.setY(pos.y() + fountSize / 2);
     }
-    if(selectLine < 0)
+    if(selectLine.size() == 0)
     {
         int y2 = h / 2 + fountSize;
         int subNum = movSpeed(abs(s_y - y2));
@@ -1133,7 +1164,16 @@ void GLrc::updateLrcwindow(qint64 time)
     {
         int sizeDiff = fountSize * lrcItems[var].fontSize / 15;
         //判断这一行是否被选中
-        if(var == selectLine)
+        int n_selID = -1;
+        for (int id = 0; id < selectLine.size(); ++id)
+        {
+            if(var == selectLine[id])
+            {
+                n_selID = id;
+                break;
+            }
+        }
+        if(n_selID != -1)
         {
             //当前行被选中
             font.setPixelSize(fountSize + sizeDiff);
@@ -1151,14 +1191,14 @@ void GLrc::updateLrcwindow(qint64 time)
                     painter.setPen(colors[1]);
                     painter.drawText(pos, itm);
                 }
-                if(fast && selectWord >= 0 && wordLength > 0 && startTime > 0 && endTime > 0)
+                if(fast && selectWord[n_selID] >= 0 && wordLength[n_selID] > 0 && startTime[n_selID] > 0 && endTime[n_selID] > 0)
                 {
                     fast = false;
                     //进度
-                    int n_w = fm.horizontalAdvance(itm.mid(0, selectWord));
-                    int n_w2 = fm.horizontalAdvance(itm.mid(selectWord, wordLength));
-                    qint64 t1 = time - startTime;
-                    qint64 t2 = endTime - startTime;
+                    int n_w = fm.horizontalAdvance(itm.mid(0, selectWord[n_selID]));
+                    int n_w2 = fm.horizontalAdvance(itm.mid(selectWord[n_selID], wordLength[n_selID]));
+                    qint64 t1 = time - startTime[n_selID];
+                    qint64 t2 = endTime[n_selID] - startTime[n_selID];
                     int n_w3 = n_w + n_w2 * t1 / t2;
                     if(n_w3 > 0 && fm.height() > 0)
                     {
@@ -1168,7 +1208,7 @@ void GLrc::updateLrcwindow(qint64 time)
                         n_painter_sel.setFont(font);
                         n_painter_sel.setPen(colors[3]);
                         QPoint n_pos_sel = {0, fountSize + sizeDiff};
-                        n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord, wordLength));
+                        n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord[n_selID], wordLength[n_selID]));
                         painter.drawPixmap(QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()), n_image_sel);
                         QPixmap n_image(n_w3, fm.height());
                         n_image.fill();
