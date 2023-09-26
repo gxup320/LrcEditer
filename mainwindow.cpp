@@ -582,17 +582,33 @@ void MainWindow::on_pushButton_save_clicked()
 void MainWindow::on_pushButton_save_as_clicked()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
-        tr("Open LRC"), QString(), tr("LRC Files (*.lrc)"));
+        tr("Open LRC"), QString(), tr("LRC Files (*.lrc);;SubRip (*.srt)"));
     if(fileName != "")
     {
-        if(saveLrcToFile(fileName))
+        if(fileName.right(4).toLower() == ".lrc")
         {
-            lrcFileName = fileName;
-            setWindowTitle(lrcFileName + " - LrcEditer powered by GXUP320");
+            if(saveLrcToFile(fileName))
+            {
+                lrcFileName = fileName;
+                setWindowTitle(lrcFileName + " - LrcEditer powered by GXUP320");
+            }
+            else
+            {
+                QMessageBox::critical(this,tr("Save fail"),tr("Save to ") + "'" + fileName + "'" + tr(" fail."));
+            }
         }
-        else
+        else if(fileName.right(4).toLower() == ".srt")
         {
-            QMessageBox::critical(this,tr("Save fail"),tr("Save to ") + "'" + fileName + "'" + tr(" fail."));
+            QFile file(fileName);
+            if(file.open(QFile::WriteOnly))
+            {
+                file.write(lrc->toSrt().toUtf8());
+                setWindowTitle(lrcFileName + " - LrcEditer powered by GXUP320");
+            }
+            else
+            {
+                QMessageBox::critical(this,tr("Save fail"),tr("Save to ") + "'" + fileName + "'" + tr(" fail."));
+            }
         }
     }
 }

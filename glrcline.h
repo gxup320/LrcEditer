@@ -23,6 +23,7 @@ public:
     QString toString(bool incuudeTimes = true);
     QStringList toStringList(bool incuudeTimes = true);
     QString toHtml(bool sel = false, int lfCount = 0);
+    QString toSrt(int sel = -1);
     int selectTime(qint64 time);
     qint64 selectId(int id);
     int selectNext();
@@ -36,6 +37,7 @@ public:
     qint64 deleteTime();
     int status(qint64 time, qint64* selectTime, qint64* nextTime, int* seleteWorld, int* seleteWorldLength);
     int getLineSum();
+    int itmCount();
 
 signals:
 

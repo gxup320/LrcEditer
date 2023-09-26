@@ -27,6 +27,7 @@ public:
     QString getHtml(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
     QString getHtmlFx(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
     QString getHtmlFx2(qint64 time = -1, bool includTimes = true,qint64* line = nullptr, int* pos = nullptr, bool wordColor = false);
+    QString toSrt(qint64 maximumTime = 30000);
     qint64 previousItem();
     qint64 previousWord();
     qint64 nextItem();
@@ -76,7 +77,7 @@ private:
     qint64 getSmallTime(lrcItem line);
     int selectTime = 0;
     int selectLine = 0;
-    void prLrcSort();
+    void prLrcSort(QList<lrcItem>& items);
     QThread* lrcThread = nullptr;
     bool threadRunning;
     qint64 lrcDispaleTime = 0;

@@ -448,6 +448,97 @@ QString GLrc::getHtmlFx2(qint64 time,bool includTimes, qint64* line, int* pos, b
     return html;
 }
 
+QString GLrc::toSrt(qint64 maximumTime)
+{
+    QMutexLocker locker(updateMutex);
+    QList<lrcItem> temp;
+    for(auto& itm:lrcItems)
+    {
+        for(auto i:itm.times)
+        {
+            lrcItem t;
+            t.times << i;
+            t.line = itm.line;
+            temp << t;
+        }
+    }
+    locker.unlock();
+    prLrcSort(temp);
+    QString srt;
+    qint64 cul = 1;
+    for (int var = 0; var < temp.length(); ++var)
+    {
+        if(temp[var].line.toString(true) == temp[var].line.toString(false))
+        {
+            qint64 time1 = temp[var].times[0];
+            qint64 time2;
+            if(var == temp.length() - 1)
+            {
+                time2 = time1 + maximumTime;
+            }
+            else
+            {
+                time2 = temp[var + 1].times[0];
+            }
+            qint64 timeOut = time2 - time1;
+            if(timeOut > maximumTime)
+            {
+                timeOut = maximumTime;
+            }
+            QTime t = QTime::fromMSecsSinceStartOfDay(time1);
+            QString ts1 = t.toString("mm:ss,zzz");
+            t = QTime::fromMSecsSinceStartOfDay(time1 + timeOut);
+            QString ts2 = t.toString("mm:ss,zzz");
+            srt += QString::number(cul) + "\n" + ts1 + " --> " + ts2 + "\n" + temp[var].line.toString(false) + "\n\n";
+            cul++;
+        }
+        else
+        {
+            GLrcLine line;
+            line = temp[var].line.toString();
+            qint64 lastTime = temp[var].times[0];
+            for (int i = 0; i < line.itmCount(); ++i)
+            {
+                QString subSrt = line.toSrt(i);
+                qint64 time1 = line.getTime(i);
+                qint64 time2;
+                if(i == line.itmCount() - 1)
+                {
+                    if(var == temp.length() - 1)
+                    {
+                        time2 = time1 + maximumTime;
+                    }
+                    else
+                    {
+                        time2 = temp[var + 1].times[0];
+                    }
+                }
+                else
+                {
+                    time2 = line.getTime(i + 1);
+                }
+                if(time1 < lastTime)
+                {
+                    time1 = lastTime;
+                }
+                lastTime = time1;
+                qint64 timeOut = time2 - time1;
+                if(timeOut > maximumTime)
+                {
+                    timeOut = maximumTime;
+                }
+                QTime t = QTime::fromMSecsSinceStartOfDay(time1);
+                QString ts1 = t.toString("mm:ss,zzz");
+                t = QTime::fromMSecsSinceStartOfDay(time1 + timeOut);
+                QString ts2 = t.toString("mm:ss,zzz");
+                srt += QString::number(cul) + "\n" + ts1 + " --> " + ts2 + "\n" + subSrt + "\n\n";
+                cul++;
+            }
+        }
+    }
+    return srt;
+}
+
 qint64 GLrc::previousItem()
 {
     if(lrcItems.size() == 0)
@@ -744,7 +835,7 @@ void GLrc::mergeDuplicates()
             }
         }
         lrcItems = temp;
-        prLrcSort();
+        prLrcSort(lrcItems);
     }
     locker.unlock();
     emit lrcChanged();
@@ -806,13 +897,13 @@ qint64 GLrc::getSmallTime(lrcItem line)
     return time;
 }
 
-void GLrc::prLrcSort()
+void GLrc::prLrcSort(QList<lrcItem>& items)
 {
     int i, j;
-    for (i = 0; i < lrcItems.length() - 1; i++)
-        for (j = 0; j < lrcItems.length() - 1 - i; j++)
-            if (getSmallTime(lrcItems[j]) > getSmallTime(lrcItems[j + 1]))
-                lrcItems.swapItemsAt(j, j + 1);
+    for (i = 0; i < items.length() - 1; i++)
+        for (j = 0; j < items.length() - 1 - i; j++)
+            if (getSmallTime(items[j]) > getSmallTime(items[j + 1]))
+                items.swapItemsAt(j, j + 1);
 }
 
 void GLrc::lrcDispaleThread(GLrc *lrc)
@@ -917,7 +1008,7 @@ int GLrc::movSpeed(int length)
 void GLrc::lrcTimesSort()
 {
     QMutexLocker locker(updateMutex);
-    prLrcSort();
+    prLrcSort(lrcItems);
     locker.unlock();
     emit lrcChanged();
 }

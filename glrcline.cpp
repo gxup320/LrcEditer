@@ -170,6 +170,31 @@ QString GLrcLine::toHtml(bool sel, int lfCount)
     return html;
 }
 
+QString GLrcLine::toSrt(int sel)
+{
+    if(sel == -1)
+    {
+        sel = lineItems.length() - 1;
+    }
+    QString srt = "";
+    for (int var = 0; var < lineItems.length(); ++var)
+    {
+        if(var < sel)
+        {
+            srt += "<font color=\"#FF0000\">" + lineItems[var].word + "</font>";
+        }
+        else if(var == sel)
+        {
+            srt += "<font color=\"#0000FF\">" + lineItems[var].word + "</font>";
+        }
+        else
+        {
+            srt += lineItems[var].word;
+        }
+    }
+    return srt;
+}
+
 int GLrcLine::selectTime(qint64 time)
 {
     int ls = -1;
@@ -323,6 +348,11 @@ int GLrcLine::status(qint64 time, qint64 *selectTime, qint64 *nextTime, int *sel
 int GLrcLine::getLineSum()
 {
     return lines.length() + 1;
+}
+
+int GLrcLine::itmCount()
+{
+    return lineItems.length();
 }
 
 
