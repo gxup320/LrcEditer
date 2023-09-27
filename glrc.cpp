@@ -738,6 +738,37 @@ qint64 GLrc::timeAdd(qint64 offset)
     return localTime;
 }
 
+void GLrc::timeAddAll(qint64 offset)
+{
+    QMutexLocker locker(updateMutex);
+    for (int i = 0; i < lrcItems.length(); ++i)
+    {
+        for (int j = 0; j < lrcItems[i].times.length(); ++j)
+        {
+            lrcItems[i].times[j] += offset;
+            if(lrcItems[i].times[j] < 0)
+            {
+                lrcItems[i].times[j] = 0;
+            }
+        }
+        for (int j = 0; j < lrcItems[i].line.itmCount(); ++j)
+        {
+            qint64 tempTime = lrcItems[i].line.getTime(j);
+            if(tempTime != -1)
+            {
+                tempTime += offset;
+                if(tempTime < 0)
+                {
+                    tempTime = 0;
+                }
+                lrcItems[i].line.setTime(tempTime, j);
+            }
+        }
+    }
+    locker.unlock();
+    emit lrcChanged();
+}
+
 qint64 GLrc::wordTimeAdd(qint64 offset)
 {
     QMutexLocker locker(updateMutex);

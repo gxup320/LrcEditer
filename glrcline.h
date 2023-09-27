@@ -31,7 +31,7 @@ public:
     int getSelect();
     bool isSpace();
     void append(QString line);
-    qint64 setTime(qint64 time);
+    qint64 setTime(qint64 time, int _id = -1);
     qint64 getTime(int _id = -1) const;
     int deleteAllTime();
     qint64 deleteTime();

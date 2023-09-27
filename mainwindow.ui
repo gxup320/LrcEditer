@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1313</width>
+    <width>1460</width>
     <height>1100</height>
    </rect>
   </property>
@@ -277,6 +277,13 @@ line2</string>
             <widget class="QPushButton" name="pushButton_edit_line">
              <property name="text">
               <string>Edit line</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_time_offset">
+             <property name="text">
+              <string>Time offset</string>
              </property>
             </widget>
            </item>
@@ -1069,8 +1076,8 @@ Alt+N:word time 0.1 s delay</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1313</width>
-     <height>22</height>
+     <width>1460</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

@@ -176,16 +176,16 @@ QString GLrcLine::toSrt(int sel)
     {
         sel = lineItems.length() - 1;
     }
-    QString srt = "";
+    QString srt = "<font color=\"#FF0000\">";
     for (int var = 0; var < lineItems.length(); ++var)
     {
         if(var < sel)
         {
-            srt += "<font color=\"#FF0000\">" + lineItems[var].word + "</font>";
+            srt += lineItems[var].word;
         }
         else if(var == sel)
         {
-            srt += "<font color=\"#0000FF\">" + lineItems[var].word + "</font>";
+            srt += "</font><font color=\"#0000FF\">" + lineItems[var].word + "</font>";
         }
         else
         {
@@ -271,12 +271,16 @@ void GLrcLine::append(QString line)
     lines.append(line);
 }
 
-qint64 GLrcLine::setTime(qint64 time)
+qint64 GLrcLine::setTime(qint64 time, int _id)
 {
-    if(select >= 0 && select < lineItems.length())
+    if(_id == -1)
     {
-        qint64 t = lineItems[select].time;
-        lineItems[select].time = time;
+        _id = select;
+    }
+    if(_id >= 0 && _id < lineItems.length())
+    {
+        qint64 t = lineItems[_id].time;
+        lineItems[_id].time = time;
         return t;
     }
     return -1;

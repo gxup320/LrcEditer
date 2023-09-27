@@ -15,6 +15,7 @@
 #include "batchprocessing.h"
 #include "buffersizeedit.h"
 #include "lrcform.h"
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -1294,5 +1295,16 @@ void MainWindow::on_pushButtonfullScreen_clicked()
     m_lrcForm->m = this;
     m_lrcForm->showFullScreen();
     ui->label_lrc->hide();
+}
+
+
+void MainWindow::on_pushButton_time_offset_clicked()
+{
+    int val = QInputDialog::getInt(this, tr("input offset time"), tr("time(ms):"));
+    if(val != 0)
+    {
+        lrc->timeAddAll(val);
+        displayLrc(-1, true);
+    }
 }
 

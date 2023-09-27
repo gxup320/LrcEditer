@@ -108,6 +108,8 @@ private slots:
 
     void on_pushButtonfullScreen_clicked();
 
+    void on_pushButton_time_offset_clicked();
+
 private:
     Ui::MainWindow *ui;
     LineEdit* linee = nullptr;

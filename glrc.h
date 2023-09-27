@@ -42,6 +42,7 @@ public:
     bool setLine(int line, QString text);
     bool setTimes(int line, QString times);
     qint64 timeAdd(qint64 offset);
+    void timeAddAll(qint64 offset);
     qint64 wordTimeAdd(qint64 offset);
     bool instTime(qint64 time, int line = -1);
     qint64 removeTime(int line = -1, int itm = -1);
