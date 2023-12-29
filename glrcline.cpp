@@ -91,8 +91,10 @@ GLrcLine GLrcLine::operator=(const GLrcLine &D)
 QString GLrcLine::toString(bool incuudeTimes)
 {
     QString retStr;
-    for (const auto& itm:lineItems)
+    //for (const auto& itm:lineItems)
+    for(int var = 0; var < lineItems.length(); var++)
     {
+        const auto& itm = lineItems[var];
         if(incuudeTimes && itm.time != -1)
         {
             QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
@@ -103,7 +105,8 @@ QString GLrcLine::toString(bool incuudeTimes)
     }
     for (int var = 0; var < lines.size(); ++var)
     {
-        retStr += "\n" + lines[var];
+        if(lines[var] != "")
+            retStr += "\n" + lines[var];
     }
     return retStr;
 }
@@ -111,8 +114,10 @@ QString GLrcLine::toString(bool incuudeTimes)
 QStringList GLrcLine::toStringList(bool incuudeTimes)
 {
     QString retStr;
-    for (const auto& itm:lineItems)
+    //for (const auto& itm:lineItems)
+    for(int var = 0; var < lineItems.length(); var++)
     {
+        const auto& itm = lineItems[var];
         if(incuudeTimes && itm.time != -1)
         {
             QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
@@ -362,12 +367,16 @@ int GLrcLine::itmCount()
 
 bool GLrcLine::continuous(QChar ch, QChar next)
 {
-    for (const auto& itm : qAsConst(nextChar))
+    //for (const auto& itm : qAsConst(nextChar))
+    for(int var = 0; var < nextChar.size(); var++)
     {
+        const auto& itm = nextChar[var];
         QJsonObject obj = itm.toObject();
         QJsonArray arr = obj.find("char")->toArray();
-        for(const auto& itm : qAsConst(arr))
+        //for(const auto& itm : qAsConst(arr))
+        for(int var = 0; var < arr.size(); var++)
         {
+            const auto& itm = arr[var];
             QJsonObject c = itm.toObject();
             int s = 0;
             if(c.find("start") != c.end())
@@ -381,8 +390,10 @@ bool GLrcLine::continuous(QChar ch, QChar next)
             if((ch.unicode() >= s && ch.unicode() <= m) || cs.indexOf(ch) != -1)
             {
                 QJsonArray arr = obj.find("next")->toArray();
-                for(const auto& itm : qAsConst(arr))
+                //for(const auto& itm : qAsConst(arr))
+                for(int var = 0; var < arr.size(); var++)
                 {
+                    const auto& itm = arr[var];
                     QJsonObject c = itm.toObject();
                     int s = 0;
                     if(c.find("start") != c.end())

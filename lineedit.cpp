@@ -20,7 +20,7 @@ void LineEdit::show()
 {
     selectLine = m->lrc->getSelectLine();
     ui->lineEdit->setText(m->lrc->getTimes(selectLine));
-    ui->plainTextEdit->setPlainText(m->lrc->getLine(selectLine));
+    ui->plainTextEdit->setPlainText(m->lrc->getLineString(selectLine));
     QWidget::show();
 }
 

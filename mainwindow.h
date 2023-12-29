@@ -40,9 +40,9 @@ private slots:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void metaDataChanged(QMediaMetaData mediaData);
-    void valFromMouse(int val);
+    void valFromMouse(qint64 val);
     void loadStatus(qint64 position, bool isEnd);
-    void lrcChanged();
+    void lrcChanged(int md);
     void bufferSizeChanged(qint64 size);
     void lrcImgChanged();
 

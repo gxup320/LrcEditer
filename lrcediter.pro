@@ -50,7 +50,8 @@ SOURCES += \
     lrcqtextedit.cpp \
     lrcsearchneteasyform.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    processlabel.cpp
 
 HEADERS += \
     batchprocessing.h \
@@ -64,7 +65,8 @@ HEADERS += \
     lrcform.h \
     lrcqtextedit.h \
     lrcsearchneteasyform.h \
-    mainwindow.h
+    mainwindow.h \
+    processlabel.h
 
 FORMS += \
     batchprocessing.ui \

@@ -355,6 +355,11 @@ qint64 GAudioPlayer::getBufferSizeSmall()
     return bufferSizeSmall;
 }
 
+QByteArray GAudioPlayer::getPcm()
+{
+    return *byteArry;
+}
+
 //void GAudioPlayer::readBuffer()
 //{
 //    QAudioBuffer audio = //->read();

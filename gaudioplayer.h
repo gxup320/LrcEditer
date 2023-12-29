@@ -32,6 +32,7 @@ public:
     qint64 setBufferSize(qint64 size = -1, qint64 smallSize = -1);
     qint64 getBufferSize();
     qint64 getBufferSizeSmall();
+    QByteArray getPcm();
 
 private slots:
     //void readBuffer();

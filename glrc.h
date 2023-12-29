@@ -20,7 +20,9 @@ class GLrc : public QObject
 {
     Q_OBJECT
 public:
+    enum mode{AUTO,MERGE,SPLIT};
     explicit GLrc(QObject *parent = nullptr);
+    GLrc(GLrc & cp);
     ~GLrc();
     void setLrc(QString lrc, int maxLine = 2147483647);
     QString getLrc(bool moreTime = false);
@@ -37,7 +39,8 @@ public:
     qint64 getLrcTime(qint64 time);
     qint64 getLrcNextTime(qint64 time);
     qint64 getSelectTime();
-    QString getLine(int line);
+    QString getLineString(int line,bool incuudeTimes = true);
+    QList<qint64> getLineTime(int line);
     QString getTimes(int line);
     bool setLine(int line, QString text);
     bool setTimes(int line, QString times);
@@ -46,11 +49,12 @@ public:
     qint64 wordTimeAdd(qint64 offset);
     bool instTime(qint64 time, int line = -1);
     qint64 removeTime(int line = -1, int itm = -1);
-    void mergeDuplicates();
+    void mergeDuplicates(mode m = AUTO);
     int instLine(int line = -1);
     void lrcTimesSort();
     int size();
     void setSelectLine(int line);
+    void setSeleteTime(qint64 time);
     bool removeLine(int line = -1);
     qint64 setWordTime(qint64 time);
     qint64 getWordTime();
@@ -59,6 +63,7 @@ public:
     qint64 deleteWordTime();
     int deleteLineWordTime();
     int deleteAllWordTime();
+    int replaceTime(qint64 sorce, qint64 target);
 
     void setDispaleColor(const QColor& _default,const QColor& _selectLine,const QColor& _selectLineOver,const QColor& _selectWord);
 public slots:
@@ -69,7 +74,7 @@ public slots:
     const QPixmap* getPixmap();
 
 signals:
-    void lrcChanged();
+    void lrcChanged(int = 0);
     void lrcImgChanged();
 
 private:

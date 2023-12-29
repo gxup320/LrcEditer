@@ -10,7 +10,7 @@ class GProgressBar : public QProgressBar
 public:
     GProgressBar(QWidget *parent = nullptr);
 signals:
-    void valFromMouse(int val);
+    void valFromMouse(qint64 val);
 private:
     void mousePressEvent(QMouseEvent *e);
 };

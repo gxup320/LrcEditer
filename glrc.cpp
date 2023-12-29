@@ -22,17 +22,34 @@ GLrc::GLrc(QObject *parent)
     lrcThread->start();
 }
 
+GLrc::GLrc(GLrc &cp)
+{
+    colors = new QColor[4];
+    colors[0] = cp.colors[0];
+    colors[1] = cp.colors[1];
+    colors[2] = cp.colors[2];
+    colors[3] = cp.colors[3];
+    lrcItems = cp.lrcItems;
+    updateMutex = new QMutex;
+    threadRunning = true;
+    //lrcThread = QThread::create(lrcDispaleThread, this);
+    //lrcThread->start();
+}
+
 GLrc::~GLrc()
 {
     threadRunning = false;
-    for(int i = 0; i < 100 && lrcThread->isRunning(); i++) thread()->msleep(100);
-    if(lrcThread->isRunning())
+    if(lrcThread != nullptr)
     {
-        qDebug() << "GLrc:listen stop time out,to terminate...";
-        lrcThread->terminate();
+        for(int i = 0; i < 100 && lrcThread->isRunning(); i++) thread()->msleep(100);
+        if(lrcThread->isRunning())
+        {
+            qDebug() << "GLrc:listen stop time out,to terminate...";
+            lrcThread->terminate();
+        }
+        while (lrcThread->isRunning()) { thread()->msleep(1);}
+        delete lrcThread;
     }
-    while (lrcThread->isRunning()) { thread()->msleep(1);}
-    delete lrcThread;
     delete updateMutex;
 }
 
@@ -48,8 +65,10 @@ void GLrc::setLrc(QString lrc, int maxLine)
     lrcItem lrcLine;
     int lineSum = 0;
     QList<qint64> lrcTimes;
-    for(auto itm:lrcLines)
+    //for(auto itm:lrcLines)
+    for(int var = 0; var < lrcLines.length(); var++)
     {
+        auto& itm = lrcLines[var];
         qint64 time = getTimeOfLrcLine(itm);
         QList<qint64> times;
         while(time != -1)
@@ -106,11 +125,15 @@ void GLrc::setLrc(QString lrc, int maxLine)
 QString GLrc::getLrc(bool moreTime /*= false*/)
 {
     QString lrcFile;
-    for(auto& itm:lrcItems)
+    //for(auto& itm:lrcItems)
+    for(int var = 0; var < lrcItems.length(); var++)
     {
+        auto& itm = lrcItems[var];
         QString times = "";
-        for(auto i:itm.times)
+        //for(auto i:itm.times)
+        for (int var = 0; var < itm.times.length(); ++var)
         {
+            auto i = itm.times[var];
             QTime t = QTime::fromMSecsSinceStartOfDay(i);
             QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
             times += "[" + ts + "]";
@@ -118,8 +141,10 @@ QString GLrc::getLrc(bool moreTime /*= false*/)
         if(moreTime)
         {
             QStringList lines = itm.line.toStringList();
-            for(auto& line:lines)
+            //for(auto& line:lines)
+            for(int var = 0; var < lines.length(); var++)
             {
+                auto& line = lines[var];
                 lrcFile += times + line + "\n";
             }
         }
@@ -450,19 +475,23 @@ QString GLrc::getHtmlFx2(qint64 time,bool includTimes, qint64* line, int* pos, b
 
 QString GLrc::toSrt(qint64 maximumTime)
 {
-    QMutexLocker locker(updateMutex);
+    //QMutexLocker locker(updateMutex);
     QList<lrcItem> temp;
-    for(auto& itm:lrcItems)
+    //for(auto& itm:lrcItems)
+    for(int var = 0; var < lrcItems.length(); var++)
     {
-        for(auto i:itm.times)
+        auto& itm = lrcItems[var];
+        //for(auto i:itm.times)
+        for(int var = 0; var < itm.times.length(); var++)
         {
+            auto i = itm.times[var];
             lrcItem t;
             t.times << i;
             t.line = itm.line;
             temp << t;
         }
     }
-    locker.unlock();
+    //locker.unlock();
     prLrcSort(temp);
     QString srt;
     qint64 cul = 1;
@@ -486,9 +515,9 @@ QString GLrc::toSrt(qint64 maximumTime)
                 timeOut = maximumTime;
             }
             QTime t = QTime::fromMSecsSinceStartOfDay(time1);
-            QString ts1 = t.toString("mm:ss,zzz");
+            QString ts1 = t.toString("hh:mm:ss,zzz");
             t = QTime::fromMSecsSinceStartOfDay(time1 + timeOut);
-            QString ts2 = t.toString("mm:ss,zzz");
+            QString ts2 = t.toString("hh:mm:ss,zzz");
             srt += QString::number(cul) + "\n" + ts1 + " --> " + ts2 + "\n" + temp[var].line.toString(false) + "\n\n";
             cul++;
         }
@@ -528,9 +557,9 @@ QString GLrc::toSrt(qint64 maximumTime)
                     timeOut = maximumTime;
                 }
                 QTime t = QTime::fromMSecsSinceStartOfDay(time1);
-                QString ts1 = t.toString("mm:ss,zzz");
+                QString ts1 = t.toString("hh:mm:ss,zzz");
                 t = QTime::fromMSecsSinceStartOfDay(time1 + timeOut);
-                QString ts2 = t.toString("mm:ss,zzz");
+                QString ts2 = t.toString("hh:mm:ss,zzz");
                 srt += QString::number(cul) + "\n" + ts1 + " --> " + ts2 + "\n" + subSrt + "\n\n";
                 cul++;
             }
@@ -630,10 +659,14 @@ int GLrc::getSelectLine()
 qint64 GLrc::getLrcTime(qint64 time)
 {
     qint64 localTime = -1;
-    for(auto& itm:lrcItems)
+    //for(auto& itm:lrcItems)
+    for(int var = 0; var < lrcItems.length(); var++)
     {
-        for(auto i:itm.times)
+        auto& itm = lrcItems[var];
+        //for(auto i:itm.times)
+        for(int var = 0; var < itm.times.length(); var++)
         {
+            auto i = itm.times[var];
             if(i > localTime && i <= time)
                 localTime = i;
         }
@@ -644,10 +677,13 @@ qint64 GLrc::getLrcTime(qint64 time)
 qint64 GLrc::getLrcNextTime(qint64 time)
 {
     qint64 localTime = std::numeric_limits<qint64>::max();
-    for(auto& itm:lrcItems)
+    //for(auto& itm:lrcItems)
+    for(int var = 0; var < lrcItems.length(); var++)
     {
-        for(auto i:itm.times)
+        auto& itm = lrcItems[var];
+        for(int var = 0; var < itm.times.length(); var++)
         {
+            auto i = itm.times[var];
             if(i < localTime && i >= time)
                 localTime = i;
         }
@@ -666,11 +702,18 @@ qint64 GLrc::getSelectTime()
     return lrcItems[selectLine].times[selectTime];
 }
 
-QString GLrc::getLine(int line)
+QString GLrc::getLineString(int line,bool incuudeTimes)
 {
     if(line >= lrcItems.size())
         return "";
-    return lrcItems[line].line.toString();
+    return lrcItems[line].line.toString(incuudeTimes);
+}
+
+QList<qint64> GLrc::getLineTime(int line)
+{
+    if(line >= lrcItems.size())
+        return QList<qint64>();
+    return lrcItems[line].times;
 }
 
 QString GLrc::getTimes(int line)
@@ -678,8 +721,10 @@ QString GLrc::getTimes(int line)
     if(line >= lrcItems.size())
         return "";
     QString times;
-    for(auto itm:(lrcItems[line].times))
+    //for(auto itm:(lrcItems[line].times))
+    for(int var = 0; var < lrcItems[line].times.length(); var++)
     {
+        auto itm = lrcItems[line].times[var];
         QTime t = QTime::fromMSecsSinceStartOfDay(itm);
         QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
         times += "[" + ts + "]";
@@ -836,29 +881,36 @@ qint64 GLrc::removeTime(int line, int itm)
     return time;
 }
 
-void GLrc::mergeDuplicates()
+void GLrc::mergeDuplicates(mode m)
 {
     QMutexLocker locker(updateMutex);
     int len = lrcItems.size();
-    for(int index = 0; index < lrcItems.size(); index++)
+    if(m == AUTO || m == MERGE)
     {
-        for(int i = index + 1; i < lrcItems.size(); i++)
+        for(int index = 0; index < lrcItems.size(); index++)
         {
-            if(lrcItems[index].line == lrcItems[i].line)
+            for(int i = index + 1; i < lrcItems.size(); i++)
             {
-                lrcItems[index].times << lrcItems[i].times;
-                lrcItems.remove(i);
-                i--;
+                if(lrcItems[index].line == lrcItems[i].line)
+                {
+                    lrcItems[index].times << lrcItems[i].times;
+                    lrcItems.remove(i);
+                    i--;
+                }
             }
         }
     }
-    if(len == lrcItems.size())
+    if((len == lrcItems.size() && m == AUTO) || m == SPLIT)
     {
         QList<lrcItem> temp;
-        for(auto& itm:lrcItems)
+        //for(auto& itm:lrcItems)
+        for(int var = 0; var < lrcItems.length(); var++)
         {
-            for(auto i:itm.times)
+            auto& itm = lrcItems[var];
+            //for(auto i:itm.times)
+            for(int var = 0; var < itm.times.length(); var++)
             {
+                auto i = itm.times[var];
                 lrcItem t;
                 t.times << i;
                 t.line = itm.line;
@@ -916,8 +968,10 @@ qint64 GLrc::getTimeOfLrcLine(QString &lrcLine)
 qint64 GLrc::getSmallTime(lrcItem line)
 {
     qint64 time = INT64_MAX;
-    for(auto i:line.times)
+    //for(auto i:line.times)
+    for(int var = 0; var < line.times.length(); var++)
     {
+        auto i = line.times[var];
         if(i < time)
         {
             time = i;
@@ -959,8 +1013,10 @@ void GLrc::status(qint64 time,QList<int> *line, QList<int> *word,QList<int>* wor
     qint64 nextTime = getLrcNextTime(localTime + 1);
     for (int var = 0; var < lrcItems.length(); ++var)
     {
-        for(auto& itm : lrcItems[var].times)
+        //for(auto& itm : lrcItems[var].times)
+        for(int i = 0; i < lrcItems[var].times.length(); i++)
         {
+            auto& itm = lrcItems[var].times[i];
             if(itm == localTime)
             {
                 line->push_back(var);
@@ -1000,11 +1056,15 @@ int GLrc::getTextSize(int w, int h)
     myFont.setPixelSize(10);
     QFontMetrics fm(myFont);
     int strLength = 0;
-    for(auto& itm : lrcItems)
+    //for(auto& itm : lrcItems)
+    for(int var = 0; var < lrcItems.length(); var++)
     {
+        auto& itm = lrcItems[var];
         QStringList sl = itm.line.toStringList(false);
-        for (auto& itm : sl)
+        //for (auto& itm : sl)
+        for(int var = 0; var < sl.length(); var++)
         {
+            auto& itm = sl[var];
             if(fm.horizontalAdvance(itm) > strLength)
             {
                 strLength = fm.horizontalAdvance(itm);
@@ -1052,6 +1112,27 @@ int GLrc::size()
 void GLrc::setSelectLine(int line)
 {
     selectLine = line;
+}
+
+void GLrc::setSeleteTime(qint64 time)
+{
+    selectLine = -1;
+    qint64 lrcTime = getLrcTime(time);
+    for (int var = 0; var < lrcItems.length(); ++var)
+    {
+        for (int var2 = 0; var2 < lrcItems[var].times.length(); ++var2)
+        {
+            if(lrcItems[var].times[var2] == lrcTime)
+            {
+                selectLine = var;
+                break;
+            }
+        }
+        if(selectLine != -1)
+        {
+            break;
+        }
+    }
 }
 
 bool GLrc::removeLine(int line)
@@ -1146,6 +1227,27 @@ int GLrc::deleteAllWordTime()
     return rev;
 }
 
+int GLrc::replaceTime(qint64 sorce, qint64 target)
+{
+    int retv = 0;
+    for (int var = 0; var < lrcItems.length(); ++var)
+    {
+        for (int i = 0; i < lrcItems[var].times.length(); ++i)
+        {
+            if(lrcItems[var].times[i] == sorce)
+            {
+                lrcItems[var].times[i] = target;
+                retv++;
+            }
+        }
+    }
+    if(retv > 0)
+    {
+        emit lrcChanged(1);
+    }
+    return retv;
+}
+
 void GLrc::setDispaleColor(const QColor &_default, const QColor &_selectLine, const QColor &_selectLineOver, const QColor &_selectWord)
 {
     colors[0] = _default;
@@ -1166,10 +1268,11 @@ QSize GLrc::setLabelSize(QSize _labelSize)
 
 void GLrc::updateLrcwindow(qint64 time)
 {
-    QMutexLocker locker(updateMutex);
+    //qDebug() << time;
+    //QMutexLocker locker(updateMutex);
     if(labelSize.isNull() || labelSize.height() == 0 || labelSize.width() == 0)
     {
-        locker.unlock();
+        //locker.unlock();
         return;
     }
     int w = labelSize.width();
@@ -1177,7 +1280,7 @@ void GLrc::updateLrcwindow(qint64 time)
     int fountSize = getTextSize(w, h);
     if(fountSize <= 0)
     {
-        locker.unlock();
+        //locker.unlock();
         return;
     }
     QList<int> selectLine, selectWord, wordLength, wordSize;
@@ -1303,8 +1406,10 @@ void GLrc::updateLrcwindow(qint64 time)
             QStringList sl = lrcItems[var].line.toStringList(false);
             bool fast = true;
             QFontMetrics fm(font);
-            for (auto& itm : sl)
+            //for (auto& itm : sl)
+            for(int var = 0; var < sl.length(); var++)
             {
+                auto& itm = sl[var];
                 //计算这一行宽度，计算横坐标
                 pos.setY(pos.y() + fm.height());
                 if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
@@ -1351,8 +1456,10 @@ void GLrc::updateLrcwindow(qint64 time)
             painter.setFont(font);
             QFontMetrics fm(font);
             QStringList sl = lrcItems[var].line.toStringList(false);
-            for (auto& itm : sl)
+            //for (auto& itm : sl)
+            for(int var = 0; var < sl.length(); var++)
             {
+                auto& itm = sl[var];
                 //计算这一行宽度，计算横坐标
                 pos.setY(pos.y() + fm.height());
                 if(pos.y() > 0 && pos.y() < h + fm.height()  && itm.length() > 0)
@@ -1366,7 +1473,7 @@ void GLrc::updateLrcwindow(qint64 time)
         }
         pos.setY(pos.y() + fountSize / 2);
     }
-    locker.unlock();
+    //locker.unlock();
     //while(!imgReadEd)thread()->msleep(1);
     if(imgReadEd)
     {

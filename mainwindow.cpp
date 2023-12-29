@@ -24,12 +24,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     qRegisterMetaType<QPixmap*>("QPixmap*");
     lrc = new GLrc;
-    connect(lrc, SIGNAL(lrcChanged()), this, SLOT(lrcChanged()));
+    connect(lrc, SIGNAL(lrcChanged(int)), this, SLOT(lrcChanged(int)));
     connect(lrc, SIGNAL(lrcImgChanged()), this, SLOT(lrcImgChanged()));
     ui->textEdit->setReadOnly(true);
     connect(ui->textEdit, SIGNAL(keyProc(QKeyEvent*)), this, SLOT(keyProc(QKeyEvent*)));
     connect(ui->textEdit, SIGNAL(focusOutProc(QFocusEvent*)), this, SLOT(focusOutProc(QFocusEvent*)));
-    connect(ui->progressBar, SIGNAL(valFromMouse(int)), this, SLOT(valFromMouse(int)));
+    connect(ui->progressBar, SIGNAL(valFromMouse(qint64)), this, SLOT(valFromMouse(qint64)));
+    connect(ui->label_pcm, SIGNAL(valFromMouse(qint64)), this, SLOT(valFromMouse(qint64)));
     ui->textEdit->setFocus();
     setWindowTitle(tr("New File") + " - LrcEditer powered by GXUP320");
     //mediaPlayer = new QMediaPlayer;
@@ -114,6 +115,7 @@ void MainWindow::positionChanged(qint64 position)
     if(position > ui->progressBar->maximum())
         position = ui->progressBar->maximum();
     ui->progressBar->setValue(position);
+    ui->label_pcm->setTime(position);
     QTime tl = QTime::fromMSecsSinceStartOfDay(position);
     QString length = tl.toString("mm:ss.") + tl.toString("zzz").left(2);
     ui->pushButton_inst->setText(tr("inst") + " [" + length + "]");
@@ -243,7 +245,7 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
     }
 }
 
-void MainWindow::valFromMouse(int val)
+void MainWindow::valFromMouse(qint64 val)
 {
     player->setPosition(val);
 }
@@ -261,6 +263,8 @@ void MainWindow::loadStatus(qint64 position, bool isEnd)
         ui->progressBar->setTextVisible(false);
         ui->progressBar->setMaximum(position);
         ui->label_length->setText(length);
+        ui->label_pcm->setPcm(player->getPcm());
+        ui->label_pcm->setLrc(lrc);
         player->play();
         ui->statusbar->showMessage(tr("Music playing."), 3000);
     }
@@ -288,7 +292,7 @@ void MainWindow::loadStatus(qint64 position, bool isEnd)
     }
 }
 
-void MainWindow::lrcChanged()
+void MainWindow::lrcChanged(int md)
 {
     if(lrcFileName == "")
     {
@@ -297,6 +301,10 @@ void MainWindow::lrcChanged()
     else
     {
         setWindowTitle("*" + lrcFileName + " - LrcEditer powered by GXUP320");
+    }
+    if(md != 0)
+    {
+        displayLrc(-1,true);
     }
 }
 
@@ -423,8 +431,10 @@ void MainWindow::loadLrc(QString fileName)
             QStringList lrcLines = lrcFull.split("\n");
             lrcFull = "";
             QString re;
-            for (auto& lrcLine : lrcLines)
+            //for (auto& lrcLine : lrcLines)
+            for(int var = 0; var < lrcLines.length(); var++)
             {
+                auto& lrcLine = lrcLines[var];
                 if(lrcLine.right(1) == "]")
                 {
                     if(lrcLine.left(4) == "[al:")
@@ -1307,4 +1317,3 @@ void MainWindow::on_pushButton_time_offset_clicked()
         displayLrc(-1, true);
     }
 }
-
