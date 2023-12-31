@@ -43,6 +43,7 @@ SOURCES += \
     gaudioplayer.cpp \
     glrc.cpp \
     glrcline.cpp \
+    gpcmbar.cpp \
     gprogressbar.cpp \
     lineedit.cpp \
     lrcedit.cpp \
@@ -50,8 +51,7 @@ SOURCES += \
     lrcqtextedit.cpp \
     lrcsearchneteasyform.cpp \
     main.cpp \
-    mainwindow.cpp \
-    processlabel.cpp
+    mainwindow.cpp
 
 HEADERS += \
     batchprocessing.h \
@@ -59,14 +59,14 @@ HEADERS += \
     gaudioplayer.h \
     glrc.h \
     glrcline.h \
+    gpcmbar.h \
     gprogressbar.h \
     lineedit.h \
     lrcedit.h \
     lrcform.h \
     lrcqtextedit.h \
     lrcsearchneteasyform.h \
-    mainwindow.h \
-    processlabel.h
+    mainwindow.h
 
 FORMS += \
     batchprocessing.ui \

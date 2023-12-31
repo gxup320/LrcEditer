@@ -43,7 +43,7 @@ signals:
 
 private:
     QList<lrcLineItem> lineItems;
-    QList<QString> lines;
+    QStringList lines;
     //单字符false，连续字符返回true
     bool continuous(QChar ch, QChar next);
     QJsonArray nextChar;

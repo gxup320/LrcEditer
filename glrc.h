@@ -7,7 +7,7 @@
 #include <glrcline.h>
 
 class QThread;
-class QMutex;
+//class QMutex;
 
 struct lrcItem
 {
@@ -89,14 +89,15 @@ private:
     qint64 lrcDispaleTime = 0;
     static void lrcDispaleThread(GLrc* lrc);
     QSize labelSize = {0 , 0};
-    void status(qint64 time,QList<int> *line, QList<int> *word,QList<int>* wordSeleteLength, QList<int> *wordSize, QList<qint64> *startTime, QList<qint64> *endTime);
-    int getTextSize(int w, int h);
-    QMutex * updateMutex = nullptr;
-    QMutex * lrcDispale = nullptr;
+    void status(QList<lrcItem>& c_lrcItems, qint64 time,QList<int> *line, QList<int> *word,QList<int>* wordSeleteLength, QList<int> *wordSize, QList<qint64> *startTime, QList<qint64> *endTime);
+    int getTextSize(QList<lrcItem>& c_lrcItems, int w, int h);
+    //QMutex * updateMutex = nullptr;
+    //QMutex * lrcDispale = nullptr;
     int movSpeed(int length);
     bool m_disableMovingPicture = true;
     QPixmap* image = nullptr;
     QPixmap* imageNext = nullptr;
+    QPixmap* imageGet = nullptr;
     bool imgReadEd = true;
     QColor* colors;
 };

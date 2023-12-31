@@ -1069,7 +1069,7 @@ Alt+N:word time 0.1 s delay</string>
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="ProcessLabel" name="label_pcm">
+     <widget class="GPcmbar" name="label_pcm">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -1145,9 +1145,9 @@ Alt+N:word time 0.1 s delay</string>
    <header location="global">gprogressbar.h</header>
   </customwidget>
   <customwidget>
-   <class>ProcessLabel</class>
+   <class>GPcmbar</class>
    <extends>QLabel</extends>
-   <header location="global">processlabel.h</header>
+   <header location="global">gpcmbar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

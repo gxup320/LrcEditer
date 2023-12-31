@@ -121,41 +121,6 @@ void MainWindow::positionChanged(qint64 position)
     ui->pushButton_inst->setText(tr("inst") + " [" + length + "]");
     if(ui->checkBox_debug->isChecked())
     {
-        //QString fullLrc = ui->textEdit->toPlainText();
-        //static QList<lrcTime> lrcTimes;
-        //if(LastFillLrc != fullLrc)
-        //{
-        //    lrcTimes.clear();
-        //    LastFillLrc = fullLrc;
-        //    lrcTime lrcTimeTemp;
-        //    QStringList lrcLines = fullLrc.split("\n");
-        //    QString lrcLine;
-        //    qint64 time;
-        //    for (int i = 0; i < lrcLines.length(); i++) {
-        //        lrcLine = lrcLines[i];
-        //        time = getTimeOfLrcLine(lrcLine);
-        //        while(time != -1)
-        //        {
-        //            lrcTimeTemp.line = i;
-        //            lrcTimeTemp.time = time;
-        //            lrcTimes.append(lrcTimeTemp);
-        //            time = getTimeOfLrcLine(lrcLine);
-        //        }
-        //    }
-        //    lrcTimesSort(lrcTimes);
-        //}
-        ////get pos of time
-        //int pos = -1;
-        //for(auto &lrcTime:lrcTimes)
-        //{
-        //    if(lrcTime.time <= position)
-        //        pos = lrcTime.line;
-        //}
-        //if(LastLine != pos)
-        //{
-        //    setSelectLrcLineShowLine(pos);
-        //    LastLine = pos;
-        //}
         displayLrc(position);
     }
     else

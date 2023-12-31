@@ -94,7 +94,7 @@ QString GLrcLine::toString(bool incuudeTimes)
     //for (const auto& itm:lineItems)
     for(int var = 0; var < lineItems.length(); var++)
     {
-        const auto& itm = lineItems[var];
+        const lrcLineItem& itm = lineItems[var];
         if(incuudeTimes && itm.time != -1)
         {
             QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
@@ -117,7 +117,7 @@ QStringList GLrcLine::toStringList(bool incuudeTimes)
     //for (const auto& itm:lineItems)
     for(int var = 0; var < lineItems.length(); var++)
     {
-        const auto& itm = lineItems[var];
+        const lrcLineItem& itm = lineItems[var];
         if(incuudeTimes && itm.time != -1)
         {
             QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
@@ -136,7 +136,7 @@ QString GLrcLine::toHtml(bool sel, int lfCount)
 {
     QString html;
     QString word2[3] = {"w1", "w2", "w3"};
-    for (int var = 0; var < lineItems.length(); ++var)
+    for (int var = 0; var < lineItems.size(); ++var)
     {
         QString lWord = lineItems[var].word;
         if(lWord == "")
@@ -370,13 +370,13 @@ bool GLrcLine::continuous(QChar ch, QChar next)
     //for (const auto& itm : qAsConst(nextChar))
     for(int var = 0; var < nextChar.size(); var++)
     {
-        const auto& itm = nextChar[var];
+        const QJsonValue& itm = nextChar[var];
         QJsonObject obj = itm.toObject();
         QJsonArray arr = obj.find("char")->toArray();
         //for(const auto& itm : qAsConst(arr))
         for(int var = 0; var < arr.size(); var++)
         {
-            const auto& itm = arr[var];
+            const QJsonValue& itm = arr[var];
             QJsonObject c = itm.toObject();
             int s = 0;
             if(c.find("start") != c.end())
@@ -393,7 +393,7 @@ bool GLrcLine::continuous(QChar ch, QChar next)
                 //for(const auto& itm : qAsConst(arr))
                 for(int var = 0; var < arr.size(); var++)
                 {
-                    const auto& itm = arr[var];
+                    const QJsonValue& itm = arr[var];
                     QJsonObject c = itm.toObject();
                     int s = 0;
                     if(c.find("start") != c.end())

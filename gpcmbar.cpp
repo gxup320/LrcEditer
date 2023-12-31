@@ -1,28 +1,50 @@
-#include "processlabel.h"
+#include "gpcmbar.h"
 #include <QBuffer>
 #include <QPainter>
 #include <QPixmap>
 #include <QMouseEvent>
+#include <QThread>
 #include "glrc.h"
 
-ProcessLabel::ProcessLabel(QWidget *parent)
+GPcmbar::GPcmbar(QWidget *parent)
     :QLabel(parent)
 {
-    m_showImage = new QPixmap(width(),200);
+    m_showImage = new QPixmap;
+    m_showImageNext = new QPixmap;
     m_pcmImage = new QPixmap;
     m_lrcImage = new QPixmap;
-    m_lrcShowImage = new QPixmap(width(),200);
+    m_lrcShowImage = new QPixmap;
     setMouseTracking(true);
+    connect(this, SIGNAL(drawPcmCached()), this, SLOT(displayPcm()));
+    threadRunning = true;
+    pcmThread = QThread::create(pcmDispaleThread, this);
+    pcmThread->start();
 }
 
-void ProcessLabel::setPcm(QByteArray pcm)
+GPcmbar::~GPcmbar()
 {
-    m_length = pcm.length() / 4;
+    threadRunning = false;
+    if(pcmThread != nullptr)
+    {
+        for(int i = 0; i < 100 && pcmThread->isRunning(); i++) thread()->msleep(100);
+        if(pcmThread->isRunning())
+        {
+            qDebug() << "GLrc:listen stop time out,to terminate...";
+            pcmThread->terminate();
+        }
+        while (pcmThread->isRunning()) { thread()->msleep(1);}
+        delete pcmThread;
+    }
+}
+
+void GPcmbar::setPcm(QByteArray pcm)
+{
+    m_length = pcm.length() / 2 / 441;
     QBuffer buffer;
     buffer.setBuffer(&pcm);
     buffer.open(QBuffer::ReadOnly);
     //每秒20像素
-    *m_pcmImage = QPixmap(pcm.length() / 2 / 441, 200);
+    *m_pcmImage = QPixmap(m_length, 200);
     m_pcmImage->fill(Qt::black);
     *m_lrcImage = *m_pcmImage;
     m_lrcImage->fill(QColor(0,0,0,0));
@@ -63,94 +85,73 @@ void ProcessLabel::setPcm(QByteArray pcm)
     }
 }
 
-void ProcessLabel::setTime(qint64 time)
+void GPcmbar::setTime(qint64 time)
 {
     //将时间转换为偏移像素
     setPos(time / 5);
 }
 
-void ProcessLabel::setPos(qint64 pos)
+void GPcmbar::setPos(qint64 pos)
 {
     if(pos != m_pos)
     {
         m_pos = pos;
-        if(m_pause == false)
-            drawPcm();
+        //if(m_pause == false)
+            //drawPcm();
     }
 }
 
-void ProcessLabel::setLrc(GLrc* lrc)
+void GPcmbar::setLrc(GLrc* lrc)
 {
     m_lrc = lrc;
-    return;
-    GLrc l_lrc = *m_lrc;
-    l_lrc.mergeDuplicates(GLrc::SPLIT);
-    QPainter painter(m_lrcImage);
-    m_lrcImage->fill(QColor(0,0,0,0));
-    for (int var = 0; var < l_lrc.size(); ++var)
-    {
-        QString lrcLine = l_lrc.getLineString(var, false);
-        if(lrcLine == "")
-        {
-            continue;
-        }
-        QList<qint64> time = l_lrc.getLineTime(var);
-        if(time.length() < 1)
-        {
-            continue;
-        }
-        qint64 nextTime = l_lrc.getLrcNextTime(time[0] + 1);
-        if(nextTime == -1)
-        {
-            nextTime = m_length;
-        }
-        //画出lrc
-        QPixmap lrcPixmap((nextTime - time[0]) / 5,200);
-        lrcPixmap.fill(QColor(255,0,0,50));
-        {
-            QPainter painter(&lrcPixmap);
-            painter.setPen(QPen(QColor(255,0,0)));
-            painter.setBrush(QBrush(QColor(0,0,0, 0)));
-            painter.drawRect(QRect(0,0,lrcPixmap.width() - 1,200));
-            painter.setPen(QPen(QColor(255,100,255)));
-            painter.drawText(lrcPixmap.rect(),lrcLine);
-        }
-        //qDebug() << lrcLine;
-        painter.drawPixmap(QPoint(time[0] / 5,0), lrcPixmap);
-    }
 }
 
-void ProcessLabel::drawPcm()
+void GPcmbar::drawPcm()
 {
     if(m_pause == false)
         m_displayPos = m_pos;
-    int mid = m_showImage->width() / 2;
-    m_showImage->fill(Qt::black);
+    if(m_showImageNext->width() == 0)
+        return;
+    int mid = m_showImageNext->width() / 2;
+    m_showImageNext->fill(Qt::black);
     //画出底部横线
-    QPainter painter(m_showImage);
-    painter.setPen(QPen(QColor(0,255,0)));
-    QLine line;
-    line.setLine(0,100,m_showImage->width(),100);
-    painter.drawLine(line);
-    //画出PCM
-    painter.drawPixmap(QPoint(mid - m_displayPos,0), *m_pcmImage);
-    //画出LRC
-    //painter.drawPixmap(QPoint(mid - pos,0), *m_lrcImage);
-    if(m_onLrcItem == -1)
-        formatLrc();
-    drowLrc();
-    painter.drawPixmap(QPoint(0,0), *m_lrcShowImage);
-    //画出中心线
-    painter.setPen(QPen(QColor(0,0,255)));
-    line.setLine(mid,0,mid,200);
-    painter.drawLine(line);
-    painter.setPen(QPen(QColor(0,0,0, 100)));
-    painter.setBrush(QBrush(QColor(0,0,0, 100)));
-    painter.drawRect(QRect(mid,0,mid,200));
-    setPixmap(*m_showImage);
+    QPainter painter(m_showImageNext);
+    if(painter.isActive())
+    {
+        painter.setPen(QPen(QColor(0,255,0)));
+        QLine line;
+        line.setLine(0,100,m_showImageNext->width(),100);
+        painter.drawLine(line);
+        //画出PCM
+        painter.drawPixmap(QPoint(mid - m_displayPos,0), *m_pcmImage);
+        //画出LRC
+        //painter.drawPixmap(QPoint(mid - pos,0), *m_lrcImage);
+        if(m_onLrcItem == -1)
+            formatLrc();
+        drowLrc();
+        painter.drawPixmap(QPoint(0,0), *m_lrcShowImage);
+        //画出中心线
+        painter.setPen(QPen(QColor(0,0,255)));
+        line.setLine(mid,0,mid,200);
+        painter.drawLine(line);
+        painter.setPen(QPen(QColor(0,0,0, 100)));
+        painter.setBrush(QBrush(QColor(0,0,0, 100)));
+        painter.drawRect(QRect(mid,0,mid,200));
+        if(displayed)
+        {
+            std::swap(m_showImage, m_showImageNext);
+            emit drawPcmCached();
+        }
+    }
 }
 
-void ProcessLabel::formatLrc()
+void GPcmbar::displayPcm()
+{
+    setPixmap(*m_showImage);
+    displayed = true;
+}
+
+void GPcmbar::formatLrc()
 {
     if(m_lrc == nullptr)
     {
@@ -207,7 +208,7 @@ void ProcessLabel::formatLrc()
     }
 }
 
-void ProcessLabel::drowLrc()
+void GPcmbar::drowLrc()
 {
     m_lrcShowImage->fill(QColor(0,0,0,0));
     QPainter painter(m_lrcShowImage);
@@ -233,28 +234,29 @@ void ProcessLabel::drowLrc()
     }
 }
 
-void ProcessLabel::resizeEvent(QResizeEvent *event)
+void GPcmbar::resizeEvent(QResizeEvent *event)
 {
     *m_showImage = QPixmap(width(),200);
+    *m_showImageNext = *m_showImage;
     *m_lrcShowImage = *m_showImage;
-    drawPcm();
+    //drawPcm();
     QLabel::resizeEvent(event);
 }
 
-void ProcessLabel::enterEvent(QEnterEvent *event)
+void GPcmbar::enterEvent(QEnterEvent *event)
 {
     m_pause = true;
     m_pausePos = m_displayPos;
 }
 
-void ProcessLabel::leaveEvent(QEvent *event)
+void GPcmbar::leaveEvent(QEvent *event)
 {
     m_pause = false;
     m_onLrcItem = -1;
-    drawPcm();
+    //drawPcm();
 }
 
-void ProcessLabel::mousePressEvent(QMouseEvent *event)
+void GPcmbar::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton)
     {
@@ -266,12 +268,20 @@ void ProcessLabel::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void ProcessLabel::mouseMoveEvent(QMouseEvent *event)
+void GPcmbar::mouseMoveEvent(QMouseEvent *event)
 {
     if(m_moveing != -1 && m_onLrcItem == -1)
     {
         //移动进度条
         m_displayPos = m_pausePos + m_moveing - event->pos().x();
+        if(m_displayPos > m_length)
+        {
+            m_displayPos = m_length;
+        }
+        if(m_displayPos < 0)
+        {
+            m_displayPos = 0;
+        }
         drawPcm();
     }
     else if(m_moveing != -1 && m_onLrcItem != -1)
@@ -338,7 +348,7 @@ void ProcessLabel::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void ProcessLabel::mouseReleaseEvent(QMouseEvent *event)
+void GPcmbar::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton && m_moveing != -1 && m_displayPos != m_pausePos && m_onLrcItem == -1)
     {
@@ -359,4 +369,22 @@ void ProcessLabel::mouseReleaseEvent(QMouseEvent *event)
         }
     }
     m_moveing = -1;
+}
+
+void GPcmbar::pcmDispaleThread(GPcmbar *pcmbar)
+{
+    while(pcmbar->threadRunning)
+    {
+        QDateTime current_date_time = QDateTime::currentDateTime();
+        if(pcmbar->m_pause == false)
+        {
+            pcmbar->drawPcm();
+        }
+        int timeout = QDateTime::currentDateTime().toMSecsSinceEpoch() - current_date_time.toMSecsSinceEpoch();
+        //qDebug() << timeout;
+        if(timeout < 17)
+        {
+            QThread::msleep(17 - timeout);
+        }
+    }
 }
