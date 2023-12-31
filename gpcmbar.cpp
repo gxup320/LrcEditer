@@ -110,8 +110,14 @@ void GPcmbar::drawPcm()
 {
     if(m_pause == false)
         m_displayPos = m_pos;
+    if(m_showImageNext->width() != width())
+    {
+        *m_showImageNext = QPixmap(width(),200);
+    }
     if(m_showImageNext->width() == 0)
+    {
         return;
+    }
     int mid = m_showImageNext->width() / 2;
     m_showImageNext->fill(Qt::black);
     //画出底部横线
@@ -210,6 +216,14 @@ void GPcmbar::formatLrc()
 
 void GPcmbar::drowLrc()
 {
+    if(m_lrcShowImage->width() != width())
+    {
+        *m_lrcShowImage = QPixmap(width(),200);
+    }
+    if(m_lrcShowImage->width() == 0)
+    {
+        return;
+    }
     m_lrcShowImage->fill(QColor(0,0,0,0));
     QPainter painter(m_lrcShowImage);
     for (int var = 0; var < m_lrcPosItems.length(); ++var)
@@ -236,9 +250,9 @@ void GPcmbar::drowLrc()
 
 void GPcmbar::resizeEvent(QResizeEvent *event)
 {
-    *m_showImage = QPixmap(width(),200);
-    *m_showImageNext = *m_showImage;
-    *m_lrcShowImage = *m_showImage;
+    //*m_showImage = QPixmap(width(),200);
+    //*m_showImageNext = QPixmap(width(),200);
+    //*m_lrcShowImage = QPixmap(width(),200);
     //drawPcm();
     QLabel::resizeEvent(event);
 }
