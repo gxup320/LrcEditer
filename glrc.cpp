@@ -19,9 +19,10 @@ GLrc::GLrc(QObject *parent)
     colors[1] = QColor(255,255,255,230);
     colors[2] = QColor(0,255,0,230);
     colors[3] = QColor(0,0,255,230);
-    backgroundColor = new QColor(0,0,0,0);
+    backgroundColor = new QColor(100,100,100);
     backgroundImage = new QImage;
     backgroundPixmap = new QPixmap;
+    backgroundMode = 0;
     //updateMutex = new QMutex;
     threadRunning = true;
     lrcThread = QThread::create(lrcDispaleThread, this);

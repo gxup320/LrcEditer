@@ -200,15 +200,22 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
     {
         //videoOutput->show();
         ui->label_Cover->setText(tr("is video"));
-        lrc->setBackground(QColor(255,255,255));
+        lrc->setBackground(QColor(100,100,100));
     }
     else
     {
         //videoOutput->hide();
         QVariant img = mediaData.value(QMediaMetaData::ThumbnailImage);
         QPixmap cove =QPixmap::fromImage(img.value<QImage>());
-        lrc->setBackground(img.value<QImage>());
         ui->label_Cover->setPixmap(cove.scaled(200,200));
+        if(img.isNull())
+        {
+            lrc->setBackground(QColor(100,100,100));
+        }
+        else
+        {
+            lrc->setBackground(img.value<QImage>());
+        }
     }
 }
 
