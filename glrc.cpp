@@ -15,11 +15,11 @@ GLrc::GLrc(QObject *parent)
     : QObject{parent}
 {
     colors = new QColor[4];
-    colors[0] = QColor(200,200,200,200);
-    colors[1] = QColor(255,255,255,230);
-    colors[2] = QColor(0,255,0,230);
-    colors[3] = QColor(0,0,255,230);
-    backgroundColor = new QColor(100,100,100);
+    colors[0] = QColor(0,0,0);
+    colors[1] = QColor(255,0,0);
+    colors[2] = QColor(0,255,0);
+    colors[3] = QColor(0,0,255);
+    backgroundColor = new QColor(255,255,255);
     backgroundImage = new QImage;
     backgroundPixmap = new QPixmap;
     backgroundMode = 0;
@@ -1495,7 +1495,7 @@ void GLrc::updateLrcwindow(qint64 time)
                     if(n_w3 > 0 && fm.height() > 0)
                     {
                         QPixmap n_image_sel(n_w2, fm.height());
-                        n_image_sel.fill(QColor(0,0,0,0));
+                        n_image_sel.fill(*backgroundColor);
                         QPainter n_painter_sel(&n_image_sel);
                         if(backgroundMode == 1)
                             n_painter_sel.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()));
@@ -1505,7 +1505,7 @@ void GLrc::updateLrcwindow(qint64 time)
                         n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord[n_selID], wordLength[n_selID]));
                         painter.drawPixmap(QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()), n_image_sel);
                         QPixmap n_image(n_w3, fm.height());
-                        n_image.fill(QColor(0,0,0,0));
+                        n_image.fill(*backgroundColor);
                         QPainter n_painter(&n_image);
                         if(backgroundMode == 1)
                             n_painter.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()));

@@ -200,7 +200,8 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
     {
         //videoOutput->show();
         ui->label_Cover->setText(tr("is video"));
-        lrc->setBackground(QColor(100,100,100));
+        lrc->setBackground(QColor(255,255,255));
+        lrc->setDispaleColor(QColor(0,0,0), QColor(255,0,0), QColor(0,255,0), QColor(0,0,255));
     }
     else
     {
@@ -210,11 +211,13 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
         ui->label_Cover->setPixmap(cove.scaled(200,200));
         if(img.isNull())
         {
-            lrc->setBackground(QColor(100,100,100));
+            lrc->setBackground(QColor(255,255,255));
+            lrc->setDispaleColor(QColor(0,0,0), QColor(255,0,0), QColor(0,255,0), QColor(0,0,255));
         }
         else
         {
             lrc->setBackground(img.value<QImage>());
+            lrc->setDispaleColor(QColor(200,200,200,200), QColor(255,255,255,230), QColor(0,255,0,230), QColor(0,0,255,230));
         }
     }
 }
