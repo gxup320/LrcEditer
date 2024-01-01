@@ -200,12 +200,14 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
     {
         //videoOutput->show();
         ui->label_Cover->setText(tr("is video"));
+        lrc->setBackground(QColor(255,255,255));
     }
     else
     {
         //videoOutput->hide();
         QVariant img = mediaData.value(QMediaMetaData::ThumbnailImage);
         QPixmap cove =QPixmap::fromImage(img.value<QImage>());
+        lrc->setBackground(img.value<QImage>());
         ui->label_Cover->setPixmap(cove.scaled(200,200));
     }
 }
@@ -281,7 +283,7 @@ void MainWindow::bufferSizeChanged(qint64 size)
 void MainWindow::lrcImgChanged()
 {
     const QPixmap* pix = lrc->getPixmap();
-    if(pix != nullptr && m_lrcLabel != nullptr)
+    if(pix != nullptr && m_lrcLabel != nullptr && m_lrcLabel->isVisible())
     {
         m_lrcLabel->setPixmap(*pix);
     }

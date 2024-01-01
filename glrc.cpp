@@ -7,15 +7,21 @@
 #include <QChar>
 //#include <QMutex>
 //#include <QMutexLocker>
+QT_BEGIN_NAMESPACE
+extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+QT_END_NAMESPACE
 
 GLrc::GLrc(QObject *parent)
     : QObject{parent}
 {
     colors = new QColor[4];
-    colors[0] = Qt::black;
-    colors[1] = Qt::red;
-    colors[2] = Qt::green;
-    colors[3] = Qt::blue;
+    colors[0] = QColor(200,200,200,200);
+    colors[1] = QColor(255,255,255,230);
+    colors[2] = QColor(0,255,0,230);
+    colors[3] = QColor(0,0,255,230);
+    backgroundColor = new QColor(0,0,0,0);
+    backgroundImage = new QImage;
+    backgroundPixmap = new QPixmap;
     //updateMutex = new QMutex;
     threadRunning = true;
     lrcThread = QThread::create(lrcDispaleThread, this);
@@ -29,6 +35,13 @@ GLrc::GLrc(GLrc &cp)
     colors[1] = cp.colors[1];
     colors[2] = cp.colors[2];
     colors[3] = cp.colors[3];
+    backgroundColor = new QColor;
+    *backgroundColor = *(cp.backgroundColor);
+    backgroundImage = new QImage;
+    *backgroundImage = *(cp.backgroundImage);
+    backgroundPixmap = new QPixmap;
+    *backgroundPixmap = *(cp.backgroundPixmap);
+    backgroundMode = cp.backgroundMode;
     lrcItems = cp.lrcItems;
     //updateMutex = new QMutex;
     threadRunning = true;
@@ -1100,6 +1113,28 @@ int GLrc::movSpeed(int length)
     return s_speed;
 }
 
+void GLrc::backgroundImageToPixmap()
+{
+    QImage image = *backgroundImage;
+    //labelSize是窗口尺寸
+    QPixmap pxDst(labelSize);
+    QPixmap temp = QPixmap::fromImage(image).scaled(labelSize.width() * 0.9,labelSize.height() * 0.9, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    image = image.scaled(labelSize, Qt::IgnoreAspectRatio);
+    pxDst.fill( Qt::transparent );
+    {
+        QPainter painter( &pxDst );
+        qt_blurImage( &painter, image, std::max(labelSize.width() / 10, labelSize.height() / 10), true, false );//blur radius: 80px
+        //居中画出图片
+    }
+    QPainter painter( &pxDst );
+    painter.drawPixmap((labelSize.width() - temp.width()) / 2, (labelSize.height() - temp.height()) / 2,temp.width(), temp.height(), temp);
+    painter.setBrush(QColor(0,0,0,100));
+    painter.setPen(QColor(0,0,0,100));
+    painter.drawRect(pxDst.rect());
+    *backgroundPixmap = pxDst;
+    backgroundMode = 1;
+}
+
 void GLrc::lrcTimesSort()
 {
     //QMutexLocker locker(updateMutex);
@@ -1260,11 +1295,25 @@ void GLrc::setDispaleColor(const QColor &_default, const QColor &_selectLine, co
     colors[3] = _selectWord;
 }
 
+void GLrc::setBackground(QColor color)
+{
+    *backgroundColor = color;
+    backgroundMode = 0;
+}
+
+void GLrc::setBackground(QImage image)
+{
+    *backgroundImage = image;
+    backgroundImageToPixmap();
+}
+
 QSize GLrc::setLabelSize(QSize _labelSize)
 {
     //QMutexLocker locker(updateMutex);
     QSize t = labelSize;
     labelSize = _labelSize;
+    if(backgroundMode == 1)
+        backgroundImageToPixmap();
     m_disableMovingPicture = true;
     //locker.unlock();
     return t;
@@ -1304,7 +1353,17 @@ void GLrc::updateLrcwindow(qint64 time)
         delete imageNext;
     }
     imageNext = new QPixmap(w, h);
-    imageNext->fill();
+    switch (backgroundMode) {
+    case 0:
+        imageNext->fill(*backgroundColor);
+        break;
+    case 1:
+        *imageNext = backgroundPixmap->scaled(w,h,Qt::IgnoreAspectRatio);
+        break;
+    default:
+        imageNext->fill();
+        break;
+    }
     QPainter painter(imageNext);
     //painter.begin(&image);
     //painter.setBackground(QBrush(QColor(255,255,255)));
@@ -1435,16 +1494,20 @@ void GLrc::updateLrcwindow(qint64 time)
                     if(n_w3 > 0 && fm.height() > 0)
                     {
                         QPixmap n_image_sel(n_w2, fm.height());
-                        n_image_sel.fill();
+                        n_image_sel.fill(QColor(0,0,0,0));
                         QPainter n_painter_sel(&n_image_sel);
+                        if(backgroundMode == 1)
+                            n_painter_sel.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()));
                         n_painter_sel.setFont(font);
                         n_painter_sel.setPen(colors[3]);
                         QPoint n_pos_sel = {0, fountSize + sizeDiff};
                         n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord[n_selID], wordLength[n_selID]));
                         painter.drawPixmap(QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()), n_image_sel);
                         QPixmap n_image(n_w3, fm.height());
-                        n_image.fill();
+                        n_image.fill(QColor(0,0,0,0));
                         QPainter n_painter(&n_image);
+                        if(backgroundMode == 1)
+                            n_painter.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()));
                         n_painter.setFont(font);
                         n_painter.setPen(colors[2]);
                         QPoint n_pos = {0, fountSize + sizeDiff};

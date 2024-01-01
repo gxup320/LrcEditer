@@ -111,13 +111,13 @@
            <property name="minimumSize">
             <size>
              <width>220</width>
-             <height>480</height>
+             <height>280</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>220</width>
-             <height>480</height>
+             <height>280</height>
             </size>
            </property>
            <widget class="QCheckBox" name="checkBox_nmlrc">
@@ -211,19 +211,19 @@
               <x>10</x>
               <y>270</y>
               <width>200</width>
-              <height>200</height>
+              <height>0</height>
              </rect>
             </property>
             <property name="minimumSize">
              <size>
               <width>200</width>
-              <height>200</height>
+              <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>200</width>
-              <height>200</height>
+              <height>0</height>
              </size>
             </property>
             <property name="text">

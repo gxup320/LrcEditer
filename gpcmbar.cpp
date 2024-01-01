@@ -57,22 +57,20 @@ void GPcmbar::setPcm(QByteArray pcm)
     QPoint point = line.p2();
     while(!buffer.atEnd())
     {
-        QList<short> list;
+        //QList<short> list;
+        int yMax = 0;
+        int yMin = 0;
         for (int var = 0; var < 441; ++var)
         {
             QByteArray num = buffer.read(2);
             if(num.size() == 2)
             {
                 short y = (short(num[1]) << 8) | num[0];
-                list << y;
+                if(yMax < y)
+                    yMax = y;
+                if(yMin > y)
+                    yMin = y;
             }
-        }
-        int yMax = 0;
-        int yMin = 0;
-        if(list.length() != 0)
-        {
-            yMax = *std::max_element(list.begin(), list.end());
-            yMin = *std::min_element(list.begin(), list.end());
         }
         point.setY(100 + yMax * 100 / 0x7FFF);
         line.setP1(point);

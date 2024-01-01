@@ -66,6 +66,8 @@ public:
     int replaceTime(qint64 sorce, qint64 target);
 
     void setDispaleColor(const QColor& _default,const QColor& _selectLine,const QColor& _selectLineOver,const QColor& _selectWord);
+    void setBackground(QColor color);
+    void setBackground(QImage image);
 public slots:
     QSize setLabelSize(QSize _labelSize);
     void updateLrcwindow(qint64 time);
@@ -100,6 +102,11 @@ private:
     QPixmap* imageGet = nullptr;
     bool imgReadEd = true;
     QColor* colors;
+    QColor* backgroundColor;
+    QImage* backgroundImage;
+    QPixmap* backgroundPixmap;
+    void backgroundImageToPixmap();
+    int backgroundMode = 0;//0代表颜色，1代表图片
 };
 
 #endif // GLRC_H
