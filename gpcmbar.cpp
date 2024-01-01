@@ -23,6 +23,7 @@ GPcmbar::GPcmbar(QWidget *parent)
 
 GPcmbar::~GPcmbar()
 {
+    disconnect(this, SIGNAL(drawPcmCached()), this, SLOT(displayPcm()));
     threadRunning = false;
     if(pcmThread != nullptr)
     {

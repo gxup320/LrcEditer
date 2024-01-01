@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    disconnect(lrc, SIGNAL(lrcChanged()), this, SLOT(lrcChanged()));
+    disconnect(lrc, SIGNAL(lrcChanged(int)), this, SLOT(lrcChanged(int)));
     disconnect(lrc, SIGNAL(lrcImgChanged()), this, SLOT(lrcImgChanged()));
     disconnect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     disconnect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
