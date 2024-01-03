@@ -6,20 +6,16 @@
 #include <QSize>
 #include <glrcline.h>
 
-class QThread;
-//class QMutex;
-
-struct lrcItem
-{
-    QList<qint64> times;
-    GLrcLine line;
-    int fontSize = -5;
-};
-
 class GLrc : public QObject
 {
     Q_OBJECT
 public:
+    struct lrcItem
+    {
+        QList<qint64> times;
+        GLrcLine line;
+        int fontSize = -5;
+    };
     enum mode{AUTO,MERGE,SPLIT};
     explicit GLrc(QObject *parent = nullptr);
     GLrc(GLrc & cp);
@@ -64,20 +60,14 @@ public:
     int deleteLineWordTime();
     int deleteAllWordTime();
     int replaceTime(qint64 sorce, qint64 target);
+    QList<lrcItem> getAllItems();
+    int getTextSize(int w, int h);
+    void status(qint64 time,QList<int> *line, QList<int> *word,QList<int>* wordSeleteLength, QList<int> *wordSize, QList<qint64> *startTime, QList<qint64> *endTime);
 
-    void setDispaleColor(const QColor& _default,const QColor& _selectLine,const QColor& _selectLineOver,const QColor& _selectWord);
-    void setBackground(QColor color);
-    void setBackground(QImage image);
 public slots:
-    QSize setLabelSize(QSize _labelSize);
-    void updateLrcwindow(qint64 time);
-    qint64 setDispaleTime(qint64 time);
-    void disableMovingPicture();
-    const QPixmap* getPixmap();
 
 signals:
     void lrcChanged(int = 0);
-    void lrcImgChanged();
 
 private:
     QList<lrcItem> lrcItems;
@@ -86,27 +76,6 @@ private:
     int selectTime = 0;
     int selectLine = 0;
     void prLrcSort(QList<lrcItem>& items);
-    QThread* lrcThread = nullptr;
-    bool threadRunning;
-    qint64 lrcDispaleTime = 0;
-    static void lrcDispaleThread(GLrc* lrc);
-    QSize labelSize = {0 , 0};
-    void status(QList<lrcItem>& c_lrcItems, qint64 time,QList<int> *line, QList<int> *word,QList<int>* wordSeleteLength, QList<int> *wordSize, QList<qint64> *startTime, QList<qint64> *endTime);
-    int getTextSize(QList<lrcItem>& c_lrcItems, int w, int h);
-    //QMutex * updateMutex = nullptr;
-    //QMutex * lrcDispale = nullptr;
-    int movSpeed(int length);
-    bool m_disableMovingPicture = true;
-    QPixmap* image = nullptr;
-    QPixmap* imageNext = nullptr;
-    QPixmap* imageGet = nullptr;
-    bool imgReadEd = true;
-    QColor* colors;
-    QColor* backgroundColor;
-    QImage* backgroundImage;
-    QPixmap* backgroundPixmap;
-    void backgroundImageToPixmap();
-    int backgroundMode = 0;//0代表颜色，1代表图片
 };
 
 #endif // GLRC_H

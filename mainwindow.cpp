@@ -25,30 +25,17 @@ MainWindow::MainWindow(QWidget *parent)
     qRegisterMetaType<QPixmap*>("QPixmap*");
     lrc = new GLrc;
     connect(lrc, SIGNAL(lrcChanged(int)), this, SLOT(lrcChanged(int)));
-    connect(lrc, SIGNAL(lrcImgChanged()), this, SLOT(lrcImgChanged()));
     ui->textEdit->setReadOnly(true);
     connect(ui->textEdit, SIGNAL(keyProc(QKeyEvent*)), this, SLOT(keyProc(QKeyEvent*)));
     connect(ui->textEdit, SIGNAL(focusOutProc(QFocusEvent*)), this, SLOT(focusOutProc(QFocusEvent*)));
     connect(ui->progressBar, SIGNAL(valFromMouse(qint64)), this, SLOT(valFromMouse(qint64)));
-    connect(ui->label_pcm, SIGNAL(valFromMouse(qint64)), this, SLOT(valFromMouse(qint64)));
+    connect(ui->openGLWidget_pcm, SIGNAL(valFromMouse(qint64)), this, SLOT(valFromMouse(qint64)));
     ui->textEdit->setFocus();
     setWindowTitle(tr("New File") + " - LrcEditer powered by GXUP320");
-    //mediaPlayer = new QMediaPlayer;
-    //audioOutput = new QAudioOutput;
-    //videoOutput = new QVideoWidget(ui->label_Cover);
-    //videoOutput->resize(200,200);
-    //videoOutput->hide();
-    //player->setAudioOutput(audioOutput);
-    //player->setVideoOutput(videoOutput);
-    //connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    //connect(mediaPlayer, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
-    //connect(mediaPlayer, SIGNAL(metaDataChanged()), this, SLOT(metaDataChanged()));
-    //audioOutput->setVolume(1);
 
     player = new GAudioPlayer;
     connect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
-    connect(player, SIGNAL(positionChanged(qint64)), lrc, SLOT(setDispaleTime(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)), Qt::BlockingQueuedConnection);
     connect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
     connect(player, SIGNAL(bufferSizeChanged(qint64)), this, SLOT(bufferSizeChanged(qint64)));
@@ -57,15 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     disconnect(lrc, SIGNAL(lrcChanged(int)), this, SLOT(lrcChanged(int)));
-    disconnect(lrc, SIGNAL(lrcImgChanged()), this, SLOT(lrcImgChanged()));
     disconnect(player, SIGNAL(durationChanged(qint64)), this, SLOT(durationChanged(qint64)));
     disconnect(player, SIGNAL(metaDataChanged(QMediaMetaData)), this, SLOT(metaDataChanged(QMediaMetaData)));
     disconnect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     disconnect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
     disconnect(player, SIGNAL(bufferSizeChanged(qint64)), this, SLOT(bufferSizeChanged(qint64)));
-    disconnect(player, SIGNAL(positionChanged(qint64)), lrc, SLOT(setDispaleTime(qint64)));
     QCoreApplication::processEvents();
-    lrc->setLabelSize(QSize(0,0));
     if(m_LrcSearchNeteasyForm != nullptr)
     {
         delete m_LrcSearchNeteasyForm;
@@ -93,11 +77,6 @@ MainWindow::~MainWindow()
 void MainWindow::show()
 {
     QWidget::show();
-    if(m_lrcLabel == nullptr)
-    {
-        m_lrcLabel = ui->label_lrc;
-        lrc->setLabelSize(ui->label_lrc->size());
-    }
 }
 
 void MainWindow::durationChanged(qint64 duration)
@@ -115,7 +94,8 @@ void MainWindow::positionChanged(qint64 position)
     if(position > ui->progressBar->maximum())
         position = ui->progressBar->maximum();
     ui->progressBar->setValue(position);
-    ui->label_pcm->setTime(position);
+    ui->openGLWidget_pcm->setTime(position);
+    ui->openGLWidget_lrc->setTime(position);
     QTime tl = QTime::fromMSecsSinceStartOfDay(position);
     QString length = tl.toString("mm:ss.") + tl.toString("zzz").left(2);
     ui->pushButton_inst->setText(tr("inst") + " [" + length + "]");
@@ -134,29 +114,29 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
     QString str;
     QStringList strList;
     //QMediaMetaData mediaData = mediaPlayer->metaData();
-    qDebug() << "Author:" << mediaData.value(QMediaMetaData::Author).value<QStringList>();
-    qDebug() << "Comment:" << mediaData.stringValue(QMediaMetaData::Comment);
-    qDebug() << "Description:" << mediaData.stringValue(QMediaMetaData::Description);
-    qDebug() << "Genre:" << mediaData.value(QMediaMetaData::Genre).value<QStringList>();
-    qDebug() << "Date:" << mediaData.value(QMediaMetaData::Date).value<QDateTime>();
+    //qDebug() << "Author:" << mediaData.value(QMediaMetaData::Author).value<QStringList>();
+    //qDebug() << "Comment:" << mediaData.stringValue(QMediaMetaData::Comment);
+    //qDebug() << "Description:" << mediaData.stringValue(QMediaMetaData::Description);
+    //qDebug() << "Genre:" << mediaData.value(QMediaMetaData::Genre).value<QStringList>();
+    //qDebug() << "Date:" << mediaData.value(QMediaMetaData::Date).value<QDateTime>();
     //qDebug() << "Language:" << mediaData.Language(QMediaMetaData::Language).value<QLocale::Language>();
-    qDebug() << "Publisher:" << mediaData.stringValue(QMediaMetaData::Publisher);
-    qDebug() << "Copyright:" << mediaData.stringValue(QMediaMetaData::Copyright);
-    qDebug() << "Url:" << mediaData.value(QMediaMetaData::Url).value<QUrl>();
-    qDebug() << "MediaType:" << mediaData.stringValue(QMediaMetaData::MediaType);
-    qDebug() << "FileFormat:" << mediaData.stringValue(QMediaMetaData::FileFormat);
+    //qDebug() << "Publisher:" << mediaData.stringValue(QMediaMetaData::Publisher);
+    //qDebug() << "Copyright:" << mediaData.stringValue(QMediaMetaData::Copyright);
+    //qDebug() << "Url:" << mediaData.value(QMediaMetaData::Url).value<QUrl>();
+    //qDebug() << "MediaType:" << mediaData.stringValue(QMediaMetaData::MediaType);
+    //qDebug() << "FileFormat:" << mediaData.stringValue(QMediaMetaData::FileFormat);
     //qDebug() << "Duration:" << mediaData.stringValue(QMediaMetaData::Duration);
     //qDebug() << "AudioBitRate:" << mediaData.stringValue(QMediaMetaData::AudioBitRate);
     //qDebug() << "AudioCodec:" << mediaData.stringValue(QMediaMetaData::AudioCodec);
     //qDebug() << "VideoFrameRate:" << mediaData.stringValue(QMediaMetaData::VideoFrameRate);
     //qDebug() << "VideoBitRate:" << mediaData.stringValue(QMediaMetaData::VideoBitRate);
     //qDebug() << "VideoCodec:" << mediaData.stringValue(QMediaMetaData::VideoCodec);
-    qDebug() << "AlbumTitle:" << mediaData.stringValue(QMediaMetaData::AlbumTitle);
-    qDebug() << "AlbumArtist:" << mediaData.stringValue(QMediaMetaData::AlbumArtist);
-    qDebug() << "ContributingArtist:" << mediaData.value(QMediaMetaData::ContributingArtist).value<QStringList>();
+    //qDebug() << "AlbumTitle:" << mediaData.stringValue(QMediaMetaData::AlbumTitle);
+    //qDebug() << "AlbumArtist:" << mediaData.stringValue(QMediaMetaData::AlbumArtist);
+    //qDebug() << "ContributingArtist:" << mediaData.value(QMediaMetaData::ContributingArtist).value<QStringList>();
     //qDebug() << "TrackNumber:" << mediaData.stringValue(QMediaMetaData::TrackNumber);
-    qDebug() << "Composer:" << mediaData.value(QMediaMetaData::Composer).value<QStringList>();
-    qDebug() << "LeadPerformer:" << mediaData.value(QMediaMetaData::LeadPerformer).value<QStringList>();
+    //qDebug() << "Composer:" << mediaData.value(QMediaMetaData::Composer).value<QStringList>();
+    //qDebug() << "LeadPerformer:" << mediaData.value(QMediaMetaData::LeadPerformer).value<QStringList>();
     //qDebug() << "ThumbnailImage:" << mediaData.stringValue(QMediaMetaData::ThumbnailImage);
     //qDebug() << "CoverArtImage:" << mediaData.stringValue(QMediaMetaData::CoverArtImage);
     //qDebug() << "Orientation:" << mediaData.stringValue(QMediaMetaData::Orientation);
@@ -199,25 +179,23 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
     if(str == "video")
     {
         //videoOutput->show();
-        ui->label_Cover->setText(tr("is video"));
-        lrc->setBackground(QColor(255,255,255));
-        lrc->setDispaleColor(QColor(0,0,0), QColor(255,0,0), QColor(0,255,0), QColor(0,0,255));
+        ui->openGLWidget_lrc->setBackground(QColor(255,255,255));
+        ui->openGLWidget_lrc->setDispaleColor(QColor(0,0,0), QColor(255,0,0), QColor(0,255,0), QColor(0,0,255));
     }
     else
     {
         //videoOutput->hide();
         QVariant img = mediaData.value(QMediaMetaData::ThumbnailImage);
         QPixmap cove =QPixmap::fromImage(img.value<QImage>());
-        ui->label_Cover->setPixmap(cove.scaled(200,200));
         if(img.isNull())
         {
-            lrc->setBackground(QColor(255,255,255));
-            lrc->setDispaleColor(QColor(0,0,0), QColor(255,0,0), QColor(0,255,0), QColor(0,0,255));
+            ui->openGLWidget_lrc->setBackground(QColor(255,255,255));
+            ui->openGLWidget_lrc->setDispaleColor(QColor(0,0,0), QColor(255,0,0), QColor(0,255,0), QColor(0,0,255));
         }
         else
         {
-            lrc->setBackground(img.value<QImage>());
-            lrc->setDispaleColor(QColor(200,200,200,200), QColor(255,255,255,230), QColor(0,255,0,230), QColor(0,0,255,230));
+            ui->openGLWidget_lrc->setBackground(img.value<QImage>());
+            ui->openGLWidget_lrc->setDispaleColor(QColor(200,200,200,200), QColor(255,255,255,230), QColor(0,255,0,230), QColor(0,0,255,230));
         }
     }
 }
@@ -240,8 +218,9 @@ void MainWindow::loadStatus(qint64 position, bool isEnd)
         ui->progressBar->setTextVisible(false);
         ui->progressBar->setMaximum(position);
         ui->label_length->setText(length);
-        ui->label_pcm->setPcm(player->getPcm());
-        ui->label_pcm->setLrc(lrc);
+        ui->openGLWidget_pcm->setPcm(player->getPcm());
+        ui->openGLWidget_pcm->setLrc(lrc);
+        ui->openGLWidget_lrc->setLrc(lrc);
         player->play();
         ui->statusbar->showMessage(tr("Music playing."), 3000);
     }
@@ -288,15 +267,6 @@ void MainWindow::lrcChanged(int md)
 void MainWindow::bufferSizeChanged(qint64 size)
 {
     ui->pushButton_bufferSize->setText(QString::number(size));
-}
-
-void MainWindow::lrcImgChanged()
-{
-    const QPixmap* pix = lrc->getPixmap();
-    if(pix != nullptr && m_lrcLabel != nullptr && m_lrcLabel->isVisible())
-    {
-        m_lrcLabel->setPixmap(*pix);
-    }
 }
 
 bool MainWindow::saveLrcToFile(QString fileName)
@@ -601,166 +571,10 @@ void MainWindow::on_pushButton_save_as_clicked()
     }
 }
 
-//qint64 MainWindow::getTimeOfLrcLine(QString& lrcLine)
-//{
-//    if(lrcLine.left(1) != "[")
-//    {
-//        return -1;
-//    }
-//    if(lrcLine.indexOf("]") == -1)
-//    {
-//        return -1;
-//    }
-//    QString timeStr = lrcLine.mid(1,lrcLine.indexOf("]") - 1);
-//    //qDebug() << timeStr;
-//    QTime time = QTime::fromString(timeStr + "0","mm:ss.zzz");
-//    if(time.isNull())
-//    {
-//        time = QTime::fromString(timeStr,"mm:ss.zzz");
-//    }
-//    if(time.isNull())
-//    {
-//        return -1;
-//    }
-//    lrcLine = lrcLine.right(lrcLine.length() - lrcLine.indexOf("]") - 1);
-//    return time.msecsSinceStartOfDay();
-//}
-
-//void MainWindow::lrcTimesSort(QList<lrcTime>& lrcTimes)
-//{
-//    int i, j;
-//    for (i = 0; i < lrcTimes.length() - 1; i++)
-//        for (j = 0; j < lrcTimes.length() - 1 - i; j++)
-//            if (lrcTimes[j].time > lrcTimes[j + 1].time)
-//                lrcTimes.swapItemsAt(j, j + 1);
-//}
-
-//void MainWindow::setSelectLrcLine(int lrcLine)
-//{
-//    QStringList lrcLines = ui->textEdit->toPlainText().split("\n");
-//    if(lrcLine != -1 && lrcLine < lrcLines.length())
-//    {
-//        int selStart = 0;
-//        int selEnd = -1;
-//        for(int i = 0; i <= lrcLine && i < lrcLines.length(); i++)
-//        {
-//            selStart = selEnd + 1;
-//            selEnd = selStart + lrcLines[i].length();
-//        }
-//        QTextCursor c = ui->textEdit->textCursor();
-//        c.setPosition(selStart);
-//        c.setPosition(selEnd,QTextCursor::KeepAnchor);
-//        ui->textEdit->setTextCursor(c);
-//        ui->textEdit->setFocus();
-//        //qDebug() << lrcLine << " " << selStart << " " << selEnd;
-//    }
-//    else if(lrcLine < lrcLines.length())
-//    {
-//        QTextCursor c = ui->textEdit->textCursor();
-//        c.setPosition(c.position());
-//        ui->textEdit->setTextCursor(c);
-//        ui->textEdit->setFocus();
-//    }
-//    else
-//    {
-//        QTextCursor c = ui->textEdit->textCursor();
-//        c.movePosition(QTextCursor::End);
-//        ui->textEdit->setTextCursor(c);
-//        ui->textEdit->setFocus();
-//    }
-//}
-
-//void MainWindow::setSelectLrcLineShowLine(int lrcLine, int showN /* = 5 */)
-//{
-//    if(lrcLine < showN)
-//    {
-//       setSelectLrcLine(0);
-//    }
-//    else
-//    {
-//        setSelectLrcLine(lrcLine - showN);
-//    }
-//    setSelectLrcLine(lrcLine + showN);
-//    setSelectLrcLine(lrcLine);
-//}
-
-//int MainWindow::getSelectLrcLine()
-//{
-//    QStringList lrcLines = ui->textEdit->toPlainText().split("\n");
-//    QTextCursor c = ui->textEdit->textCursor();
-//    int selectLine = 0;
-//    int testLength = 0;
-//    for (auto &lrcLine:lrcLines)
-//    {
-//        testLength += lrcLine.length() + 1;
-//        if(testLength > c.position())
-//            break;
-//        selectLine++;
-//    }
-//    return selectLine;
-//}
-
-//void MainWindow::instLrcTime(int lrcLine, qint64 time)
-//{
-//    if(player != nullptr)
-//    {
-//        QStringList lrcLines = ui->textEdit->toPlainText().split("\n");
-//        if(lrcLine < lrcLines.length() && lrcLine >= 0)
-//        {
-//            QTime tl;
-//            if(time == -1)
-//                tl = QTime::fromMSecsSinceStartOfDay(player->position());
-//            else
-//                tl = QTime::fromMSecsSinceStartOfDay(time);
-//            QString length = tl.toString("mm:ss.") + tl.toString("zzz").left(2);
-//            lrcLines[lrcLine] = "[" + length + "]" + lrcLines[lrcLine];
-//            QString lrcFull = lrcLines[0];
-//            for (int i = 1; i < lrcLines.length(); i++)
-//            {
-//                lrcFull += "\n" + lrcLines[i];
-//            }
-//            ui->textEdit->setPlainText(lrcFull);
-//        }
-//    }
-//}
-
-//qint64 MainWindow::removeLrcTime(int lrcLine)
-//{
-//    QStringList lrcLines = ui->textEdit->toPlainText().split("\n");
-//    qint64 time = -1;
-//    if(lrcLine < lrcLines.length() && lrcLine >= 0)
-//    {
-//        time = getTimeOfLrcLine(lrcLines[lrcLine]);
-//        if(time == -1)
-//            return -1;
-//        QString lrcFull = lrcLines[0];
-//        for (int i = 1; i < lrcLines.length(); i++)
-//        {
-//            lrcFull += "\n" + lrcLines[i];
-//        }
-//        ui->textEdit->setPlainText(lrcFull);
-//    }
-//    return time;
-//}
-
-//qint64 MainWindow::getLrcTimeLine(int lrcLine)
-//{
-//    QStringList lrcLines = ui->textEdit->toPlainText().split("\n");
-//    qint64 time = -1;
-//    if(lrcLine < lrcLines.length() && lrcLine >= 0)
-//    {
-//        time = getTimeOfLrcLine(lrcLines[lrcLine]);
-//    }
-//    return time;
-//}
-
 
 void MainWindow::on_pushButton_inst_clicked()
 {
-    //int lrcLine = getSelectLrcLine();
-    //instLrcTime(lrcLine);
     lrc->instTime(player->position());
-    //setSelectLrcLineShowLine(lrcLine + 1);
     lrc->nextLine();
     displayLrc(-1, true);
 }
@@ -768,17 +582,8 @@ void MainWindow::on_pushButton_inst_clicked()
 
 void MainWindow::on_pushButton_remove_clicked()
 {
-    //int lrcLine = getSelectLrcLine();
-    //qint64 time = removeLrcTime(lrcLine);
-    //if(time != -1 && player != nullptr && ui->lineEdit_backms->text() != "-")
-    //{
-    //    time -= ui->lineEdit_backms->text().toInt();
-    //    if(time < 0)
-    //        time = 0;
-    //    player->setPosition(time);
-    //}
-    //setSelectLrcLineShowLine(lrcLine);
     lrc->removeTime();
+    displayLrc(-1, true);
 }
 
 
@@ -788,84 +593,51 @@ bool MainWindow::keyProc(QKeyEvent *event)
     {
         if(event->key() == Qt::Key_Up)
         {
-            //int lrcLine = getSelectLrcLine();
-            //lrcLine--;
-            //if(lrcLine < 0)
-            //    lrcLine = 0;
             qint64 time = lrc->previousItem();
             if(time != -1 && player != nullptr)
                 player->setPosition(time);
-            //setSelectLrcLineShowLine(lrcLine);
+            displayLrc(-1, true);
         }
         else if(event->key() == Qt::Key_Down)
         {
-            //int lrcLine = getSelectLrcLine();
-            //lrcLine++;
-            //if(lrcLine < 0)
-            //    lrcLine = 0;
             qint64 time = lrc->nextItem();
             if(time != -1 && player != nullptr)
                 player->setPosition(time);
-            //setSelectLrcLineShowLine(lrcLine);
+            displayLrc(-1, true);
         }
         else if(event->key() == Qt::Key_Left)
         {
             if(event->modifiers() == (Qt::ControlModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->timeAdd(-10);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time - 10);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time - 10);
-                //}
                 player->setPosition(time);
+                displayLrc(-1, true);
             }
             else if(event->modifiers() == (Qt::AltModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->timeAdd(-100);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time - 100);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time - 100);
-                //}
                 player->setPosition(time);
+                displayLrc(-1, true);
             }
             else
             {
                 if(player != nullptr)
                     player->setPosition(player->position() - 3000);
             }
-
         }
         else if(event->key() == Qt::Key_Right)
         {
             if(event->modifiers() == (Qt::ControlModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->timeAdd(10);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time + 10);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time + 10);
-                //}
                 player->setPosition(time);
+                displayLrc(-1, true);
             }
             else if(event->modifiers() == (Qt::AltModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->timeAdd(100);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time + 100);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time + 100);
-                //}
                 player->setPosition(time);
+                displayLrc(-1, true);
             }
             else
             {
@@ -892,7 +664,6 @@ bool MainWindow::keyProc(QKeyEvent *event)
         }
         else if(event->key() == Qt::Key_E)
         {
-            //ui->checkBox_keyop->setChecked(false);
             on_pushButton_edit_line_clicked();
         }
         else if(event->key() == Qt::Key_D)
@@ -907,60 +678,32 @@ bool MainWindow::keyProc(QKeyEvent *event)
         {
             if(event->modifiers() == (Qt::ControlModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->wordTimeAdd(-10);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time + 10);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time + 10);
-                //}
                 player->setPosition(time);
             }
             else if(event->modifiers() == (Qt::AltModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->wordTimeAdd(-100);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time + 100);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time + 100);
-                //}
                 player->setPosition(time);
             }
             else
             {
                 qint64 time = lrc->previousWord();
-                qDebug() << time;
                 if(time != -1)
                     player->setPosition(time);
             }
+            displayLrc(-1, true);
         }
         else if(event->key() == Qt::Key_N)
         {
             if(event->modifiers() == (Qt::ControlModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->wordTimeAdd(10);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time + 10);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time + 10);
-                //}
                 player->setPosition(time);
             }
             else if(event->modifiers() == (Qt::AltModifier))
             {
-                //int lrcLine = getSelectLrcLine();
                 qint64 time = lrc->wordTimeAdd(100);
-                //if(time != -1)
-                //{
-                //    instLrcTime(lrcLine, time + 100);
-                //    setSelectLrcLineShowLine(lrcLine);
-                //    player->setPosition(time + 100);
-                //}
                 player->setPosition(time);
             }
             else
@@ -970,6 +713,7 @@ bool MainWindow::keyProc(QKeyEvent *event)
                 if(time != -1)
                     player->setPosition(time);
             }
+            displayLrc(-1, true);
         }
         else if(event->key() == Qt::Key_M)
         {
@@ -981,12 +725,12 @@ bool MainWindow::keyProc(QKeyEvent *event)
                 lrc->nextLine();
                 lrc->selectWordId(0);
             }
+            displayLrc(-1, true);
         }
         else if(event->key() == Qt::Key_C)
         {
             on_pushButton_deleteLineWordTime_clicked();
         }
-        displayLrc(-1, true);
         return false;
     }
     else
@@ -994,6 +738,7 @@ bool MainWindow::keyProc(QKeyEvent *event)
         if(event->key() == Qt::Key_Escape)
         {
             ui->checkBox_keyop->setChecked(true);
+            displayLrc(-1, true);
             return false;
         }
         return true;
@@ -1012,68 +757,8 @@ void MainWindow::focusOutProc(QFocusEvent *)
         ui->textEdit->setFocus();
 }
 
-
-void MainWindow::on_textEdit_textChanged()
-{
-    //if(lrcFileName == "")
-    //{
-    //    setWindowTitle("*" + tr("New File") + " - LrcEditer powered by GXUP320");
-    //}
-    //else
-    //{
-    //    setWindowTitle("*" + lrcFileName + " - LrcEditer powered by GXUP320");
-    //}
-}
-
-
 void MainWindow::on_pushButton_sort_clicked()
 {
-    //QList<lrcTime> lrcTimes;
-    //lrcTime lrcTimeTemp;
-    //QStringList lrcLines = ui->textEdit->toPlainText().split("\n");
-    //for (int i = 0; i < lrcLines.length(); i++) {
-    //    qint64 time = getTimeOfLrcLine(lrcLines[i]);
-    //    while(time != -1)
-    //    {
-    //        lrcTimeTemp.line = i;
-    //        lrcTimeTemp.time = time;
-    //        lrcTimes.append(lrcTimeTemp);
-    //        time = getTimeOfLrcLine(lrcLines[i]);
-    //    }
-    //}
-    //lrcTimesSort(lrcTimes);
-    //int LastLine = -1;
-    //QString fullLrc;
-    //QString tempLrc;
-    //for(auto& lrcTime:lrcTimes)
-    //{
-    //    if(lrcTime.time == -1 || lrcTime.time != LastLine)
-    //    {
-    //        LastLine = lrcTime.time;
-    //        if(fullLrc == "")
-    //            fullLrc = tempLrc;
-    //        else
-    //            fullLrc += "\n" + tempLrc;
-    //        if(lrcTime.time >= 0)
-    //        {
-    //            QTime tl = QTime::fromMSecsSinceStartOfDay(lrcTime.time);
-    //            tempLrc = "[" + tl.toString("mm:ss.") + tl.toString("zzz").left(2) + "]" + lrcLines[lrcTime.line];
-    //        }
-    //        else
-    //        {
-    //            tempLrc = lrcLines[lrcTime.line];
-    //        }
-    //    }
-    //    else if(lrcLines[lrcTime.line] != "")
-    //    {
-    //        tempLrc += "<br/>" + lrcLines[lrcTime.line];
-    //    }
-    //}
-    //if(fullLrc == "")
-    //    fullLrc = tempLrc;
-    //else
-    //    fullLrc += "\n" + tempLrc;
-    //ui->textEdit->setPlainText(fullLrc);
     lrc->lrcTimesSort();
     displayLrc(-1, true);
 }
@@ -1243,6 +928,7 @@ void MainWindow::on_pushButton_deleteLineWordTime_clicked()
         if(time != -1 && player != nullptr)
             player->setPosition(time);
     }
+    displayLrc(-1, true);
 }
 
 
@@ -1268,9 +954,8 @@ void MainWindow::on_pushButton_showLrcWindow_clicked()
     if(m_lrcForm != nullptr)
         delete m_lrcForm;
     m_lrcForm = new lrcForm;
-    m_lrcForm->m = this;
+    ui->openGLWidget_lrc->copyTo(m_lrcForm->lrcWindow);
     m_lrcForm->show();
-    ui->label_lrc->hide();
 }
 
 
@@ -1279,9 +964,8 @@ void MainWindow::on_pushButtonfullScreen_clicked()
     if(m_lrcForm != nullptr)
         delete m_lrcForm;
     m_lrcForm = new lrcForm;
-    m_lrcForm->m = this;
+    ui->openGLWidget_lrc->copyTo(m_lrcForm->lrcWindow);
     m_lrcForm->showFullScreen();
-    ui->label_lrc->hide();
 }
 
 

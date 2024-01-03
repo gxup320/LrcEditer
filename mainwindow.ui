@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1460</width>
-    <height>1302</height>
+    <width>1313</width>
+    <height>1096</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,6 +15,28 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="0">
+     <widget class="GPcmbarGL" name="openGLWidget_pcm">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>0</width>
+        <height>200</height>
+       </size>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
@@ -29,6 +51,12 @@
       </item>
       <item>
        <widget class="QFrame" name="verticalFrame_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>220</width>
@@ -43,61 +71,69 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <item>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>vol:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QLabel" name="label_vol">
-             <property name="minimumSize">
-              <size>
-               <width>23</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QSlider" name="horizontalSlider">
-             <property name="maximum">
-              <number>100</number>
-             </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-             <property name="pageStep">
-              <number>1</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_buff">
-             <property name="text">
-              <string>buffer:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QPushButton" name="pushButton_bufferSize">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QWidget" name="" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>vol:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="label_vol">
+              <property name="minimumSize">
+               <size>
+                <width>23</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>100</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSlider" name="horizontalSlider">
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="singleStep">
+               <number>100</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>100</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_buff">
+              <property name="text">
+               <string>buffer:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QPushButton" name="pushButton_bufferSize">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="pushButton_search_from_neteasy">
@@ -200,37 +236,6 @@
             </property>
             <property name="text">
              <string>load lrc for neteasy temp</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_Cover">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>270</y>
-              <width>200</width>
-              <height>0</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Cover</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
             </property>
            </widget>
            <widget class="QLabel" name="label_7">
@@ -480,51 +485,52 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_lrc">
+          <widget class="GLrcWindowGL" name="openGLWidget_lrc">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>0</width>
              <height>300</height>
             </size>
            </property>
-           <property name="text">
-            <string>lyric</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="pushButton_showLrcWindow">
-             <property name="text">
-              <string>show lrc window</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonfullScreen">
-             <property name="text">
-              <string>full screen</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
+           <property name="baseSize">
             <size>
              <width>0</width>
              <height>0</height>
             </size>
            </property>
-          </spacer>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QPushButton" name="pushButton_showLrcWindow">
+              <property name="text">
+               <string>show lrc window</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButtonfullScreen">
+              <property name="text">
+               <string>full screen</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1068,37 +1074,6 @@ Alt+N:word time 0.1 s delay</string>
       </layout>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="GPcmbar" name="label_pcm">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>200</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>200</height>
-       </size>
-      </property>
-      <property name="baseSize">
-       <size>
-        <width>-1</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -1107,7 +1082,7 @@ Alt+N:word time 0.1 s delay</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1460</width>
+     <width>1313</width>
      <height>21</height>
     </rect>
    </property>
@@ -1145,9 +1120,14 @@ Alt+N:word time 0.1 s delay</string>
    <header location="global">gprogressbar.h</header>
   </customwidget>
   <customwidget>
-   <class>GPcmbar</class>
-   <extends>QLabel</extends>
-   <header location="global">gpcmbar.h</header>
+   <class>GPcmbarGL</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">gpcmbargl.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLrcWindowGL</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">glrcwindowgl.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

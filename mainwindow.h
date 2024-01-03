@@ -44,7 +44,6 @@ private slots:
     void loadStatus(qint64 position, bool isEnd);
     void lrcChanged(int md);
     void bufferSizeChanged(qint64 size);
-    void lrcImgChanged();
 
     void on_pushButton_loadmusic_clicked();
     void on_pushButton_tostart_clicked();
@@ -64,8 +63,6 @@ private slots:
     bool keyProc(QKeyEvent *event);
 
     void focusOutProc(QFocusEvent *event);
-
-    void on_textEdit_textChanged();
 
     void on_pushButton_sort_clicked();
 

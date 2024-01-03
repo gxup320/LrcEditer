@@ -325,21 +325,24 @@ qint64 GAudioPlayer::setBufferSize(qint64 size, qint64 smallSize)
     {
         bool nPlaying = playing == QAudio::ActiveState;
         qint64 pos = position();
-        if(isAccurateProgress)
+        if(audioSink != nullptr)
         {
-            stop();
-            audioSink->setBufferSize(bufferSize);
-            if(nPlaying)
-                play(pos);
-            emit bufferSizeChanged(audioSink->bufferSize());
-        }
-        else
-        {
-            stop();
-            audioSink->setBufferSize(bufferSizeSmall);
-            if(nPlaying)
-                play(pos);
-            emit bufferSizeChanged(audioSink->bufferSize());
+            if(isAccurateProgress)
+            {
+                stop();
+                audioSink->setBufferSize(bufferSize);
+                if(nPlaying)
+                    play(pos);
+                emit bufferSizeChanged(audioSink->bufferSize());
+            }
+            else
+            {
+                stop();
+                audioSink->setBufferSize(bufferSizeSmall);
+                if(nPlaying)
+                    play(pos);
+                emit bufferSizeChanged(audioSink->bufferSize());
+            }
         }
     }
     return last;

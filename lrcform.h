@@ -2,6 +2,7 @@
 #define LRCFORM_H
 
 #include <QWidget>
+class GLrcWindowGL;
 
 namespace Ui {
 class lrcForm;
@@ -16,16 +17,11 @@ class lrcForm : public QWidget
 public:
     explicit lrcForm(QWidget *parent = nullptr);
     ~lrcForm();
-    MainWindow* m;
-    void show();
-    void showFullScreen();
-    QSize m_labelSize;
-    QLabel* m_label;
+    GLrcWindowGL* lrcWindow;
 
 private:
     Ui::lrcForm *ui;
-    void closeEvent( QCloseEvent * event );
-    void resizeEvent(QResizeEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent *event);
 };
 
 #endif // LRCFORM_H

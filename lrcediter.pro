@@ -1,6 +1,7 @@
 QT       += core gui
 QT       += multimedia
 QT       += network
+QT       += openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -43,7 +44,9 @@ SOURCES += \
     gaudioplayer.cpp \
     glrc.cpp \
     glrcline.cpp \
+    glrcwindowgl.cpp \
     gpcmbar.cpp \
+    gpcmbargl.cpp \
     gprogressbar.cpp \
     lineedit.cpp \
     lrcedit.cpp \
@@ -59,7 +62,9 @@ HEADERS += \
     gaudioplayer.h \
     glrc.h \
     glrcline.h \
+    glrcwindowgl.h \
     gpcmbar.h \
+    gpcmbargl.h \
     gprogressbar.h \
     lineedit.h \
     lrcedit.h \
