@@ -24,6 +24,7 @@ public:
     void setTime(qint64 time);
     void setPos(qint64 pos);
     void setLrc(GLrc* lrc);
+    void pause(bool p);
 
 public slots:
 

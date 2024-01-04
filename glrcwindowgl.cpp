@@ -125,6 +125,18 @@ void GLrcWindowGL::copyTo(GLrcWindowGL *target)
     connect(target, SIGNAL(closeLrc()), this, SLOT(discopy()));
 }
 
+void GLrcWindowGL::pause(bool p)
+{
+    if(p)
+    {
+        m_timer->stop();
+    }
+    else
+    {
+        m_timer->start(0);
+    }
+}
+
 int GLrcWindowGL::movSpeed(int length)
 {
     if(height() / 500 < 1)

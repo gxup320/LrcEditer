@@ -94,6 +94,18 @@ void GPcmbarGL::setLrc(GLrc *lrc)
     m_lrc = lrc;
 }
 
+void GPcmbarGL::pause(bool p)
+{
+    if(p)
+    {
+        m_timer->stop();
+    }
+    else
+    {
+        m_timer->start(0);
+    }
+}
+
 void GPcmbarGL::paintEvent(QPaintEvent *e)
 {
     if(m_pause == false)

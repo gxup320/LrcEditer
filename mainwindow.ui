@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1313</width>
-    <height>1096</height>
+    <width>1456</width>
+    <height>1368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,7 +71,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <item>
-          <widget class="QWidget" name="" native="true">
+          <widget class="QWidget" name="widget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -487,7 +487,7 @@
          <item>
           <widget class="GLrcWindowGL" name="openGLWidget_lrc">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -507,7 +507,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="" native="true">
+          <widget class="QWidget" name="widget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -531,6 +531,24 @@
             </item>
            </layout>
           </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="checkBox_lrc_pause">
+             <property name="text">
+              <string>lrc pause</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_pcm_pause">
+             <property name="text">
+              <string>pcm pause</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -1082,7 +1100,7 @@ Alt+N:word time 0.1 s delay</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1313</width>
+     <width>1456</width>
      <height>21</height>
     </rect>
    </property>

@@ -19,6 +19,7 @@ public:
     void setBackground(QColor color);
     void setBackground(QImage image);
     void copyTo(GLrcWindowGL* target);
+    void pause(bool p);
 
 public slots:
     void setTime(qint64 time);

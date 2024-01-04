@@ -77,6 +77,7 @@ MainWindow::~MainWindow()
 void MainWindow::show()
 {
     QWidget::show();
+    ui->checkBox_pcm_pause->setCheckState(Qt::Checked);
 }
 
 void MainWindow::durationChanged(qint64 duration)
@@ -968,3 +969,33 @@ void MainWindow::on_pushButton_time_offset_clicked()
         displayLrc(-1, true);
     }
 }
+
+void MainWindow::on_checkBox_lrc_pause_stateChanged(int arg1)
+{
+    if(arg1 == Qt::Checked)
+    {
+        ui->openGLWidget_lrc->pause(true);
+        ui->openGLWidget_lrc->hide();
+    }
+    else
+    {
+        ui->openGLWidget_lrc->pause(false);
+        ui->openGLWidget_lrc->show();
+    }
+}
+
+
+void MainWindow::on_checkBox_pcm_pause_stateChanged(int arg1)
+{
+    if(arg1 == Qt::Checked)
+    {
+        ui->openGLWidget_pcm->pause(true);
+        ui->openGLWidget_pcm->hide();
+    }
+    else
+    {
+        ui->openGLWidget_pcm->pause(false);
+        ui->openGLWidget_pcm->show();
+    }
+}
+
