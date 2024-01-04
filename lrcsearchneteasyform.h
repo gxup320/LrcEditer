@@ -1,7 +1,7 @@
 #ifndef LRCSEARCHNETEASYFORM_H
 #define LRCSEARCHNETEASYFORM_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class LrcSearchNeteasyForm;
@@ -15,7 +15,7 @@ struct lrcTime
     int line;
 };
 
-class LrcSearchNeteasyForm : public QWidget
+class LrcSearchNeteasyForm : public QDialog
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ public:
     explicit LrcSearchNeteasyForm(QWidget *parent = nullptr);
     ~LrcSearchNeteasyForm();
     MainWindow* m;
-    void show();
+    int exec();
     bool close();
 
 private slots:

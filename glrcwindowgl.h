@@ -37,6 +37,7 @@ private:
     int m_speed = 0;
     int movSpeed(int length);
     void paintEvent(QPaintEvent *e);
+    int m_dark = 0;
     QColor* colors;
     QColor* backgroundColor;
     QImage* backgroundImage;

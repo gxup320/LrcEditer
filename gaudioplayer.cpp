@@ -91,12 +91,9 @@ void GAudioPlayer::load(QUrl url)
     //执行ffmpeg
     QFileInfo f(url.toLocalFile());
     ffmpeg_sourceDir = f.dir().absolutePath();
-    //qDebug() << ffmpeg_sourceDir;
     QDir dir;
     dir.remove(ffmpeg_outPCM);
     dir.remove(ffmpeg_outJpg);
-    qDebug() << ffmpeg_outPCM;
-    qDebug() << ffmpeg_outJpg;
     ffmpeg_mateDate->terminate();
     ffmpeg_mateDate->start(ffmpeg, {"-i", url.toLocalFile(), "-y", ffmpeg_outJpg});
     ffmpeg_decoder->terminate();
@@ -138,8 +135,6 @@ bool GAudioPlayer::setPosition(qint64 position)
             if(audioSink != nullptr)
             {
                 qsizetype buffSize = audioSink->bufferSize();
-                //QAudioFormat format = audioSink->format();
-                //qDebug() << buffSize / (getAudioFormatSize(format) * format.sampleRate() / 1000.0);
                 if(buffSize / (getAudioFormatSize(*format) * format->sampleRate() / 1000.0) < 100)
                 {
                     if(buffSize > 0)
@@ -363,38 +358,13 @@ QByteArray GAudioPlayer::getPcm()
     return *byteArry;
 }
 
-//void GAudioPlayer::readBuffer()
-//{
-//    QAudioBuffer audio = //->read();
-//    QAudioFormat format = audio.format();
-//    buffer->write(audio.data<char>(), audio.frameCount() * getAudioFormatSize(format));
-//    qint64 decodeTime = audioDecoder->position();
-//    //qDebug() << format;
-//    if(decodeTime - lastDecodeTime > 1000)
-//    {
-//        emit loadStatus(decodeTime, false);
-//        lastDecodeTime = decodeTime;
-//    }
-//}
-
 void GAudioPlayer::decodingChanged(bool status)
 {
     decodeing = status;
-    //musicLen = 0;
     if(status == false)
     {
-        //qint64 len = audioDecoder->position();
-        //QAudioBuffer audio = audioDecoder->read();
-        //QAudioFormat format = audioSink->format();
-        //if(getAudioFormatSize(format) * 1000 / format.sampleRate() != 0)
-        //{
-        //    len = buffer->size() / getAudioFormatSize(format) * 1000 / format.sampleRate();
-        //}
-        //musicLen = len;
-        //qDebug() << len;
         buffer->seek(0);
         QMutexLocker locker(timerMutex);
-        //locker.relock();
         if(playTime != nullptr)
         {
             delete playTime;
@@ -404,7 +374,6 @@ void GAudioPlayer::decodingChanged(bool status)
         stopTime = 0;
         lastDecodeTime = -1;
         locker.unlock();
-        //audioDecoder->setSource(QUrl());
         emit loadStatus(musicLen, true);
     }
 
@@ -412,14 +381,12 @@ void GAudioPlayer::decodingChanged(bool status)
 
 void GAudioPlayer::audioSinkStateChanged(QAudio::State state)
 {
-    //qDebug() << state;
     playing = state;
     if(state != QAudio::ActiveState)
     {
         if(isAccurateProgress)
         {
             QMutexLocker locker(timerMutex);
-            //locker.relock();
             if(playTime != nullptr)
             {
                 if(state == QAudio::IdleState)
@@ -449,29 +416,29 @@ void GAudioPlayer::stateChangedMateDate(QProcess::ProcessState newState)
     if(newState == QProcess::NotRunning)
     {
         QString text = ffmpeg_mateDate->readAllStandardOutput() + ffmpeg_mateDate->readAllStandardError();
-        qDebug() << strMid(text, "ARTIST          : ", "\r\n");
+        //qDebug() << strMid(text, "ARTIST          : ", "\r\n");
         metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "ARTIST          : ", "\r\n"));
-        qDebug() << strMid(text, "TITLE           : ", "\r\n");
+        //qDebug() << strMid(text, "TITLE           : ", "\r\n");
         metaData.insert(QMediaMetaData::Title, strMid(text, "TITLE           : ", "\r\n"));
-        qDebug() << strMid(text, "ALBUM           : ", "\r\n");
+        //qDebug() << strMid(text, "ALBUM           : ", "\r\n");
         metaData.insert(QMediaMetaData::AlbumTitle, strMid(text, "ALBUM           : ", "\r\n"));
-        qDebug() << strMid(text, "album_artist    : ", "\r\n");
+        //qDebug() << strMid(text, "album_artist    : ", "\r\n");
         metaData.insert(QMediaMetaData::AlbumArtist, strMid(text, "album_artist    : ", "\r\n"));
-        qDebug() << strMid(text, "GENRE           : ", "\r\n");
+        //qDebug() << strMid(text, "GENRE           : ", "\r\n");
         metaData.insert(QMediaMetaData::Genre, strMid(text, "GENRE           : ", "\r\n"));
-        qDebug() << strMid(text, "GENRENUMBER     : ", "\r\n");
-        qDebug() << strMid(text, "COMPOSER        : ", "\r\n");
+        //qDebug() << strMid(text, "GENRENUMBER     : ", "\r\n");
+        //qDebug() << strMid(text, "COMPOSER        : ", "\r\n");
         metaData.insert(QMediaMetaData::Composer, strMid(text, "COMPOSER        : ", "\r\n"));
-        qDebug() << strMid(text, "disc            : ", "\r\n");
-        qDebug() << strMid(text, "track           : ", "\r\n");
-        qDebug() << strMid(text, "COPYRIGHT       : ", "\r\n");
+        //qDebug() << strMid(text, "disc            : ", "\r\n");
+        //qDebug() << strMid(text, "track           : ", "\r\n");
+        //qDebug() << strMid(text, "COPYRIGHT       : ", "\r\n");
         metaData.insert(QMediaMetaData::Copyright, strMid(text, "COPYRIGHT       : ", "\r\n"));
-        qDebug() << strMid(text, "ORGANIZATION    : ", "\r\n");
+        //qDebug() << strMid(text, "ORGANIZATION    : ", "\r\n");
         metaData.insert(QMediaMetaData::Orientation, strMid(text, "ORGANIZATION    : ", "\r\n"));
-        qDebug() << strMid(text, "COMMENT         : ", "\r\n");
+        //qDebug() << strMid(text, "COMMENT         : ", "\r\n");
         metaData.insert(QMediaMetaData::Comment, strMid(text, "COMMENT         : ", "\r\n"));
-        qDebug() << strMid(text, "PERFORMER       : ", "\r\n");
-        qDebug() << strMid(text, "MOOD            : ", "\r\n");
+        //qDebug() << strMid(text, "PERFORMER       : ", "\r\n");
+        //qDebug() << strMid(text, "MOOD            : ", "\r\n");
         QImage img;
         if(ffmpeg_mateDate->exitCode() == 0)
         {
@@ -607,8 +574,6 @@ void positionChangedThread(GAudioPlayer* audioPlayer)
                 {
                     audioPlayer->sync();
                 }
-                //if(audioPlayer->audioSink != nullptr)
-                //    qDebug() << audioPlayer->audioSink->bufferSize();
             }
         }
         QObject().thread()->usleep(10);

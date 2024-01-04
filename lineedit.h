@@ -1,7 +1,7 @@
 #ifndef LINEEDIT_H
 #define LINEEDIT_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class LineEdit;
@@ -9,7 +9,7 @@ class LineEdit;
 
 class MainWindow;
 
-class LineEdit : public QWidget
+class LineEdit : public QDialog
 {
     Q_OBJECT
 
@@ -17,8 +17,7 @@ public:
     explicit LineEdit(QWidget *parent = nullptr);
     ~LineEdit();
     MainWindow* m;
-    void show();
-    bool close();
+    int exec();
 
 private slots:
     void on_pushButton_save_clicked();
@@ -28,7 +27,6 @@ private slots:
 private:
     Ui::LineEdit *ui;
     int selectLine;
-    void closeEvent( QCloseEvent * event );
 };
 
 #endif // LINEEDIT_H

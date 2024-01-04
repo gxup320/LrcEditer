@@ -88,6 +88,7 @@ void GLrcWindowGL::setBackground(QImage image)
 {
     *backgroundImage = image;
     backgroundImageToPixmap();
+    m_dark = 0;
     backgroundMode = 1;
     if(copyed != nullptr)
     {
@@ -113,6 +114,7 @@ void GLrcWindowGL::copyTo(GLrcWindowGL *target)
             copyed->setBackground(*backgroundColor);
             break;
         }
+        target->m_dark = m_dark;
         //复制前景
         setDispaleColor(colors[0],colors[1],colors[2],colors[3]);
         //复制歌词
@@ -170,7 +172,14 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
         break;
     case 1:
         if(!backgroundPixmap->isNull())
+        {
             painter.drawPixmap(0,0,backgroundPixmap->scaled(w,h,Qt::IgnoreAspectRatio));
+        }
+        else
+        {
+            painter.fillRect(0,0,w,h,QColor(0,0,0));
+        }
+        painter.fillRect(QRect(0, 0, w, h),QBrush(QColor(0, 0, 0, m_dark)));
         break;
     default:
         painter.fillRect(0,0,w,h,QColor(255,255,255));
@@ -240,7 +249,7 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                             m_lrcY = y2;
                         }
                     }
-                    if(m_disableMovingPicture)
+                    if(m_disableMovingPicture || m_dark == 0)
                     {
                         m_lrcY = y2;
                         m_disableMovingPicture = false;
@@ -288,6 +297,7 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
             }
         }
         pos.setY(m_lrcY);
+        bool textExists = false;
         for (int var = 0; var < l_lrcItems.length(); ++var)
         {
             int sizeDiff = fountSize * l_lrcItems[var].fontSize / 15;
@@ -318,8 +328,11 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                     if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
                     {
                         pos.setX((w - fm.horizontalAdvance(itm)) / 2);
-                        painter.setPen(colors[1]);
+                        QColor l_color = colors[1];
+                        l_color.setAlpha(l_color.alpha() * m_dark / 100);
+                        painter.setPen(l_color);
                         painter.drawText(pos, itm);
+                        textExists = true;
                     }
                     if(fast && selectWord[n_selID] >= 0 && wordLength[n_selID] > 0 && startTime[n_selID] > 0 && endTime[n_selID] > 0)
                     {
@@ -336,9 +349,14 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                             n_image_sel.fill(*backgroundColor);
                             QPainter n_painter_sel(&n_image_sel);
                             if(backgroundMode == 1)
+                            {
                                 n_painter_sel.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()));
+                                n_painter_sel.fillRect(QRect(0, 0, n_image_sel.width(), n_image_sel.height()),QBrush(QColor(0, 0, 0, m_dark)));
+                            }
                             n_painter_sel.setFont(font);
-                            n_painter_sel.setPen(colors[3]);
+                            QColor l_color = colors[3];
+                            l_color.setAlpha(l_color.alpha() * m_dark / 100);
+                            n_painter_sel.setPen(l_color);
                             QPoint n_pos_sel = {0, fountSize + sizeDiff};
                             n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord[n_selID], wordLength[n_selID]));
                             painter.drawPixmap(QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()), n_image_sel);
@@ -346,11 +364,17 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                             n_image.fill(*backgroundColor);
                             QPainter n_painter(&n_image);
                             if(backgroundMode == 1)
+                            {
                                 n_painter.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()));
+                                n_painter.fillRect(QRect(0, 0, n_image.width(), n_image.height()),QBrush(QColor(0, 0, 0, m_dark)));
+                            }
                             n_painter.setFont(font);
-                            n_painter.setPen(colors[2]);
+                            l_color = colors[2];
+                            l_color.setAlpha(l_color.alpha() * m_dark / 100);
+                            n_painter.setPen(l_color);
                             QPoint n_pos = {0, fountSize + sizeDiff};
                             n_painter.drawText(n_pos, itm);
+                            textExists = true;
                             painter.drawPixmap(QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()), n_image);
                         }
                     }
@@ -373,12 +397,23 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                     {
                         QFontMetrics fm(font);
                         pos.setX((w - fm.horizontalAdvance(itm)) / 2);
-                        painter.setPen(colors[0]);
+                        QColor l_color = colors[0];
+                        l_color.setAlpha(l_color.alpha() * m_dark / 100);
+                        painter.setPen(l_color);
                         painter.drawText(pos, itm);
+                        textExists = true;
                     }
                 }
             }
             pos.setY(pos.y() + fountSize / 2);
+        }
+        if(textExists && m_dark < 100)
+        {
+            m_dark++;
+        }
+        else if(!textExists && m_dark > 0)
+        {
+            m_dark--;
         }
     }
 }
@@ -402,9 +437,6 @@ void GLrcWindowGL::backgroundImageToPixmap()
     //居中画出图片
     QPainter painter( &pxDst );
     painter.drawPixmap((width() - temp.width()) / 2, (height() - temp.height()) / 2,temp.width(), temp.height(), temp);
-    painter.setBrush(QColor(0,0,0,100));
-    painter.setPen(QColor(0,0,0,100));
-    painter.drawRect(pxDst.rect());
     *backgroundPixmap = pxDst;
 }
 

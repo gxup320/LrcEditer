@@ -35,7 +35,6 @@ public:
     QByteArray getPcm();
 
 private slots:
-    //void readBuffer();
     void audioSinkStateChanged(QAudio::State state);
     void sync();
 

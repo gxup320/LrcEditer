@@ -5,7 +5,7 @@
 #include <QMessageBox>
 
 LrcEdit::LrcEdit(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::LrcEdit)
 {
     ui->setupUi(this);
@@ -16,15 +16,10 @@ LrcEdit::~LrcEdit()
     delete ui;
 }
 
-void LrcEdit::show()
+int LrcEdit::exec()
 {
     ui->plainTextEdit->setPlainText(m->lrc->getLrc());
-    QWidget::show();
-}
-
-bool LrcEdit::close()
-{
-    return QWidget::close();
+    return QDialog::exec();
 }
 
 void LrcEdit::on_pushButton_save_clicked()
@@ -39,9 +34,3 @@ void LrcEdit::on_pushButton_close_clicked()
 {
     close();
 }
-
-void LrcEdit::closeEvent(QCloseEvent *)
-{
-    m->show();
-}
-

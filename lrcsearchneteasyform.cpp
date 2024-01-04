@@ -10,7 +10,7 @@
 #include <QMessageBox>
 
 LrcSearchNeteasyForm::LrcSearchNeteasyForm(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::LrcSearchNeteasyForm)
 {
     ui->setupUi(this);
@@ -23,15 +23,14 @@ LrcSearchNeteasyForm::~LrcSearchNeteasyForm()
     delete ui;
 }
 
-void LrcSearchNeteasyForm::show()
+int LrcSearchNeteasyForm::exec()
 {
     if(m->netEasyApiUrl != "")
         ui->lineEdit_url->setText(m->netEasyApiUrl);
     ui->lineEdit->setText(m->ui->lineEdit_ti->text());
-    QWidget::show();
-    QCoreApplication::processEvents();
     if(ui->lineEdit->text() != "")
         wangyiyunList(ui->lineEdit->text());
+    return QDialog::exec();
 }
 
 bool LrcSearchNeteasyForm::close()
@@ -237,7 +236,12 @@ void LrcSearchNeteasyForm::on_comboBox_currentIndexChanged(int index)
 {
     if(index < musicArr->count())
     {
-        QString url = ui->lineEdit_url->text() + "/lyric?id=" + QString::number((*musicArr)[index].toObject().find("id")->toInt());
+        QJsonObject musicObj = (*musicArr)[index].toObject();
+        if(musicObj.find("id") == musicObj.end())
+        {
+            return;
+        }
+        QString url = ui->lineEdit_url->text() + "/lyric?id=" + QString::number(musicObj.find("id")->toInt());
         QNetworkRequest Request = QNetworkRequest(url);
         QNetworkReply *reply;
         QNetworkAccessManager HTTPManger;

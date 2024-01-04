@@ -7,7 +7,7 @@
 #include <QMessageBox>
 
 batchProcessing::batchProcessing(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::batchProcessing)
 {
     ui->setupUi(this);
@@ -194,11 +194,6 @@ bool batchProcessing::saveLrcToFile(QString fileName)
     }
     //ui->statusbar->showMessage(tr("Save lyric to ") + "'" + fileName +"' fail!", 5000);
     return false;
-}
-
-void batchProcessing::closeEvent(QCloseEvent *)
-{
-    m->show();
 }
 
 void batchProcessing::on_pushButton_add_file_clicked()

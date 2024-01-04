@@ -1,7 +1,7 @@
 #ifndef BATCHPROCESSING_H
 #define BATCHPROCESSING_H
 
-#include <QWidget>
+#include <QDialog>
 
 class MainWindow;
 class QStandardItemModel;
@@ -11,14 +11,13 @@ namespace Ui {
 class batchProcessing;
 }
 
-class batchProcessing : public QWidget
+class batchProcessing : public QDialog
 {
     Q_OBJECT
 
 public:
     explicit batchProcessing(QWidget *parent = nullptr);
     ~batchProcessing();
-    MainWindow* m;
     void fileListAddItem(const QString & fileName);
     void loadLrc(QString fileName);
     bool saveLrcToFile(QString fileName);
@@ -38,7 +37,6 @@ private:
     GLrc *lrc;
     Ui::batchProcessing *ui;
     QStandardItemModel* model_files;
-    void closeEvent( QCloseEvent * event );
 
     QString al, ar, au, by, ti, re, ve;
     int offset = 0;

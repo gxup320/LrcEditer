@@ -1,7 +1,7 @@
 #ifndef LRCEDIT_H
 #define LRCEDIT_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class LrcEdit;
@@ -9,7 +9,7 @@ class LrcEdit;
 
 class MainWindow;
 
-class LrcEdit : public QWidget
+class LrcEdit : public QDialog
 {
     Q_OBJECT
 
@@ -17,8 +17,7 @@ public:
     explicit LrcEdit(QWidget *parent = nullptr);
     ~LrcEdit();
     MainWindow* m;
-    void show();
-    bool close();
+    int exec();
 
 private slots:
     void on_pushButton_save_clicked();
@@ -27,7 +26,6 @@ private slots:
 
 private:
     Ui::LrcEdit *ui;
-    void closeEvent( QCloseEvent * event );
 };
 
 #endif // LRCEDIT_H

@@ -5,7 +5,7 @@
 #include <QMessageBox>
 
 LineEdit::LineEdit(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::LineEdit)
 {
     ui->setupUi(this);
@@ -16,17 +16,12 @@ LineEdit::~LineEdit()
     delete ui;
 }
 
-void LineEdit::show()
+int LineEdit::exec()
 {
     selectLine = m->lrc->getSelectLine();
     ui->lineEdit->setText(m->lrc->getTimes(selectLine));
     ui->plainTextEdit->setPlainText(m->lrc->getLineString(selectLine));
-    QWidget::show();
-}
-
-bool LineEdit::close()
-{
-    return QWidget::close();
+    return QDialog::exec();
 }
 
 void LineEdit::on_pushButton_save_clicked()
@@ -41,9 +36,3 @@ void LineEdit::on_pushButton_close_clicked()
 {
     close();
 }
-
-void LineEdit::closeEvent(QCloseEvent *)
-{
-    m->show();
-}
-

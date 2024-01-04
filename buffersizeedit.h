@@ -17,15 +17,11 @@ class BufferSizeEdit : public QDialog
 public:
     explicit BufferSizeEdit(QWidget *parent = nullptr);
     ~BufferSizeEdit();
-    void show();
+    int exec();
     MainWindow* m;
 
 private slots:
-    void on_BufferSizeEdit_rejected();
-
     void on_BufferSizeEdit_accepted();
-
-    void on_buttonBox_accepted();
 
 private:
     Ui::BufferSizeEdit *ui;

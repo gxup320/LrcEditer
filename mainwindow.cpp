@@ -210,7 +210,6 @@ void MainWindow::loadStatus(qint64 position, bool isEnd)
     //QTime time = QTime::fromMSecsSinceStartOfDay(position);
     QTime tl = QTime::fromMSecsSinceStartOfDay(position);
     QString length = tl.toString("mm:ss.") + tl.toString("zzz").left(2);
-    //qDebug() << position;
     if(isEnd)
     {
         //ui->label->setText("总长度："+time.toString("hh:mm:ss.zzz"));
@@ -343,7 +342,6 @@ void MainWindow::displayLrc(qint64 time, bool f)
     qint64 localTime;
     int line;
     QString html = lrc->getHtml(time ,true , &localTime, &line, f);
-    //qDebug() << html;
     if(f || lestLocalTime != localTime)
     {
         lestLocalTime = localTime;
@@ -457,7 +455,6 @@ qint64 MainWindow::setBufferSize(qint64 size, qint64 sizeSmall)
 void MainWindow::on_pushButton_loadmusic_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this);
-    //qDebug() << fileName;
     if(fileName != "")
     {
         //检查同名歌词
@@ -709,7 +706,6 @@ bool MainWindow::keyProc(QKeyEvent *event)
             else
             {
                 qint64 time = lrc->nextWord();
-                qDebug() << time;
                 if(time != -1)
                     player->setPosition(time);
             }
@@ -829,8 +825,7 @@ void MainWindow::on_pushButton_edit_line_clicked()
         delete linee;
     linee = new LineEdit;
     linee->m = this;
-    linee->show();
-    hide();
+    linee->exec();
 }
 
 
@@ -840,8 +835,7 @@ void MainWindow::on_pushButton_edit_lrc_clicked()
         delete lrce;
     lrce = new LrcEdit;
     lrce->m = this;
-    lrce->show();
-    hide();
+    lrce->exec();
 }
 
 
@@ -867,13 +861,13 @@ void MainWindow::on_pushButton_append_line_clicked()
 
 void MainWindow::on_pushButton_search_from_neteasy_clicked()
 {
+    ui->pushButton_search_from_neteasy->setEnabled(false);
     if(m_LrcSearchNeteasyForm != nullptr)
         delete m_LrcSearchNeteasyForm;
     m_LrcSearchNeteasyForm = new LrcSearchNeteasyForm;
     m_LrcSearchNeteasyForm->m = this;
-    m_LrcSearchNeteasyForm->show();
-    QCoreApplication::processEvents();
-    hide();
+    m_LrcSearchNeteasyForm->exec();
+    ui->pushButton_search_from_neteasy->setEnabled(true);
 }
 
 
@@ -896,10 +890,7 @@ void MainWindow::on_pushButto_batchProcess_clicked()
     if(m_batchProcessing != nullptr)
         delete m_batchProcessing;
     m_batchProcessing = new batchProcessing;
-    m_batchProcessing->m = this;
-    m_batchProcessing->show();
-    QCoreApplication::processEvents();
-    hide();
+    m_batchProcessing->exec();
 }
 
 
@@ -944,8 +935,7 @@ void MainWindow::on_pushButton_bufferSize_clicked()
         delete m_BufferSizeEdit;
     m_BufferSizeEdit = new BufferSizeEdit;
     m_BufferSizeEdit->m = this;
-    m_BufferSizeEdit->show();
-    hide();
+    m_BufferSizeEdit->exec();
 }
 
 
