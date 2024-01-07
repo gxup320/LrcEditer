@@ -10,10 +10,6 @@
 GPcmbarGL::GPcmbarGL(QWidget *parent)
     :QOpenGLWidget(parent)
 {
-    //QSurfaceFormat format;
-    //format.setSamples(16);
-    //setFormat(format);
-    m_pcmImage = new QPixmap;
     setMouseTracking(true);
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -30,47 +26,24 @@ GPcmbarGL::~GPcmbarGL()
 void GPcmbarGL::setPcm(QByteArray pcm)
 {
     m_length = pcm.length() / 2 / 441;
-    QBuffer buffer;
-    buffer.setBuffer(&pcm);
-    buffer.open(QBuffer::ReadOnly);
-    //每秒20像素
-    *m_pcmImage = QPixmap(m_length, 200);
-    m_pcmImage->fill(QColor(0,0,0,0));
-    //画出PCM
-    QPainter painter(m_pcmImage);
-    painter.setPen(QPen(QColor(0,255,0)));
-    QLine line;
-    line.setLine(0,100,0,100);
-    QPoint point = line.p2();
-    while(!buffer.atEnd())
+    int seek = 0;
+    while (seek < pcm.size() - 441 * 4)
     {
-        //QList<short> list;
-        int yMax = 0;
-        int yMin = 0;
+        //计算PCM
+        float yMax = 0;
+        float yMin = 0;
         for (int var = 0; var < 441; ++var)
         {
-            QByteArray num = buffer.read(2);
-            if(num.size() == 2)
-            {
-                short y = (short(num[1]) << 8) | num[0];
-                if(yMax < y)
-                    yMax = y;
-                if(yMin > y)
-                    yMin = y;
-            }
+            short y = (short(pcm[seek + 1]) << 8) | pcm[seek + 0];
+            if(yMax < y)
+                yMax = y;
+            if(yMin > y)
+                yMin = y;
+            seek+=2;
         }
-        point.setY(100 + yMax * 100 / 0x7FFF);
-        line.setP1(point);
-        point.setY(100 + yMin * 100 / 0x7FFF);
-        line.setP2(point);
-        painter.drawLine(line);
-        int x = line.x1();
-        x++;
-        line.setLine(x,100,x,100);
-        point.setX(x);
+        m_showBytearray.append(yMax / 0x7FFF);
+        m_showBytearray.append(yMin / 0x7FFF);
     }
-    //painter.end();
-    //m_pcmImage->save("C:/a/1.png");
 }
 
 void GPcmbarGL::setTime(qint64 time)
@@ -84,8 +57,6 @@ void GPcmbarGL::setPos(qint64 pos)
     if(pos != m_pos)
     {
         m_pos = pos;
-        //if(m_pause == false)
-        //drawPcm();
     }
 }
 
@@ -103,72 +74,6 @@ void GPcmbarGL::pause(bool p)
     else
     {
         m_timer->start(0);
-    }
-}
-
-void GPcmbarGL::paintEvent(QPaintEvent *e)
-{
-    if(m_pause == false)
-        m_displayPos = m_pos;
-    if(width() == 0)
-    {
-        return;
-    }
-    int mid = width() / 2;
-    QPainter painter(this);
-    painter.fillRect(0,0,width(),height(),Qt::black);
-    //画出底部横线
-    if(painter.isActive())
-    {
-        QFont font = painter.font();
-        font.setPixelSize(25);
-        painter.setFont(font);
-        painter.setPen(QPen(QColor(0,255,0)));
-        QLine line;
-        line.setLine(0,100,width(),100);
-        painter.drawLine(line);
-        //画出PCM
-        painter.drawPixmap(QPoint(std::max(mid - m_displayPos, (qint64)0),0), m_pcmImage->copy(std::max(m_displayPos - mid, (qint64)0),0,width(),height()));
-        //painter.drawPixmap(QPoint(mid - m_displayPos,0), *m_pcmImage);
-        //painter.fillRect(rect(), QColor(0,0,0));
-        //画出LRC
-        //painter.drawPixmap(QPoint(mid - pos,0), *m_lrcImage);
-        if(m_onLrcItem == -1)
-            formatLrc();
-        //drowLrc();
-        for (int var = 0; var < m_lrcPosItems.length(); ++var)
-        {
-            //qDebug() << m_lrcPosItems[var].string;
-            if(m_lrcPosItems[var].string != "")
-            {
-                painter.setPen(QPen(QColor(255,0,0)));
-                painter.setBrush(QBrush(QColor(0,0,0, 50)));
-                painter.drawRect(m_lrcPosItems[var].rect);
-                painter.setPen(QPen(QColor(255,100,255)));
-                QRect d_rect;
-                if(m_lrcPosItems[var].rect.right() - m_lrcPosItems[var].rect.left() > 10)
-                {
-                    d_rect.setLeft(m_lrcPosItems[var].rect.left() + 5);
-                    d_rect.setRight(m_lrcPosItems[var].rect.right() - 5);
-                    d_rect.setTop(5);
-                    d_rect.setBottom(200-5);
-                    painter.drawText(d_rect,m_lrcPosItems[var].string);
-                }
-            }
-        }
-        //painter.drawPixmap(QPoint(0,0), *m_lrcShowImage);
-        //画出中心线
-        painter.setPen(QPen(QColor(0,0,255)));
-        line.setLine(mid,0,mid,200);
-        painter.drawLine(line);
-        painter.setPen(QPen(QColor(0,0,0, 100)));
-        painter.setBrush(QBrush(QColor(0,0,0, 100)));
-        painter.drawRect(QRect(mid,0,mid,200));
-        //if(displayed)
-        //{
-        //    std::swap(m_showImage, m_showImageNext);
-        //    emit drawPcmCached();
-        //}
     }
 }
 
@@ -351,4 +256,97 @@ void GPcmbarGL::mouseReleaseEvent(QMouseEvent *event)
         }
     }
     m_moveing = -1;
+}
+
+void GPcmbarGL::initializeGL()
+{
+    initializeOpenGLFunctions();
+}
+
+void GPcmbarGL::paintGL()
+{
+    if(m_pause == false)
+        m_displayPos = m_pos;
+    if(m_onLrcItem == -1)
+        formatLrc();
+    glClearColor(0.0f,0.0f,0.0f,0.0f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor3f(0.0f,1.0f,0.0f);
+    glBegin(GL_LINES);
+    int seek = m_displayPos * 2 - width();
+    int x = 0;
+    int w = width();
+    //先画一条中线
+    glVertex2f(-1.0,0);
+    glVertex2f(1.0,0);
+    while (x < w && seek < m_showBytearray.size() - 2)
+    {
+        if(seek >= 0)
+        {
+            glVertex2f((x-w/2.0f)/(w/2.0f),m_showBytearray[seek]);
+            glVertex2f((x-w/2.0f)/(w/2.0f),m_showBytearray[seek+1]);
+        }
+        x++;
+        seek += 2;
+    }
+    glEnd();
+    //画出放歌词的矩形
+    glColor4f(1.0f,0.0f,1.0f, 0.3f);
+    for (int var = 0; var < m_lrcPosItems.length(); ++var)
+    {
+        if(m_lrcPosItems[var].string != "")
+        {
+            glRectf(float(m_lrcPosItems[var].rect.x() - w / 2) / (w / 2), -1.0, float(m_lrcPosItems[var].rect.right() - w / 2) / (w / 2), 1.0);
+        }
+    }
+    //画出歌词分界线
+    glBegin(GL_LINES);
+    glColor3f(1.0f,0.0f,1.0f);
+    for (int var = 0; var < m_lrcPosItems.length(); ++var)
+    {
+        //qDebug() << m_lrcPosItems[var].string;
+        if(m_lrcPosItems[var].string != "")
+        {
+            glVertex2f(float(m_lrcPosItems[var].rect.x() - w / 2) / (w / 2),1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.x() - w / 2) / (w / 2),-1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.right() - w / 2) / (w / 2),1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.right() - w / 2) / (w / 2),-1.0);
+        }
+    }
+    glEnd();
+    //画出歌词
+    QPainter painter(this);
+    QFont font = painter.font();
+    font.setPixelSize(25);
+    painter.setFont(font);
+    painter.setPen(QPen(QColor(255,100,255)));
+    for (int var = 0; var < m_lrcPosItems.length(); ++var)
+    {
+        //qDebug() << m_lrcPosItems[var].string;
+        if(m_lrcPosItems[var].string != "")
+        {
+            QRect d_rect;
+            if(m_lrcPosItems[var].rect.right() - m_lrcPosItems[var].rect.left() > 10)
+            {
+                d_rect.setLeft(m_lrcPosItems[var].rect.left() + 5);
+                d_rect.setRight(m_lrcPosItems[var].rect.right() - 5);
+                d_rect.setTop(5);
+                d_rect.setBottom(200-5);
+                painter.drawText(d_rect, 0, m_lrcPosItems[var].string);
+            }
+        }
+    }
+    painter.end();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //未播放降低亮度
+    glColor4f(0.0f,0.0f,0.0f, 0.3f);
+    glRectf(0, -1.0, 1.0, 1.0);
+    //画出中线
+    glBegin(GL_LINES);
+    glColor3f(0.0f,0.0f,1.0f);
+    glVertex2f(0.0,-1.0);
+    glVertex2f(0.0,1.0);
+    glEnd();
 }

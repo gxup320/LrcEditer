@@ -78,6 +78,7 @@ void MainWindow::show()
 {
     QWidget::show();
     ui->checkBox_pcm_pause->setCheckState(Qt::Checked);
+    ui->checkBox_lrc_pause->setCheckState(Qt::Checked);
 }
 
 void MainWindow::durationChanged(qint64 duration)
@@ -196,7 +197,7 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
         else
         {
             ui->openGLWidget_lrc->setBackground(img.value<QImage>());
-            ui->openGLWidget_lrc->setDispaleColor(QColor(200,200,200,200), QColor(255,255,255,230), QColor(0,255,0,230), QColor(0,0,255,230));
+            ui->openGLWidget_lrc->setDispaleColor(QColor(200,200,200,200), QColor(255,255,255,230), QColor(0,255,0,230), QColor(200,255,200,230));
         }
     }
 }

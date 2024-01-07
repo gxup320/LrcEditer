@@ -337,15 +337,8 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                     auto& itm = sl[var];
                     //计算这一行宽度，计算横坐标
                     pos.setY(pos.y() + fm.height());
-                    if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
-                    {
-                        pos.setX((w - fm.horizontalAdvance(itm)) / 2);
-                        QColor l_color = colors[1];
-                        l_color.setAlpha(l_color.alpha() * m_dark / 100);
-                        painter.setPen(l_color);
-                        painter.drawText(pos, itm);
-                        textExists = true;
-                    }
+                    pos.setX((w - fm.horizontalAdvance(itm)) / 2);
+                    int l_endPix = 0;
                     if(fast && selectWord[n_selID] >= 0 && wordLength[n_selID] > 0 && startTime[n_selID] > 0 && endTime[n_selID] > 0)
                     {
                         fast = false;
@@ -357,38 +350,27 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                         int n_w3 = n_w + n_w2 * t1 / t2;
                         if(n_w3 > 0 && fm.height() > 0)
                         {
-                            QPixmap n_image_sel(n_w2, fm.height());
-                            n_image_sel.fill(*backgroundColor);
-                            QPainter n_painter_sel(&n_image_sel);
-                            if(backgroundMode == 1)
-                            {
-                                n_painter_sel.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()));
-                                n_painter_sel.fillRect(QRect(0, 0, n_image_sel.width(), n_image_sel.height()),QBrush(QColor(0, 0, 0, m_dark)));
-                            }
-                            n_painter_sel.setFont(font);
+                            l_endPix = n_w + n_w2;
                             QColor l_color = colors[3];
                             l_color.setAlpha(l_color.alpha() * m_dark / 100);
-                            n_painter_sel.setPen(l_color);
-                            QPoint n_pos_sel = {0, fountSize + sizeDiff};
-                            n_painter_sel.drawText(n_pos_sel, itm.mid(selectWord[n_selID], wordLength[n_selID]));
-                            painter.drawPixmap(QRect(pos.x() + n_w, pos.y() - (fountSize + sizeDiff), n_image_sel.width(), n_image_sel.height()), n_image_sel);
-                            QPixmap n_image(n_w3, fm.height());
-                            n_image.fill(*backgroundColor);
-                            QPainter n_painter(&n_image);
-                            if(backgroundMode == 1)
-                            {
-                                n_painter.drawPixmap(QPoint(0,0),*backgroundPixmap,QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()));
-                                n_painter.fillRect(QRect(0, 0, n_image.width(), n_image.height()),QBrush(QColor(0, 0, 0, m_dark)));
-                            }
-                            n_painter.setFont(font);
+                            painter.setPen(l_color);
+                            QRect n_pos = {pos.x() + n_w3, pos.y() - (fountSize + sizeDiff),n_w2 - (n_w3 - n_w),fm.height()};
+                            painter.drawText(n_pos, Qt::AlignRight, itm.mid(selectWord[n_selID], wordLength[n_selID]));
                             l_color = colors[2];
                             l_color.setAlpha(l_color.alpha() * m_dark / 100);
-                            n_painter.setPen(l_color);
-                            QPoint n_pos = {0, fountSize + sizeDiff};
-                            n_painter.drawText(n_pos, itm);
-                            textExists = true;
-                            painter.drawPixmap(QRect(pos.x(), pos.y() - (fountSize + sizeDiff), n_image.width(), n_image.height()), n_image);
+                            painter.setPen(l_color);
+                            n_pos = {pos.x(), pos.y() - (fountSize + sizeDiff),n_w3,fm.height()};
+                            painter.drawText(n_pos, 0, itm);
                         }
+                    }
+                    if(pos.y() > 0 && pos.y() < h + fountSize + sizeDiff && itm.length() > 0)
+                    {
+                        QColor l_color = colors[1];
+                        l_color.setAlpha(l_color.alpha() * m_dark / 100);
+                        painter.setPen(l_color);
+                        QRect n_pos = {pos.x() + l_endPix, pos.y() - (fountSize + sizeDiff),fm.horizontalAdvance(itm) - l_endPix,fm.height()};
+                        painter.drawText(n_pos, Qt::AlignRight, itm);
+                        textExists = true;
                     }
                 }
             }
@@ -412,7 +394,8 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                         QColor l_color = colors[0];
                         l_color.setAlpha(l_color.alpha() * m_dark / 100);
                         painter.setPen(l_color);
-                        painter.drawText(pos, itm);
+                        QRect n_pos = {pos.x(), pos.y() - (fountSize + sizeDiff),fm.horizontalAdvance(itm),fm.height()};
+                        painter.drawText(n_pos, 0, itm);
                         textExists = true;
                     }
                 }

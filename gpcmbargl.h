@@ -4,10 +4,11 @@
 #include <QOpenGLWidget>
 #include <QObject>
 #include <QWidget>
+#include <QOpenGLFunctions>
 
 class GLrc;
 
-class GPcmbarGL : public QOpenGLWidget
+class GPcmbarGL : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
     struct lrcPosItem
@@ -33,7 +34,7 @@ signals:
 
 private:
     QTimer* m_timer;
-    QPixmap * m_pcmImage;
+    QList<float> m_showBytearray;
     qint64 m_length = 0;
     qint64 m_pos = 0;
     qint64 m_displayPos = 0;
@@ -42,7 +43,6 @@ private:
     qint64 m_pausePos = 0;
     int m_onLrcItem = -1;
     qint64 m_lrcPos = -1;
-    void paintEvent(QPaintEvent *e);
     GLrc * m_lrc = nullptr;
     QList<lrcPosItem> m_lrcPosItems;
     void formatLrc();
@@ -51,6 +51,8 @@ private:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void initializeGL();
+    void paintGL();
 };
 
 #endif // GPCMBARGL_H
