@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)), Qt::BlockingQueuedConnection);
     connect(player, SIGNAL(loadStatus(qint64,bool)), this, SLOT(loadStatus(qint64,bool)));
     connect(player, SIGNAL(bufferSizeChanged(qint64)), this, SLOT(bufferSizeChanged(qint64)));
+    connect(player, SIGNAL(audioStateChanged(QAudio::State)), this, SLOT(audioStateChanged(QAudio::State)));
+
 }
 
 MainWindow::~MainWindow()
@@ -268,6 +270,17 @@ void MainWindow::lrcChanged(int md)
 void MainWindow::bufferSizeChanged(qint64 size)
 {
     ui->pushButton_bufferSize->setText(QString::number(size));
+}
+
+void MainWindow::audioStateChanged(QAudio::State state)
+{
+    if(state == QAudio::IdleState)
+    {
+        if(ui->checkBox_loop->isChecked())
+        {
+            player->play();
+        }
+    }
 }
 
 bool MainWindow::saveLrcToFile(QString fileName)

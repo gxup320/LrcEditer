@@ -26,6 +26,7 @@ GPcmbarGL::~GPcmbarGL()
 void GPcmbarGL::setPcm(QByteArray pcm)
 {
     m_length = pcm.length() / 2 / 441;
+    m_showBytearray = {};
     int seek = 0;
     while (seek < pcm.size() - 441 * 4)
     {

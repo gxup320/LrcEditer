@@ -389,109 +389,114 @@ Alt+→:延后0.1秒</translation>
         <translation>主窗口</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="639"/>
+        <location filename="../mainwindow.ui" line="649"/>
         <source>load lrc</source>
         <translation>加载歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="623"/>
+        <location filename="../mainwindow.ui" line="633"/>
         <source>load music</source>
         <translation>加载音乐</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="655"/>
-        <location filename="../mainwindow.ui" line="1115"/>
+        <location filename="../mainwindow.ui" line="665"/>
+        <location filename="../mainwindow.ui" line="1125"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="604"/>
-        <location filename="../mainwindow.ui" line="1120"/>
+        <location filename="../mainwindow.ui" line="614"/>
+        <location filename="../mainwindow.ui" line="1130"/>
         <source>Save As...</source>
         <translation>另存为...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="666"/>
+        <location filename="../mainwindow.ui" line="676"/>
         <source>batch processing...</source>
         <translation>批处理...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="683"/>
+        <location filename="../mainwindow.ui" line="693"/>
         <source>Mote times</source>
         <translation>更多时间</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="747"/>
+        <location filename="../mainwindow.ui" line="757"/>
         <source>back</source>
         <translation>自动回退时间</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="801"/>
+        <location filename="../mainwindow.ui" line="811"/>
         <source>inst[00:00.00]</source>
         <translation>插入[00:00.00]</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="779"/>
+        <location filename="../mainwindow.ui" line="789"/>
         <source>ms</source>
         <translation>毫秒</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="540"/>
+        <location filename="../mainwindow.ui" line="76"/>
+        <source>Loop</source>
+        <translation>循环播放</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="550"/>
         <source>lrc pause</source>
         <translation>关闭歌词窗口</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="547"/>
+        <location filename="../mainwindow.ui" line="557"/>
         <source>pcm pause</source>
         <translation>关闭PCM条</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="812"/>
+        <location filename="../mainwindow.ui" line="822"/>
         <source>Edit lrc</source>
         <translation>编辑歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="819"/>
+        <location filename="../mainwindow.ui" line="829"/>
         <source>Edit line</source>
         <translation>编辑一行</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="849"/>
+        <location filename="../mainwindow.ui" line="859"/>
         <source>inst line</source>
         <translation>插入一行</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="868"/>
+        <location filename="../mainwindow.ui" line="878"/>
         <source>append line</source>
         <translation>追加一行</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="875"/>
+        <location filename="../mainwindow.ui" line="885"/>
         <source>remove line</source>
         <translation>删除一行</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="886"/>
+        <location filename="../mainwindow.ui" line="896"/>
         <source>delete word time</source>
         <translation>删除字时间</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="893"/>
+        <location filename="../mainwindow.ui" line="903"/>
         <source>delete line word time</source>
         <translation>删除一行字时间</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="900"/>
+        <location filename="../mainwindow.ui" line="910"/>
         <source>delete all word time</source>
         <translation>删除所有字时间</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="968"/>
+        <location filename="../mainwindow.ui" line="978"/>
         <source>sort</source>
         <translation>排序</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="766"/>
+        <location filename="../mainwindow.ui" line="776"/>
         <source>remove</source>
         <translation>删除时间</translation>
     </message>
@@ -504,7 +509,7 @@ Alt+→:延后0.1秒</translation>
         <translation type="vanished">&lt;br/&gt; 到 \n</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="673"/>
+        <location filename="../mainwindow.ui" line="683"/>
         <source>checked
 [00:00:00]line1
 [00:00:00]line2
@@ -522,27 +527,27 @@ line2</source>
 第二行</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="933"/>
+        <location filename="../mainwindow.ui" line="943"/>
         <source>play/pause</source>
         <translation>播放/暂停</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="949"/>
+        <location filename="../mainwindow.ui" line="959"/>
         <source>to start</source>
         <translation>到开头</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="975"/>
+        <location filename="../mainwindow.ui" line="985"/>
         <source>Merge duplicates</source>
         <translation>合并相同项目</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="986"/>
+        <location filename="../mainwindow.ui" line="996"/>
         <source>Accurate progress</source>
         <translation>精准播放进度</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1011"/>
+        <location filename="../mainwindow.ui" line="1021"/>
         <source>Debug</source>
         <translation>调试</translation>
     </message>
@@ -657,7 +662,7 @@ N:下一字
 M:修改字时间</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1030"/>
+        <location filename="../mainwindow.ui" line="1040"/>
         <source>E:Disable Keyboard operation
 ESC:Enable Keyboard operation
 D:Enable or Disable Debug
@@ -714,52 +719,52 @@ Alt+N:字时间提前0.1秒
 Alt+N:字时间延后0.1秒</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1062"/>
+        <location filename="../mainwindow.ui" line="1072"/>
         <source>Keyboard operation</source>
         <translation>键盘操作</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="98"/>
+        <location filename="../mainwindow.ui" line="105"/>
         <source>100</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="85"/>
+        <location filename="../mainwindow.ui" line="92"/>
         <source>vol:</source>
         <translation>音量:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="826"/>
+        <location filename="../mainwindow.ui" line="836"/>
         <source>Time offset</source>
         <translation>时间偏移</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="124"/>
+        <location filename="../mainwindow.ui" line="131"/>
         <source>buffer:</source>
         <translation>缓冲:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="141"/>
+        <location filename="../mainwindow.ui" line="148"/>
         <source>Search from neteasy</source>
         <translation>在网易云音乐搜索</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="175"/>
+        <location filename="../mainwindow.ui" line="182"/>
         <source>lrc</source>
         <translation>歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="197"/>
+        <location filename="../mainwindow.ui" line="204"/>
         <source>tlyric</source>
         <translation>中文翻译歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="219"/>
+        <location filename="../mainwindow.ui" line="226"/>
         <source>romalrc</source>
         <translation>歌词注音</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="238"/>
+        <location filename="../mainwindow.ui" line="245"/>
         <source>load lrc for neteasy temp</source>
         <translation>从网易云音乐临时文件加载歌词</translation>
     </message>
@@ -768,57 +773,57 @@ Alt+N:字时间延后0.1秒</translation>
         <translation type="vanished">专辑封面</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="257"/>
-        <location filename="../mainwindow.ui" line="304"/>
+        <location filename="../mainwindow.ui" line="264"/>
+        <location filename="../mainwindow.ui" line="311"/>
         <source>Lyrics (song) title</source>
         <translation>歌词(歌曲)的标题</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="263"/>
+        <location filename="../mainwindow.ui" line="270"/>
         <source>ti:</source>
         <translation>标题:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="285"/>
-        <location filename="../mainwindow.ui" line="354"/>
+        <location filename="../mainwindow.ui" line="292"/>
+        <location filename="../mainwindow.ui" line="361"/>
         <source>Lyrics artist</source>
         <translation>演出者-歌手</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="326"/>
-        <location filename="../mainwindow.ui" line="429"/>
+        <location filename="../mainwindow.ui" line="333"/>
+        <location filename="../mainwindow.ui" line="436"/>
         <source>Creator of the Songtext</source>
         <translation>歌詞作者-作曲家</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="332"/>
+        <location filename="../mainwindow.ui" line="339"/>
         <source>au:</source>
         <translation>作曲:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="360"/>
+        <location filename="../mainwindow.ui" line="367"/>
         <source>ar:</source>
         <translation>艺人:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="382"/>
-        <location filename="../mainwindow.ui" line="410"/>
+        <location filename="../mainwindow.ui" line="389"/>
+        <location filename="../mainwindow.ui" line="417"/>
         <source>Album where the song is from</source>
         <translation>本歌所在的唱片集</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="388"/>
+        <location filename="../mainwindow.ui" line="395"/>
         <source>al:</source>
         <translation>专辑:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="451"/>
-        <location filename="../mainwindow.ui" line="479"/>
+        <location filename="../mainwindow.ui" line="458"/>
+        <location filename="../mainwindow.ui" line="486"/>
         <source>Creator of the LRC file</source>
         <translation>此LRC文件的创建者</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="457"/>
+        <location filename="../mainwindow.ui" line="464"/>
         <source>by:</source>
         <translation>歌词作者:</translation>
     </message>
@@ -827,33 +832,33 @@ Alt+N:字时间延后0.1秒</translation>
         <translation type="vanished">歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="521"/>
+        <location filename="../mainwindow.ui" line="531"/>
         <source>show lrc window</source>
         <translation>打开歌词窗口</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="528"/>
+        <location filename="../mainwindow.ui" line="538"/>
         <source>full screen</source>
         <translation>全屏歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1110"/>
+        <location filename="../mainwindow.ui" line="1120"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1125"/>
+        <location filename="../mainwindow.ui" line="1135"/>
         <source>Load music</source>
         <translation>加载音乐</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="34"/>
-        <location filename="../mainwindow.cpp" line="254"/>
+        <location filename="../mainwindow.cpp" line="258"/>
         <source>New File</source>
         <translation>新文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="101"/>
+        <location filename="../mainwindow.cpp" line="105"/>
         <source>inst</source>
         <translation>插入</translation>
     </message>
@@ -862,7 +867,7 @@ Alt+N:字时间延后0.1秒</translation>
         <translation type="vanished">视频</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="224"/>
+        <location filename="../mainwindow.cpp" line="228"/>
         <source>Music playing.</source>
         <translation>正在播放音乐.</translation>
     </message>
@@ -875,102 +880,102 @@ Alt+N:字时间延后0.1秒</translation>
         <translation type="vanished">加载中:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="273"/>
-        <location filename="../mainwindow.cpp" line="296"/>
-        <location filename="../mainwindow.cpp" line="300"/>
-        <location filename="../mainwindow.cpp" line="303"/>
+        <location filename="../mainwindow.cpp" line="288"/>
+        <location filename="../mainwindow.cpp" line="311"/>
+        <location filename="../mainwindow.cpp" line="315"/>
+        <location filename="../mainwindow.cpp" line="318"/>
         <source>Save lyric to </source>
         <translation>歌词文件保存到 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="312"/>
+        <location filename="../mainwindow.cpp" line="327"/>
         <source>The document has been modified.</source>
         <translation>文件已被修改.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="313"/>
+        <location filename="../mainwindow.cpp" line="328"/>
         <source>Do you want to save your changes?</source>
         <translation>是否要保存更改？</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="472"/>
+        <location filename="../mainwindow.cpp" line="487"/>
         <source>Load music from </source>
         <translation>加载音乐 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="512"/>
-        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="527"/>
+        <location filename="../mainwindow.cpp" line="555"/>
         <source>Open LRC</source>
         <translation>打开歌词</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="512"/>
+        <location filename="../mainwindow.cpp" line="527"/>
         <source>LRC Files (*.lrc)</source>
         <translation>歌词文件 (*.lrc)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="422"/>
+        <location filename="../mainwindow.cpp" line="437"/>
         <source>warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="237"/>
+        <location filename="../mainwindow.cpp" line="241"/>
         <source>Music decodeing...</source>
         <translation>正在解码音频...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="241"/>
+        <location filename="../mainwindow.cpp" line="245"/>
         <source>Audio device loading...</source>
         <translation>正在加载音频设备...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="245"/>
+        <location filename="../mainwindow.cpp" line="249"/>
         <source>Music loading...</source>
         <translation>正在加载音频...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="422"/>
+        <location filename="../mainwindow.cpp" line="437"/>
         <source>offset option ignored</source>
         <translation>offset选项被忽略</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="552"/>
-        <location filename="../mainwindow.cpp" line="565"/>
+        <location filename="../mainwindow.cpp" line="546"/>
+        <location filename="../mainwindow.cpp" line="567"/>
+        <location filename="../mainwindow.cpp" line="580"/>
         <source>Save fail</source>
         <translation>保存失败</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="552"/>
-        <location filename="../mainwindow.cpp" line="565"/>
+        <location filename="../mainwindow.cpp" line="546"/>
+        <location filename="../mainwindow.cpp" line="567"/>
+        <location filename="../mainwindow.cpp" line="580"/>
         <source>Save to </source>
         <translation>保存到 </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="552"/>
-        <location filename="../mainwindow.cpp" line="565"/>
+        <location filename="../mainwindow.cpp" line="546"/>
+        <location filename="../mainwindow.cpp" line="567"/>
+        <location filename="../mainwindow.cpp" line="580"/>
         <source> fail.</source>
         <translation> 失败。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="555"/>
         <source>LRC Files (*.lrc);;SubRip (*.srt)</source>
         <translation>LRC 文件 (*.lrc);;SRT字幕 (*.srt)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="766"/>
+        <location filename="../mainwindow.cpp" line="781"/>
         <source>Open NetEasy Music LRC Temp File</source>
         <translation>打开网易云音乐歌词临时文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="964"/>
+        <location filename="../mainwindow.cpp" line="979"/>
         <source>input offset time</source>
         <translation>输入时间偏移</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="964"/>
+        <location filename="../mainwindow.cpp" line="979"/>
         <source>time(ms):</source>
         <translation>时间(毫秒):</translation>
     </message>

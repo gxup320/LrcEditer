@@ -48,6 +48,7 @@ signals:
     void metaDataChanged (QMediaMetaData metaData);
     void durationChanged(qint64 length);
     void bufferSizeChanged(qint64 length);
+    void audioStateChanged(QAudio::State state);
 
 private:
     QAudioFormat* format;

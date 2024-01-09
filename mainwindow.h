@@ -44,6 +44,7 @@ private slots:
     void loadStatus(qint64 position, bool isEnd);
     void lrcChanged(int md);
     void bufferSizeChanged(qint64 size);
+    void audioStateChanged(QAudio::State state);
 
     void on_pushButton_loadmusic_clicked();
     void on_pushButton_tostart_clicked();
