@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->label_cover->setAlignment(Qt::AlignCenter);
     qRegisterMetaType<QPixmap*>("QPixmap*");
     lrc = new GLrc;
     connect(lrc, SIGNAL(lrcChanged(int)), this, SLOT(lrcChanged(int)));
@@ -80,7 +81,7 @@ void MainWindow::show()
 {
     QWidget::show();
     ui->checkBox_pcm_pause->setCheckState(Qt::Checked);
-    ui->checkBox_lrc_pause->setCheckState(Qt::Checked);
+    //ui->checkBox_lrc_pause->setCheckState(Qt::Checked);
 }
 
 void MainWindow::durationChanged(qint64 duration)
@@ -191,6 +192,7 @@ void MainWindow::metaDataChanged(QMediaMetaData mediaData)
         //videoOutput->hide();
         QVariant img = mediaData.value(QMediaMetaData::ThumbnailImage);
         QPixmap cove =QPixmap::fromImage(img.value<QImage>());
+        //ui->label_cover->setPixmap(cove.scaled(200,16777215,Qt::KeepAspectRatio, Qt::SmoothTransformation));
         if(img.isNull())
         {
             ui->openGLWidget_lrc->setBackground(QColor(255,255,255));
@@ -819,7 +821,10 @@ void MainWindow::on_pushButton_loadlrc_neteasy_clicked()
 
 void MainWindow::on_horizontalSlider_valueChanged(int value)
 {
-    player->setVolume((float)value / 100);
+    qreal linearVolume = QAudio::convertVolume(value / qreal(100.0),
+                                               QAudio::LogarithmicVolumeScale,
+                                               QAudio::LinearVolumeScale);
+    player->setVolume(linearVolume);
     ui->label_vol->setText(QString::number(value));
 }
 
@@ -989,12 +994,12 @@ void MainWindow::on_checkBox_lrc_pause_stateChanged(int arg1)
     if(arg1 == Qt::Checked)
     {
         ui->openGLWidget_lrc->pause(true);
-        ui->openGLWidget_lrc->hide();
+        //ui->openGLWidget_lrc->hide();
     }
     else
     {
         ui->openGLWidget_lrc->pause(false);
-        ui->openGLWidget_lrc->show();
+        //ui->openGLWidget_lrc->show();
     }
 }
 

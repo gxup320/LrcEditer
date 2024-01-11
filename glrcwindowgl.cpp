@@ -82,6 +82,10 @@ void GLrcWindowGL::setBackground(QColor color)
     {
         copyed->setBackground(color);
     }
+    if(!m_timer->isActive())
+    {
+        update();
+    }
 }
 
 void GLrcWindowGL::setBackground(QImage image)
@@ -93,6 +97,10 @@ void GLrcWindowGL::setBackground(QImage image)
     if(copyed != nullptr)
     {
         copyed->setBackground(image);
+    }
+    if(!m_timer->isActive())
+    {
+        update();
     }
 }
 
@@ -114,7 +122,7 @@ void GLrcWindowGL::copyTo(GLrcWindowGL *target)
             copyed->setBackground(*backgroundColor);
             break;
         }
-        target->m_dark = m_dark;
+        target->m_dark = 0;
         //复制前景
         setDispaleColor(colors[0],colors[1],colors[2],colors[3]);
         //复制歌词
@@ -127,9 +135,11 @@ void GLrcWindowGL::copyTo(GLrcWindowGL *target)
 
 void GLrcWindowGL::pause(bool p)
 {
+    m_stop = p;
     if(p)
     {
-        m_timer->stop();
+        //m_timer->stop();
+        //m_dark = 0;
     }
     else
     {
@@ -183,19 +193,20 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
         painter.fillRect(0,0,w,h,*backgroundColor);
         break;
     case 1:
+        painter.fillRect(0,0,w,h,QColor(0,0,0));
         if(!backgroundPixmap->isNull())
         {
             painter.drawPixmap(0,0,backgroundPixmap->scaled(w,h,Qt::IgnoreAspectRatio));
-        }
-        else
-        {
-            painter.fillRect(0,0,w,h,QColor(0,0,0));
         }
         painter.fillRect(QRect(0, 0, w, h),QBrush(QColor(0, 0, 0, m_dark)));
         break;
     default:
         painter.fillRect(0,0,w,h,QColor(255,255,255));
         break;
+    }
+    if(m_dark <= 0 && m_stop)
+    {
+        m_timer->stop();
     }
     if(m_lrc != nullptr)
     {
@@ -402,13 +413,13 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
             }
             pos.setY(pos.y() + fountSize / 2);
         }
-        if(textExists && m_dark < 100)
-        {
-            m_dark++;
-        }
-        else if(!textExists && m_dark > 0)
+        if((!textExists && m_dark > 0) || (m_stop && m_dark > 0))
         {
             m_dark--;
+        }
+        else if(textExists && m_dark < 100)
+        {
+            m_dark++;
         }
     }
 }
@@ -435,9 +446,9 @@ void GLrcWindowGL::backgroundImageToPixmap()
     *backgroundPixmap = pxDst;
 }
 
-void GLrcWindowGL::resizeEvent(QResizeEvent *e)
+void GLrcWindowGL::resizeGL(int w, int h)
 {
-    QOpenGLWidget::resizeEvent(e);
+
     if(backgroundMode == 1)
     {
         backgroundImageToPixmap();

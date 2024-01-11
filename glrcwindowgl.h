@@ -39,6 +39,7 @@ private:
     int movSpeed(int length);
     void paintEvent(QPaintEvent *e);
     int m_dark = 0;
+    bool m_stop = false;
     QColor* colors;
     QColor* backgroundColor;
     QImage* backgroundImage;
@@ -46,7 +47,7 @@ private:
     //0-背景颜色，1-背景图标
     int backgroundMode = 0;
     void backgroundImageToPixmap();
-    void resizeEvent(QResizeEvent *e);
+    void resizeGL(int w, int h);
     void closeEvent(QCloseEvent *event);
 };
 
