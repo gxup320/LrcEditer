@@ -270,9 +270,12 @@ void GPcmbarGL::paintGL()
         m_displayPos = m_pos;
     if(m_onLrcItem == -1)
         formatLrc();
-    glClearColor(0.0f,0.0f,0.0f,0.0f);
+    //glClearColor(0.0f,0.0f,0.0f,0.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //清空画板
+    glColor4f(0.0f,0.0f,0.0f, 1.0f);
+    glRectf(-1.0, -1.0, 1.0, 1.0);
     glColor3f(0.0f,1.0f,0.0f);
     glBegin(GL_LINES);
     int seek = m_displayPos * 2 - width();

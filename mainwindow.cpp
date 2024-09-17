@@ -554,7 +554,7 @@ void MainWindow::on_pushButton_save_clicked()
 void MainWindow::on_pushButton_save_as_clicked()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
-        tr("Open LRC"), QString(), tr("LRC Files (*.lrc);;SubRip (*.srt)"));
+        tr("Open LRC"), lrcFileName, tr("LRC Files (*.lrc);;SubRip (*.srt)"));
     if(fileName != "")
     {
         if(fileName.right(4).toLower() == ".lrc")
