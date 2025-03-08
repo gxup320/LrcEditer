@@ -118,12 +118,17 @@ bool GAudioPlayer::setPosition(qint64 position)
         if(isAccurateProgress)
         {
             stop();
-            rev = buffer->seek(filePosition);
             startTime = position;
             QMutexLocker locker(timerMutex);
             //locker.relock();
             if(audioSink != nullptr)
             {
+                delete audioSink;
+                rev = buffer->seek(filePosition);
+                audioSink = new QAudioSink(*format, this);
+                audioSink->setVolume(lastVolume);
+                connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
+                audioSink->setBufferSize(bufferSize);
                 playTime = new QElapsedTimer;
                 audioSink->start(buffer);
                 playTime->start();
@@ -231,6 +236,11 @@ void GAudioPlayer::play(qint64 _position)
         startTime = _position;
         if(isAccurateProgress)
         {
+            delete audioSink;
+            audioSink = new QAudioSink(*format, this);
+            audioSink->setVolume(lastVolume);
+            connect(audioSink, SIGNAL(stateChanged(QAudio::State)), this, SLOT(audioSinkStateChanged(QAudio::State)));
+            audioSink->setBufferSize(bufferSize);
             audioSink->start(buffer);
             QMutexLocker locker(timerMutex);
             //locker.relock();
