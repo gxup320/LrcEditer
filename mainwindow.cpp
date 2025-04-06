@@ -306,7 +306,7 @@ bool MainWindow::saveLrcToFile(QString fileName)
         if(ui->lineEdit_ti->text() != "")
             lrcFull += "[ti:" + ui->lineEdit_ti->text() + "]\n";
         lrcFull += "[ve:1.0]\n";
-        lrcFull += lrc->getLrc(ui->checkBox_moreTimes->checkState());
+        lrcFull += lrc->getLrc(ui->checkBox_moreTimes->checkState(), ui->checkBox_syncLineFistTime->checkState());
         //lrcFull.replace("<br/>","\n");
         if(file.write(lrcFull.toUtf8()) == false)
         {

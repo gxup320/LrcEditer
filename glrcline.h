@@ -20,8 +20,8 @@ public:
     GLrcLine operator=(const QString &D);
     GLrcLine operator=(const GLrcLine &D);
     bool operator==(const GLrcLine &D);
-    QString toString(bool incuudeTimes = true);
-    QStringList toStringList(bool incuudeTimes = true);
+    QString toString(const QTime* fistTime = nullptr, bool incuudeTimes = true);
+    QStringList toStringList(const QTime* fistTime = nullptr, bool incuudeTimes = true);
     QString toHtml(bool sel = false, int lfCount = 0);
     QString toSrt(int sel = -1);
     int selectTime(qint64 time);

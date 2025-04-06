@@ -248,7 +248,7 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                 int sizeDiff = fountSize * l_lrcItems[var].fontSize / 15;
                 font.setPixelSize(fountSize + sizeDiff);
                 QFontMetrics fm(font);
-                QStringList sl = l_lrcItems[var].line.toStringList(false);
+                QStringList sl = l_lrcItems[var].line.toStringList(nullptr, false);
                 if(moveed == false)
                 {
                     moveed = true;
@@ -288,7 +288,7 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                 int sizeDiff = fountSize * l_lrcItems[var].fontSize / 15;
                 font.setPixelSize(fountSize + sizeDiff);
                 QFontMetrics fm(font);
-                QStringList sl = l_lrcItems[var].line.toStringList(false);
+                QStringList sl = l_lrcItems[var].line.toStringList(nullptr, false);
                 pos.setY(pos.y() + fm.height() * sl.size());
             }
             pos.setY(pos.y() + fountSize / 2);
@@ -339,7 +339,7 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                 //当前行被选中
                 font.setPixelSize(fountSize + sizeDiff);
                 painter.setFont(font);
-                QStringList sl = l_lrcItems[var].line.toStringList(false);
+                QStringList sl = l_lrcItems[var].line.toStringList(nullptr, false);
                 bool fast = true;
                 QFontMetrics fm(font);
                 //for (auto& itm : sl)
@@ -391,7 +391,7 @@ void GLrcWindowGL::paintEvent(QPaintEvent *e)
                 font.setPixelSize(fountSize + sizeDiff);
                 painter.setFont(font);
                 QFontMetrics fm(font);
-                QStringList sl = l_lrcItems[var].line.toStringList(false);
+                QStringList sl = l_lrcItems[var].line.toStringList(nullptr, false);
                 //for (auto& itm : sl)
                 for(int var = 0; var < sl.length(); var++)
                 {

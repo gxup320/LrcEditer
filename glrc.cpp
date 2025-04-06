@@ -74,23 +74,28 @@ void GLrc::setLrc(QString lrc, int maxLine)
     emit lrcChanged();
 }
 
-QString GLrc::getLrc(bool moreTime /*= false*/)
+QString GLrc::getLrc(bool moreTime /*= false*/, bool syncLineFistTime /*= true*/)
 {
     QString lrcFile;
     for(int var = 0; var < lrcItems.length(); var++)
     {
         auto& itm = lrcItems[var];
         QString times = "";
+        QTime fistTime;
         for (int var = 0; var < itm.times.length(); ++var)
         {
             auto i = itm.times[var];
             QTime t = QTime::fromMSecsSinceStartOfDay(i);
+            if(syncLineFistTime && fistTime.isNull())
+            {
+                fistTime = t;
+            }
             QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
             times += "[" + ts + "]";
         }
         if(moreTime)
         {
-            QStringList lines = itm.line.toStringList();
+            QStringList lines = itm.line.toStringList(&fistTime);
             for(int var = 0; var < lines.length(); var++)
             {
                 auto& line = lines[var];
@@ -99,7 +104,7 @@ QString GLrc::getLrc(bool moreTime /*= false*/)
         }
         else
         {
-            lrcFile += times + itm.line.toString() + "\n";
+            lrcFile += times + itm.line.toString(&fistTime) + "\n";
         }
     }
     return lrcFile;
@@ -429,7 +434,7 @@ QString GLrc::toSrt(qint64 maximumTime)
     qint64 cul = 1;
     for (int var = 0; var < temp.length(); ++var)
     {
-        if(temp[var].line.toString(true) == temp[var].line.toString(false))
+        if(temp[var].line.toString(nullptr, true) == temp[var].line.toString(nullptr, false))
         {
             qint64 time1 = temp[var].times[0];
             qint64 time2;
@@ -450,7 +455,7 @@ QString GLrc::toSrt(qint64 maximumTime)
             QString ts1 = t.toString("hh:mm:ss,zzz");
             t = QTime::fromMSecsSinceStartOfDay(time1 + timeOut);
             QString ts2 = t.toString("hh:mm:ss,zzz");
-            srt += QString::number(cul) + "\n" + ts1 + " --> " + ts2 + "\n" + temp[var].line.toString(false) + "\n\n";
+            srt += QString::number(cul) + "\n" + ts1 + " --> " + ts2 + "\n" + temp[var].line.toString(nullptr, false) + "\n\n";
             cul++;
         }
         else
@@ -634,7 +639,7 @@ QString GLrc::getLineString(int line,bool incuudeTimes)
 {
     if(line >= lrcItems.size())
         return "";
-    return lrcItems[line].line.toString(incuudeTimes);
+    return lrcItems[line].line.toString(nullptr, incuudeTimes);
 }
 
 QList<qint64> GLrc::getLineTime(int line)
@@ -1050,7 +1055,7 @@ int GLrc::getTextSize(int w, int h)
     for(int var = 0; var < lrcItems.length(); var++)
     {
         auto& itm = lrcItems[var];
-        QStringList sl = itm.line.toStringList(false);
+        QStringList sl = itm.line.toStringList(nullptr, false);
         for(int var = 0; var < sl.length(); var++)
         {
             auto& itm = sl[var];

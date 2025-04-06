@@ -88,7 +88,7 @@ GLrcLine GLrcLine::operator=(const GLrcLine &D)
     return *this;
 }
 
-QString GLrcLine::toString(bool incuudeTimes)
+QString GLrcLine::toString(const QTime* fistTime, bool incuudeTimes)
 {
     QString retStr;
     //for (const auto& itm:lineItems)
@@ -97,9 +97,17 @@ QString GLrcLine::toString(bool incuudeTimes)
         const lrcLineItem& itm = lineItems[var];
         if(incuudeTimes && itm.time != -1)
         {
-            QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
-            QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
-            retStr += "<" + ts + ">";
+            if(var == 0 && fistTime != nullptr && !fistTime->isNull())
+            {
+                QString ts = fistTime->toString("mm:ss.") + fistTime->toString("zzz").left(2);
+                retStr += "<" + ts + ">";
+            }
+            else
+            {
+                QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
+                QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
+                retStr += "<" + ts + ">";
+            }
         }
         retStr += itm.word;
     }
@@ -111,7 +119,7 @@ QString GLrcLine::toString(bool incuudeTimes)
     return retStr;
 }
 
-QStringList GLrcLine::toStringList(bool incuudeTimes)
+QStringList GLrcLine::toStringList(const QTime* fistTime, bool incuudeTimes)
 {
     QString retStr;
     //for (const auto& itm:lineItems)
@@ -120,9 +128,17 @@ QStringList GLrcLine::toStringList(bool incuudeTimes)
         const lrcLineItem& itm = lineItems[var];
         if(incuudeTimes && itm.time != -1)
         {
-            QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
-            QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
-            retStr += "<" + ts + ">";
+            if(var == 0 && fistTime != nullptr && !fistTime->isNull())
+            {
+                QString ts = fistTime->toString("mm:ss.") + fistTime->toString("zzz").left(2);
+                retStr += "<" + ts + ">";
+            }
+            else
+            {
+                QTime t = QTime::fromMSecsSinceStartOfDay(itm.time);
+                QString ts = t.toString("mm:ss.") + t.toString("zzz").left(2);
+                retStr += "<" + ts + ">";
+            }
         }
         retStr += itm.word;
     }
@@ -421,7 +437,7 @@ qint64 GLrcLine::getTime(QString str, int start)
     {
         return -1;
     }
-    QString timeStr = str.mid(start + 1,str.indexOf(">") - 1);
+    QString timeStr = str.mid(start + 1,str.indexOf(">", start + 1) - start - 1);
     QTime time = QTime::fromString(timeStr + "0","mm:ss.zzz");
     if(time.isNull())
     {
