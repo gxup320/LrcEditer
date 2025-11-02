@@ -1082,7 +1082,7 @@ void GLrc::status(qint64 time, QList<int> *line, QList<int> *word, QList<int> *w
     {
         for(int i = 0; i < lrcItems[var].times.length(); i++)
         {
-            auto& itm = lrcItems[var].times[i];
+            auto itm = lrcItems[var].times[i];
             if(itm == localTime)
             {
                 line->push_back(var);

@@ -281,6 +281,8 @@ void GPcmbarGL::paintGL()
     int seek = m_displayPos * 2 - width();
     int x = 0;
     int w = width();
+    float half_w = w / 2.0f;
+    float norm_factor = 1.0f / half_w; // 归一化因子
     //先画一条中线
     glVertex2f(-1.0,0);
     glVertex2f(1.0,0);
@@ -288,8 +290,8 @@ void GPcmbarGL::paintGL()
     {
         if(seek >= 0)
         {
-            glVertex2f((x-w/2.0f)/(w/2.0f),m_showBytearray[seek]);
-            glVertex2f((x-w/2.0f)/(w/2.0f),m_showBytearray[seek+1]);
+            glVertex2f((x-half_w) * norm_factor,m_showBytearray[seek]);
+            glVertex2f((x-half_w) * norm_factor,m_showBytearray[seek+1]);
         }
         x++;
         seek += 2;
@@ -301,7 +303,7 @@ void GPcmbarGL::paintGL()
     {
         if(m_lrcPosItems[var].string != "")
         {
-            glRectf(float(m_lrcPosItems[var].rect.x() - w / 2) / (w / 2), -1.0, float(m_lrcPosItems[var].rect.right() - w / 2) / (w / 2), 1.0);
+            glRectf(float(m_lrcPosItems[var].rect.x() - half_w) * norm_factor, -1.0, float(m_lrcPosItems[var].rect.right() - half_w) * norm_factor, 1.0);
         }
     }
     //画出歌词分界线
@@ -312,10 +314,10 @@ void GPcmbarGL::paintGL()
         //qDebug() << m_lrcPosItems[var].string;
         if(m_lrcPosItems[var].string != "")
         {
-            glVertex2f(float(m_lrcPosItems[var].rect.x() - w / 2) / (w / 2),1.0);
-            glVertex2f(float(m_lrcPosItems[var].rect.x() - w / 2) / (w / 2),-1.0);
-            glVertex2f(float(m_lrcPosItems[var].rect.right() - w / 2) / (w / 2),1.0);
-            glVertex2f(float(m_lrcPosItems[var].rect.right() - w / 2) / (w / 2),-1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.x() - half_w) * norm_factor,1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.x() - half_w) * norm_factor,-1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.right() - half_w) * norm_factor,1.0);
+            glVertex2f(float(m_lrcPosItems[var].rect.right() - half_w) * norm_factor,-1.0);
         }
     }
     glEnd();

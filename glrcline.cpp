@@ -351,7 +351,7 @@ int GLrcLine::status(qint64 time, qint64 *selectTime, qint64 *nextTime, int *sel
     *nextTime = -1;
     for (int var = 0; var < lineItems.length(); ++var)
     {
-        if(lineItems[var].time == -1)
+        if(lineItems[var].time == -1 && var > 0)
         {
             break;
         }
